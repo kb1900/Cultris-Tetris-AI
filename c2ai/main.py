@@ -17,12 +17,12 @@ from c2ai.cell_classifier import Classifier
 from c2ai.matrix import matrix_updater
 from c2ai import build_absolute_path
 
-
 best_drop_times = []
 move_execution_times = []
 garbage_update_times = []
 game_over_check_times = []
-
+max_bpm = 200
+min_time_per_piece = 1 / (max_bpm / 60)
 break_program = False
 
 # with open ('current_generation_dump', 'rb') as dump_file:
@@ -392,23 +392,28 @@ while True:
                     next_tetromino_name = Classifier.TETROMINO_NAME[next_rgb]
 
                     t0 = time.time()
-                    best_drop = Optimizer.best_move(
-                        field,
-                        current_tetromino,
-                        next_tetromino,
-                        n=[
-                            17.266573527809562,
-                            2.777217126349192,
-                            6.760730777087559,
-                            0.7876033208193283,
-                            12.351036669926016,
-                            2.9693729446011448,
-                            17.853166241417732,
-                            8.531717290316418,
-                            1.5111635889673647,
-                            4.507103638484812,
-                        ],
-                    )
+                    start_time = time.time()
+                    try:
+                        best_drop = Optimizer.best_move(
+                            field,
+                            current_tetromino,
+                            next_tetromino,
+                            n=[
+                                17.266573527809562,
+                                2.777217126349192,
+                                6.760730777087559,
+                                0.7876033208193283,
+                                12.351036669926016,
+                                2.9693729446011448,
+                                17.853166241417732,
+                                8.531717290316418,
+                                1.5111635889673647,
+                                4.507103638484812,
+                            ],
+                        )
+                    except IndexError:
+                        print('Game Over, ran out of moves')
+                        game_over = 1
                     best_drop_times.append(time.time() - t0)
 
                     t0 = time.time()
@@ -436,7 +441,6 @@ while True:
                     kb.write(
                         keys, delay=0.00
                     )  # 0.111s execution speed av and stable at delay = 0.005s but only needed if lag
-
                     move_execution_times.append(time.time() - t0)
 
                     t0 = time.time()
@@ -471,6 +475,11 @@ while True:
                     else:
                         game_over = 0
                     game_over_check_times.append(time.time() - t0)
+
+                    ## Throttle speed if move would be faster than max speed
+                    move_time = time.time() - start_time
+                    if move_time < min_time_per_piece:
+                        time.sleep(min_time_per_piece-move_time)
 
                     if game_over == 1:
                         print("GAME OVER DETECTED")
