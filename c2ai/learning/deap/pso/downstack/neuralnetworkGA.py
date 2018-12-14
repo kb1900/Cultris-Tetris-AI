@@ -8,7 +8,7 @@ from statistics import median
 import dill
 import time
 
-from c2ai import build_dotted_path
+from c2ai import build_absolute_path
 from c2ai.learning.deap.pso.downstack.tetris import Tetris
 from c2ai.base.tetromino import Tetromino
 from c2ai.base.field import Field
