@@ -148,7 +148,7 @@ class Field:
     def add_garbage(self):
         board_array = numpy.array(self.state)
 
-        garbage_array = ["0", "0", "0", "0", "0", "0", "0", "0", "0", "0"]
+        garbage_array = ["0" for _ in range(10)]
         gap = random.randint(0, self.WIDTH - 1)
         garbage_array[gap] = " "
 

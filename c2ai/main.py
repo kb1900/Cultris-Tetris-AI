@@ -15,6 +15,7 @@ from c2ai.base.field import Field
 from c2ai.base.optimizer import Optimizer
 from c2ai.cell_classifier import Classifier
 from c2ai.matrix import matrix_updater
+from c2ai import build_absolute_path
 
 
 best_drop_times = []
@@ -56,31 +57,31 @@ def on_press(key):
 
 
 def login():
-    target = Classifier.template_match("Images/Play_online.png")
+    target = Classifier.template_match(build_absolute_path("Images/Play_online.png"))
     pyautogui.moveTo(target)
     pyautogui.doubleClick(target)
     time.sleep(.5)
 
-    target = Classifier.template_match("Images/Play_as_guest.png")
+    target = Classifier.template_match(build_absolute_path("Images/Play_as_guest.png"))
     pyautogui.moveTo(target)
     pyautogui.doubleClick(target)
 
-    # target = template_match('Name.png')
+    # target = template_match(build_absolute_path('Name.png'))
     pyautogui.moveTo(x=target[0] + 600, y=target[1] + 50)
     pyautogui.dragTo(target[0] + 50, target[1] + 50, 0.5, button="left")
     pyautogui.typewrite("kb of python")
 
-    target = Classifier.template_match("Images/Play.png")
+    target = Classifier.template_match(build_absolute_path("Images/Play.png"))
     pyautogui.moveTo(target)
     pyautogui.doubleClick(target)
     time.sleep(2)
 
-    target = Classifier.template_match("Images/No.png")
+    target = Classifier.template_match(build_absolute_path("Images/No.png"))
     pyautogui.moveTo(target)
     pyautogui.doubleClick(target)
 
     time.sleep(1)
-    target = Classifier.template_match("Images/lobby.png")
+    target = Classifier.template_match(build_absolute_path("Images/lobby.png"))
     pyautogui.moveTo(target)
     pyautogui.doubleClick(target)
 
@@ -89,7 +90,7 @@ def login():
 def leave_room():
     pyautogui.press("escape")
     time.sleep(.3)
-    target = Classifier.template_match("Images/yes.png")
+    target = Classifier.template_match(build_absolute_path("Images/yes.png"))
     pyautogui.moveTo(target)
     pyautogui.doubleClick(target)
 
@@ -97,16 +98,16 @@ def leave_room():
 def leave_challenge():
     pyautogui.press("escape")
     time.sleep(.3)
-    target = Classifier.template_match("Images/yes.png")
+    target = Classifier.template_match(build_absolute_path("Images/yes.png"))
     if target == False:
-        target = Classifier.template_match("Images/back_to_menu.png")
+        target = Classifier.template_match(build_absolute_path("Images/back_to_menu.png"))
     pyautogui.moveTo(target)
     pyautogui.doubleClick(target)
 
 
 def find_lobby_chat():
 
-    if Classifier.template_match("Images/online3.png") != False:
+    if Classifier.template_match(build_absolute_path("Images/online3.png")) != False:
         print("we are on the lobby chat page!")
     elif is_on_homescreen() != False:
         login()
@@ -117,15 +118,15 @@ def find_lobby_chat():
             time.sleep(2)
         if is_loggedin() == True:
             print("we are logged in")
-            if Classifier.template_match("Images/online3.png") != False:
+            if Classifier.template_match(build_absolute_path("Images/online3.png")) != False:
                 print("we are on the lobby chat page!")
             else:
-                target = Classifier.template_match("Images/lobby.png")
+                target = Classifier.template_match(build_absolute_path("Images/lobby.png"))
                 pyautogui.moveTo(target)
                 pyautogui.doubleClick(target)
         else:
             print("we are logged in but not on the lobby chat page")
-            target = template_match("Images/Back.png")
+            target = template_match(build_absolute_path("Images/Back.png"))
             pyautogui.moveTo(target)
             pyautogui.doubleClick(target)
             time.sleep(2)
@@ -133,7 +134,7 @@ def find_lobby_chat():
     else:
         print("error finding lobby")
     time.sleep(2)
-    if Classifier.template_match("Images/online3.png") != False:
+    if Classifier.template_match(build_absolute_path("Images/online3.png")) != False:
         print("we are on the lobby chat page!")
 
 
@@ -157,7 +158,7 @@ def find_lobby_chat():
 # find_lobby_chat()
 
 
-# target = template_match('Challenges.png')
+# target = template_match(build_absolute_path('Challenges.png'))
 # pyautogui.moveTo(target)
 # pyautogui.doubleClick(target)
 # time.sleep(2)
@@ -181,9 +182,9 @@ while True:
                     if sys.argv[1] == "-maserati":
                         os.system("open /Applications/cultris2.app")
                         print("maserati mode selected")
-                        maserati = Classifier.template_match("Images/maserati.png")
+                        maserati = Classifier.template_match(build_absolute_path("Images/maserati.png"))
                         if maserati == False:
-                            maserati = Classifier.template_match("Images/maserati2.png")
+                            maserati = Classifier.template_match(build_absolute_path("Images/maserati2.png"))
                         if maserati == False:
                             print("ERROR finding maserati template match")
                             count = -100
@@ -192,7 +193,7 @@ while True:
                         pyautogui.doubleClick(maserati)
                         time.sleep(0.25)
 
-                        No = Classifier.template_match("Images/No.png")
+                        No = Classifier.template_match(build_absolute_path("Images/No.png"))
                         pyautogui.moveTo(No)
                         pyautogui.doubleClick(No)
                         time.sleep(2)  # 3,2,1 countdown
@@ -200,11 +201,11 @@ while True:
                     elif sys.argv[1] == "-cheese":
                         os.system("open /Applications/cultris2.app")
                         print("cheese mode selected")
-                        cheese = Classifier.template_match("Images/swiss_cheese.png")
+                        cheese = Classifier.template_match(build_absolute_path("Images/swiss_cheese.png"))
                         if cheese == False:
                             cheese = Classifier.template_match(
                                 "Images/swiss_cheese2.png")
-                    
+
                         if cheese == False:
                             print("ERROR finding cheese template match")
                             count = -100
@@ -213,7 +214,7 @@ while True:
                         pyautogui.doubleClick(cheese)
                         time.sleep(0.25)
 
-                        No = Classifier.template_match("Images/No.png")
+                        No = Classifier.template_match(build_absolute_path("Images/No.png"))
                         pyautogui.moveTo(No)
                         pyautogui.doubleClick(No)
                         time.sleep(2)  # 3,2,1 countdonw
@@ -253,17 +254,17 @@ while True:
                                 count = -2
                                 break
 
-                    target = Classifier.template_match("Images/kb_baby_bot.png")
+                    target = Classifier.template_match(build_absolute_path("Images/kb_baby_bot.png"))
                     if target == False:
                         print(
                             "ERROR finding kb_baby_bot template match. ATTEMPTING 2nd TIME"
                         )
-                        target = Classifier.template_match("Images/kb_baby_bot.png")
+                        target = Classifier.template_match(build_absolute_path("Images/kb_baby_bot.png"))
                         if target == False:
                             print(
                                 "ERROR finding kb_baby_bot template match. ATTEMPTING 3rd TIME"
                             )
-                            target = Classifier.template_match("Images/kb_baby_bot.png")
+                            target = Classifier.template_match(build_absolute_path("Images/kb_baby_bot.png"))
                             if target == False:
                                 print(
                                     "ERROR finding kb_baby_bot template match. Re-setting count to -2"

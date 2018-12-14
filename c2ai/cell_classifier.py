@@ -4,6 +4,8 @@ import cv2
 import pyautogui
 import os
 import autopy
+import mss
+import numpy as np
 from c2ai import build_absolute_path
 
 
@@ -11,9 +13,13 @@ class Classifier:
     @staticmethod
     def template_match(template):
 
-        os.system(build_absolute_path("screencapture screengrab.png"))
-        img = cv2.imread(build_absolute_path("screengrab.png"), 0)
+        with mss.mss() as sct:
+            mon = sct.monitors[-1]
+            img = sct.grab(mon)
+        img = np.array(img)
+        img = cv2.cvtColor(img, cv2.COLOR_BGRA2GRAY)
         A, B = img.shape[::-1]
+
 
         template = cv2.imread(template, 0)
         w, h = template.shape[::-1]
