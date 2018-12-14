@@ -19,6 +19,10 @@ setup(
         'pathos',
         'statistics',
         'dill',
-        'pyautogui'
+        'pyautogui',
+        'autopy',
+        'pynput',
+        'keyboard',
+        'opencv-python'
     ]
 )
