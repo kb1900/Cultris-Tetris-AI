@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='c2ai',
-    version='0.0.1',
+    version='0.0.2',
     author='kb1900',
     packages=['c2ai'],
     python_requires='>=3.6.0',
@@ -18,6 +18,7 @@ setup(
         'scoop',
         'pathos',
         'statistics',
-        'dill'
+        'dill',
+        'pyautogui'
     ]
 )

@@ -1,6 +1,5 @@
 import os
 import sys
-import psutil
 
 import pyautogui
 import autopy
@@ -54,16 +53,6 @@ def on_press(key):
         count = -1
         os.system("open /Applications/cultris2.app")
         return True
-
-
-def c2_open():
-
-    for p in psutil.pids():
-        x = psutil.Process(p)
-        if x.name() == "JavaApplicationStub":
-            return True
-    print("c2 is not running")
-    return False
 
 
 def login():
