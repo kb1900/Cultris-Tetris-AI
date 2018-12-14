@@ -7,16 +7,16 @@ from deap import tools
 from scoop import futures
 
 
-from tetris import Tetris
-from tetromino import Tetromino
-from field import Field
-from optimizer import Optimizer
+from c2ai.learning.deap.pso.downstack.tetris import Tetris
+from c2ai.base.tetromino import Tetromino
+from c2ai.base.field import Field
+from c2ai.base.optimizer import Optimizer
 from plot import Regression
 from NN import neuralNetwork
 import numpy
 
 
-creator.create("FitnessMax", base.Fitness, weights=(1.0,-1.0))
+creator.create("FitnessMax", base.Fitness, weights=(1.0, -1.0))
 creator.create("Individual", list, fitness=creator.FitnessMax)
 
 toolbox = base.Toolbox()
@@ -31,24 +31,24 @@ toolbox.register("attr_bool", random.uniform, -1, 1)
 # Structure initializers
 #                         define 'individual' to be an individual
 #                         consisting of 100 'attr_bool' elements ('genes')
-toolbox.register("individual", tools.initRepeat, creator.Individual,
-                 toolbox.attr_bool, 8)
+toolbox.register(
+    "individual", tools.initRepeat, creator.Individual, toolbox.attr_bool, 8
+)
 
 # define the population to be a list of individuals
 toolbox.register("population", tools.initRepeat, list, toolbox.individual)
 
 toolbox.register("map", futures.map)
-#toolbox.register("map", map)
+# toolbox.register("map", map)
 
 # the goal ('fitness') function to be maximized
 def evalOneMax(individual):
 
     scores = []
     for attempt in range(game_attempts):
-        scores.append(Tetris.run_game(n=individual,render=False))
+        scores.append(Tetris.run_game(n=individual, render=False))
 
-    return numpy.mean(scores),
-
+    return (numpy.mean(scores),)
 
 
 # ----------
@@ -76,11 +76,12 @@ toolbox.register("select", tools.selTournament, tournsize=10)
 population_size = 500
 game_attempts = 3
 CXPB = 0.3  # CXPB  is the probability with which two individuals are crossed
-MUTPB = 0.05 # MUTPB is the probability for mutating an individual
+MUTPB = 0.05  # MUTPB is the probability for mutating an individual
+
 
 def main():
     random.seed(64)
-    
+
     # create an initial population of population_size individuals (where
     # each individual is a list of integers)
     pop = toolbox.population(population_size)

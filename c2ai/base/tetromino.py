@@ -1,8 +1,9 @@
 #!/usr/bin/python
 
-class Tetromino():
 
-    TYPES = ['I', 'O', 'T', 'S', 'Z', 'J', 'L']
+class Tetromino:
+
+    TYPES = ["I", "O", "T", "S", "Z", "J", "L"]
 
     def __init__(self, state):
         # assert that there are rows
@@ -13,80 +14,42 @@ class Tetromino():
 
     @staticmethod
     def I_Tetromino():
-        return Tetromino(
-            [
-                ['x', 'x', 'x', 'x']
-            ]
-        )
+        return Tetromino([["x", "x", "x", "x"]])
 
     @staticmethod
     def O_Tetromino():
-        return Tetromino(
-            [
-                ['x', 'x'],
-                ['x', 'x']
-            ]
-        )
+        return Tetromino([["x", "x"], ["x", "x"]])
 
     @staticmethod
     def T_Tetromino():
-        return Tetromino(
-            [
-                [' ', 'x', ' '],
-                ['x', 'x', 'x']
-            ]
-        )
+        return Tetromino([[" ", "x", " "], ["x", "x", "x"]])
 
     @staticmethod
     def S_Tetromino():
-        return Tetromino(
-            [
-                [' ', 'x', 'x'],
-                ['x', 'x', ' ']
-            ]
-        )
+        return Tetromino([[" ", "x", "x"], ["x", "x", " "]])
 
     @staticmethod
     def Z_Tetromino():
-        return Tetromino(
-            [
-                ['x', 'x', ' '],
-                [' ', 'x', 'x']
-            ]
-        )
+        return Tetromino([["x", "x", " "], [" ", "x", "x"]])
 
     @staticmethod
     def J_Tetromino():
-        return Tetromino(
-            [
-                ['x', ' ', ' '],
-                ['x', 'x', 'x']
-            ]
-        )
+        return Tetromino([["x", " ", " "], ["x", "x", "x"]])
 
     @staticmethod
     def L_Tetromino():
-        return Tetromino(
-            [
-                [' ', ' ', 'x'],
-                ['x', 'x', 'x']
-            ]
-        )
+        return Tetromino([[" ", " ", "x"], ["x", "x", "x"]])
 
     @staticmethod
     def null_Tetromino():
-        return Tetromino(
-            [
-                ['x']
-            ]
-        )
+        return Tetromino([["x"]])
 
     @staticmethod
     def create(letter):
         if letter == None:
-            letter = 'O'
+            letter = "O"
         assert letter.upper() in Tetromino.TYPES
-        return getattr(Tetromino, '{}_Tetromino'.format(letter.upper()))()
+        return getattr(Tetromino, "{}_Tetromino".format(letter.upper()))()
 
     def __str__(self):
         return "\n".join(["".join(x) for x in self.state])
@@ -106,7 +69,7 @@ class Tetromino():
     def rotate(self, change):
         while change < 0:
             change += 4
-        change = (change % 4)
+        change = change % 4
         assert 0 <= change and change <= 3
         if change == 0:
             return None
@@ -117,7 +80,7 @@ class Tetromino():
         elif change == 3:
             self.rotate_left()
         else:
-            raise Exception('This should never happen!')
+            raise Exception("This should never happen!")
 
     def rotate_right(self):
         self.state = list(zip(*self.state[::-1]))
@@ -131,7 +94,8 @@ class Tetromino():
         self.state = [row[::-1] for row in self.state[::-1]]
         return self
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     t = Tetromino.LTetromino()
     print(t)
     print()

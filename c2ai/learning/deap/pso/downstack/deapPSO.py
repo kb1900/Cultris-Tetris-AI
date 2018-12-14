@@ -3,12 +3,22 @@ from deap import creator
 from deap import tools
 from scoop import futures
 
-from tetris import Tetris
-import numpy, time, operator, random
+from c2ai.learning.deap.pso.downstack.tetris import Tetris
+import numpy
+import time
+import operator
+import random
 
 creator.create("FitnessMax", base.Fitness, weights=(1.0,))
-creator.create("Particle", list, fitness=creator.FitnessMax, speed=list,
-               smin=None, smax=None, best=None)
+creator.create(
+    "Particle",
+    list,
+    fitness=creator.FitnessMax,
+    speed=list,
+    smin=None,
+    smax=None,
+    best=None,
+)
 
 
 def generate(size, pmin, pmax, smin, smax):
@@ -32,12 +42,14 @@ def updateParticle(part, best, phi1, phi2):
             part.speed[i] = part.smax
     part[:] = list(map(operator.add, part, part.speed))
 
+
 def evalOneMax(individual):
     scores = []
     for i in range(game_attempts):
-        scores.append(Tetris.run_game(n=individual,render=False)[0])
+        scores.append(Tetris.run_game(n=individual, render=False)[0])
 
-    return numpy.average(scores),
+    return (numpy.average(scores),)
+
 
 toolbox = base.Toolbox()
 toolbox.register("particle", generate, size=10, pmin=-3, pmax=15, smin=-3, smax=3)
@@ -78,14 +90,18 @@ def main():
         logbook.record(gen=g, evals=len(pop), **stats.compile(pop))
         print(logbook.stream)
 
-        print('Time for generation:', time.strftime("%H:%M:%S", time.gmtime(time.time() - start_time)))
+        print(
+            "Time for generation:",
+            time.strftime("%H:%M:%S", time.gmtime(time.time() - start_time)),
+        )
 
-        print(best, '\n')
+        print(best, "\n")
 
         with open("PSOoutput.txt", "a") as text_file:
-            text_file.writelines([logbook.stream, str(best), '\n'])
+            text_file.writelines([logbook.stream, str(best), "\n"])
 
     return pop, logbook, best
+
 
 population_size = 100
 game_attempts = 5
