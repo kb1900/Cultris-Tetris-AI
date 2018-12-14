@@ -1,6 +1,7 @@
 from c2ai.base.tetromino import Tetromino
 from c2ai.base.field import Field
 from c2ai.base.optimizer import Optimizer
+from c2ai import build_absolute_path
 
 import random
 import time
@@ -26,7 +27,7 @@ class Tetris:
 
 		"""
         field = Field()
-        with open("pieces.txt", "r") as file:
+        with open(build_absolute_path("base/pieces.txt"), "r") as file:
             sequence = file.read().replace("\n", "")
             # print(sequence)
             # sequence = sequence.strip('\n')

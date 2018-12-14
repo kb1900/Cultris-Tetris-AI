@@ -2,6 +2,7 @@ from deap import base
 from deap import creator
 from deap import tools
 from scoop import futures
+from c2ai import build_absolute_path
 
 from c2ai.learning.deap.pso.downstack.tetris import Tetris
 import numpy
@@ -97,7 +98,7 @@ def main():
 
         print(best, "\n")
 
-        with open("PSOoutput.txt", "a") as text_file:
+        with open(build_absolute_path("learning/deap.pso/downstack/PSOoutput.txt"), "a") as text_file:
             text_file.writelines([logbook.stream, str(best), "\n"])
 
     return pop, logbook, best

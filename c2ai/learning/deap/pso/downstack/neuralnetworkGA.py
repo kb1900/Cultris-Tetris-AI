@@ -8,6 +8,7 @@ from statistics import median
 import dill
 import time
 
+from c2ai import build_dotted_path
 from c2ai.learning.deap.pso.downstack.tetris import Tetris
 from c2ai.base.tetromino import Tetromino
 from c2ai.base.field import Field
@@ -343,7 +344,7 @@ def several_generations(epochs):
 
         # Attempt to load a previous current_generation and the epoch # if available
         try:
-            with open("current_generation_dump", "rb") as dump_file:
+            with open(build_dotted_path("learning/deap/pso/downstack/current_generation_dump"), "rb") as dump_file:
                 dump = dill.load(dump_file)
                 most_recent_generation = dump[0]
                 current_generation = most_recent_generation[:population_size]
@@ -433,7 +434,7 @@ def several_generations(epochs):
         Regression.plot(x=df["Epoch"], y=df["Average Score"], y1=df["Median Score"])
 
         current_generation_dump = (current_generation, epoch)
-        with open("current_generation_dump", "wb") as dump_file:
+        with open(build_absolute_path("learning/deap/pso/downstack/current_generation_dump"), "wb") as dump_file:
             dill.dump(current_generation_dump, dump_file)
         dump_file.close()
 

@@ -2,6 +2,7 @@ from c2ai.base.tetromino import Tetromino
 from c2ai.base.field import Field
 from c2ai.base.optimizer import Optimizer
 from c2ai.learning.deap.pso.downstack.NN import neuralNetwork
+from c2ai import build_absolute_path
 
 import random
 import time
@@ -27,7 +28,7 @@ class Tetris:
 
 		"""
         field = Field()
-        with open("pieces.txt", "r") as file:
+        with open(build_absolute_path("base/pieces.txt"), "r") as file:
             sequence = file.read().replace("\n", "")
             # print(sequence)
             # sequence = sequence.strip('\n')
@@ -142,10 +143,10 @@ def cheese_field():
     return field
 
 
-if __name__ == "__main__":
+def main():
 
     try:
-        with open("current_generation_dump", "rb") as dump_file:
+        with open(build_absolute_path("learning/deap/pso/downstack/current_generation_dump"), "rb") as dump_file:
             dump = pickle.load(dump_file)
             current_generation = dump[0]
             n = current_generation[0]
@@ -189,3 +190,6 @@ if __name__ == "__main__":
 
         # print(n.wih)
         # print(n.who)
+
+if __name__ == '__main__':
+    main()

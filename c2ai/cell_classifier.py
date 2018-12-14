@@ -4,14 +4,15 @@ import cv2
 import pyautogui
 import os
 import autopy
+from c2ai import build_absolute_path
 
 
 class Classifier:
     @staticmethod
     def template_match(template):
 
-        os.system("screencapture screengrab.png")
-        img = cv2.imread("screengrab.png", 0)
+        os.system(build_absolute_path("screencapture screengrab.png"))
+        img = cv2.imread(build_absolute_path("screengrab.png"), 0)
         A, B = img.shape[::-1]
 
         template = cv2.imread(template, 0)
