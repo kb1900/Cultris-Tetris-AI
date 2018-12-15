@@ -7,6 +7,7 @@ from c2ai import build_absolute_path
 import random
 import time
 import pickle
+import ast
 
 
 class Tetris:
@@ -87,7 +88,7 @@ class Tetris:
                             heuristics[3],
                             "tall_holes",
                             heuristics[4],
-                            "max_bumps",
+                            "field_height",
                             heuristics[5],
                             "stack gaps",
                             heuristics[6],
@@ -109,17 +110,18 @@ class Tetris:
                 previous_tetromino = current_tetromino
                 current_tetromino = next_tetromino
 
-                if piece_count % 5 == 0:
-                    field.add_garbage()
+                if piece_count % 18 == 0:
+                    for i in range(4):
+                        field.add_garbage()
 
-                    ## CHECK FOR GAME END ##
-                if field.height() > 20:
-                    score = [piece_count]
-                    return score
-                    break
+                        ## CHECK FOR GAME END ##
+                    if field.height() > 20:
+                        score = [piece_count]
+                        return score
+                        break
 
                 if piece_count == max_piece_count:
-                    score = [piece_count + clears_count]
+                    score = [piece_count]
                     return score
                     break
 
@@ -131,17 +133,9 @@ class Tetris:
                 score = [piece_count]
                 return score
                 break
-            except:
-                print("unhandeled error occured")
-                break
-
-
-def cheese_field():
-    field = Field()
-    for h in range(6):
-        field.add_garbage()
-    return field
-
+            # except:
+            #     print("unhandeled error occured")
+            #     break
 
 def main():
 
@@ -156,40 +150,24 @@ def main():
             print(n.wih)
             print(n.who)
     except:
-        input_nodes = 11
-        hidden_nodes = 1
-        output_nodes = 1
-
         """
 		heuristics[0] = count_gaps()
 		heuristics[1] = bumpiness
 		heuristics[2] = blocks_over_gap1
 		heuristics[3] = blocks_over_gap2
 		heuristics[4] = tall_holes
-		heuristics[5] = max(bump)
+		heuristics[5] = field_height
 		heuristics[6] = stack_gaps
 		heuristics[7] = stack_height
 		heuristics[8] = sum_bumps_above_two
 		heuristics[9] = row_trans_above_gap1
 		"""
-        n = [
-            17.266573527809562,
-            2.777217126349192,
-            6.760730777087559,
-            0.7876033208193283,
-            12.351036669926016,
-            2.9693729446011448,
-            17.853166241417732,
-            8.531717290316418,
-            1.5111635889673647,
-            4.507103638484812,
-        ]
+        f_read = open("PSOoutput.txt", "r")
+        n = ast.literal_eval(f_read.readlines()[-1])
+        f_read.close()
 
         score = Tetris.run_game(n, render=True)
         print(score)
-
-        # print(n.wih)
-        # print(n.who)
 
 if __name__ == '__main__':
     main()
