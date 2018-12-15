@@ -98,7 +98,7 @@ def main():
 
         print(best, "\n")
 
-        with open(build_absolute_path("learning/deap.pso/downstack/PSOoutput.txt"), "a") as text_file:
+        with open(build_absolute_path("learning/deap/pso/downstack/PSOoutput.txt"), "a") as text_file:
             text_file.writelines([logbook.stream, str(best), "\n"])
 
     return pop, logbook, best

@@ -168,6 +168,7 @@ def main():
 
         score = Tetris.run_game(n, render=True)
         print(score)
+        print(n)
 
 if __name__ == '__main__':
     main()
