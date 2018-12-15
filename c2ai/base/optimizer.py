@@ -46,13 +46,13 @@ class Optimizer:
                 try:
                     field_copy.drop(tetromino_rotation, column)
                     score = Optimizer.get_score(field=field_copy, n=n)
-                    # print(tetromino_rotation, ' ',column, 'score:', score)
+                    # print(tetromino_rotation, " ",column, "score:", score)
                     # print(field_copy)
                     all_boards_first.append(
                         [field_copy, rotation_counter, column, score]
                     )
                 except AssertionError:
-                    # print(tetromino_rotation, column, 'AssertionError')
+                    # print(tetromino_rotation, column, "AssertionError")
                     continue
 
         all_boards_first.sort(
@@ -85,7 +85,7 @@ class Optimizer:
                         second_scores.append(score)
 
                     except AssertionError:
-                        # print(tetromino_rotation, column, 'AssertionError')
+                        # print(tetromino_rotation, column, "AssertionError")
                         score = float("inf")
                         second_scores.append(score)
 
@@ -97,7 +97,7 @@ class Optimizer:
         )  # sort by minimum second piece placed board score
 
         # for i in all_boards_first:
-        # 	print('first move board score', i[-2], 'min second piece board score', i[-1])
+        # 	print("first move board score", i[-2], "min second piece board score", i[-1])
 
         return all_boards_first[0]
 
@@ -109,7 +109,7 @@ class Optimizer:
 
         if rotation == 0 or tetromino_name == "O":
             if tetromino_name == "O":
-                # print('moving O piece to column #', column)
+                # print("moving O piece to column #", column)
                 if column == 4:
                     pass
                 elif column > 4:
@@ -120,7 +120,7 @@ class Optimizer:
                         keys.append(keymap["move_left"])
 
             elif tetromino_name == "T" and rotation == 0:
-                # print('moving T piece to column #', column)
+                # print("moving T piece to column #", column)
                 if column == 3:
                     pass
                 elif column > 3:
@@ -131,7 +131,7 @@ class Optimizer:
                         keys.append(keymap["move_left"])
 
             elif tetromino_name == "I" and rotation == 0:
-                # print('moving I piece to column #', column)
+                # print("moving I piece to column #", column)
                 if column == 3:
                     pass
                 elif column > 3:
@@ -142,7 +142,7 @@ class Optimizer:
                         keys.append(keymap["move_left"])
 
             elif tetromino_name == "L" and rotation == 0:
-                # print('moving L piece to column #', column)
+                # print("moving L piece to column #", column)
                 if column == 3:
                     pass
                 elif column > 3:
@@ -153,7 +153,7 @@ class Optimizer:
                         keys.append(keymap["move_left"])
 
             elif tetromino_name == "J" and rotation == 0:
-                # print('moving J piece to column #', column)
+                # print("moving J piece to column #", column)
                 if column == 3:
                     pass
                 elif column > 3:
@@ -164,7 +164,7 @@ class Optimizer:
                         keys.append(keymap["move_left"])
 
             elif tetromino_name == "S" and rotation == 0:
-                # print('moving S piece to column #', column)
+                # print("moving S piece to column #", column)
                 if column == 3:
                     pass
                 elif column > 3:
@@ -175,7 +175,7 @@ class Optimizer:
                         keys.append(keymap["move_left"])
 
             elif tetromino_name == "Z" and rotation == 0:
-                # print('moving Z piece to column #', column)
+                # print("moving Z piece to column #", column)
                 if column == 3:
                     pass
                 elif column > 3:
@@ -190,7 +190,7 @@ class Optimizer:
             keys.append(keymap["rotate_180"])
 
             if tetromino_name == "T":
-                # print('moving T piece to column #', column)
+                # print("moving T piece to column #", column)
                 if column == 3:
                     pass
                 elif column > 3:
@@ -201,7 +201,7 @@ class Optimizer:
                         keys.append(keymap["move_left"])
 
             elif tetromino_name == "I":
-                # print('moving I piece to column #', column)
+                # print("moving I piece to column #", column)
                 if column == 3:
                     pass
                 elif column > 3:
@@ -212,7 +212,7 @@ class Optimizer:
                         keys.append(keymap["move_left"])
 
             elif tetromino_name == "L":
-                # print('moving L piece to column #', column)
+                # print("moving L piece to column #", column)
                 if column == 3:
                     pass
                 elif column > 3:
@@ -223,7 +223,7 @@ class Optimizer:
                         keys.append(keymap["move_left"])
 
             elif tetromino_name == "J":
-                # print('moving J piece to column #', column)
+                # print("moving J piece to column #", column)
                 if column == 3:
                     pass
                 elif column > 3:
@@ -238,7 +238,7 @@ class Optimizer:
             keys.append(keymap["rotate_right"])
 
             if tetromino_name == "I":
-                # print('moving CW ROTATED I piece to column #', column)
+                # print("moving CW ROTATED I piece to column #", column)
                 if column == 5:
                     pass
                 elif column > 5:
@@ -252,7 +252,7 @@ class Optimizer:
             keys.append(keymap["rotate_left"])
 
             if tetromino_name == "I":
-                # print('moving CCW ROTATED I piece to column #', column)
+                # print("moving CCW ROTATED I piece to column #", column)
                 if column == 4:
                     pass
                 elif column > 4:
@@ -266,7 +266,7 @@ class Optimizer:
             keys.append(keymap["rotate_right"])
 
             if tetromino_name == "T":
-                # print('moving CW ROTATED T piece to column #', column)
+                # print("moving CW ROTATED T piece to column #", column)
                 if column == 4:
                     pass
                 elif column > 4:
@@ -280,7 +280,7 @@ class Optimizer:
             keys.append(keymap["rotate_left"])
 
             if tetromino_name == "T":
-                # print('moving CCW ROTATED T piece to column #', column)
+                # print("moving CCW ROTATED T piece to column #", column)
                 if column == 3:
                     pass
                 elif column > 3:
@@ -294,7 +294,7 @@ class Optimizer:
             keys.append(keymap["rotate_right"])
 
             if tetromino_name == "S":
-                # print('moving CW ROTATED S piece to column #', column)
+                # print("moving CW ROTATED S piece to column #", column)
                 if column == 4:
                     pass
                 elif column > 4:
@@ -308,7 +308,7 @@ class Optimizer:
             keys.append(keymap["rotate_left"])
 
             if tetromino_name == "S":
-                # print('moving CCW ROTATED S piece to column #', column)
+                # print("moving CCW ROTATED S piece to column #", column)
                 if column == 3:
                     pass
                 elif column > 3:
@@ -322,7 +322,7 @@ class Optimizer:
             keys.append(keymap["rotate_right"])
 
             if tetromino_name == "Z":
-                # print('moving CW ROTATED Z piece to column #', column)
+                # print("moving CW ROTATED Z piece to column #", column)
                 if column == 4:
                     pass
                 elif column > 4:
@@ -336,7 +336,7 @@ class Optimizer:
             keys.append(keymap["rotate_left"])
 
             if tetromino_name == "Z":
-                # print('moving CCW ROTATED Z piece to column #', column)
+                # print("moving CCW ROTATED Z piece to column #", column)
                 if column == 3:
                     pass
                 elif column > 3:
@@ -350,7 +350,7 @@ class Optimizer:
             keys.append(keymap["rotate_right"])
 
             if tetromino_name == "J":
-                # print('moving CW ROTATED J piece to column #', column)
+                # print("moving CW ROTATED J piece to column #", column)
                 if column == 4:
                     pass
                 elif column > 4:
@@ -364,7 +364,7 @@ class Optimizer:
             keys.append(keymap["rotate_left"])
 
             if tetromino_name == "J":
-                # print('moving CCW ROTATED J piece to column #', column)
+                # print("moving CCW ROTATED J piece to column #", column)
                 if column == 3:
                     pass
                 elif column > 3:
@@ -378,7 +378,7 @@ class Optimizer:
             keys.append(keymap["rotate_right"])
 
             if tetromino_name == "L":
-                # print('moving CW ROTATED L piece to column #', column)
+                # print("moving CW ROTATED L piece to column #", column)
                 if column == 4:
                     pass
                 elif column > 4:
@@ -392,7 +392,7 @@ class Optimizer:
             keys.append(keymap["rotate_left"])
 
             if tetromino_name == "L":
-                # print('moving CCW ROTATED L piece to column #', column)
+                # print("moving CCW ROTATED L piece to column #", column)
                 if column == 3:
                     pass
                 elif column > 3:

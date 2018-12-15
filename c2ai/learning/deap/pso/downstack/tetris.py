@@ -13,26 +13,26 @@ import ast
 class Tetris:
 
     """
-	Returns a ```Tetris Game``` with the given Weights, Piece Count
+    Returns a ```Tetris Game``` with the given Weights, Piece Count
 
-	"""
+    """
 
     def __init__(self):
         print("A Tetris Game was started")
 
     def run_game(n, render=False):
         """
-		Runs a Tetris simulation until either 1) The max piece count is reached or 2) The game was lost
+        Runs a Tetris simulation until either 1) The max piece count is reached or 2) The game was lost
 
-		Parameters: weights: scoring function weights array (1x29)
-		Returns: piece_count: pieces placed prior to game end
+        Parameters: weights: scoring function weights array (1x29)
+        Returns: piece_count: pieces placed prior to game end
 
-		"""
+        """
         field = Field()
         with open(build_absolute_path("base/pieces.txt"), "r") as file:
             sequence = file.read().replace("\n", "")
             # print(sequence)
-            # sequence = sequence.strip('\n')
+            # sequence = sequence.strip("\n")
 
         piece_count = 1
         max_piece_count = 500
@@ -63,7 +63,7 @@ class Tetris:
                 if render == True:
                     if piece_count % 1 == 0:
                         print(field)
-                        print("GETTING BEST DROP TOOK", t1 - t0, "seconds")
+                        print("GETTING BEST DROP TOOK", "{0:.4f}".format(t1 - t0), "seconds")
                         print(
                             "Current Piece:",
                             sequence[piece_count],
@@ -90,7 +90,7 @@ class Tetris:
                             heuristics[4],
                             "field_height",
                             heuristics[5],
-                            "stack gaps",
+                            "\n"+"stack gaps",
                             heuristics[6],
                             "stack height",
                             heuristics[7],
@@ -129,7 +129,7 @@ class Tetris:
 
             except IndexError:
                 if render == True:
-                    print("GAME OVER: best_drop[0] didnt exist")
+                    print("GAME OVER")
                 score = [piece_count]
                 return score
                 break
@@ -149,26 +149,29 @@ def main():
             print(score)
             print(n.wih)
             print(n.who)
+    
     except:
-        """
-		heuristics[0] = count_gaps()
-		heuristics[1] = bumpiness
-		heuristics[2] = blocks_over_gap1
-		heuristics[3] = blocks_over_gap2
-		heuristics[4] = tall_holes
-		heuristics[5] = field_height
-		heuristics[6] = stack_gaps
-		heuristics[7] = stack_height
-		heuristics[8] = sum_bumps_above_two
-		heuristics[9] = row_trans_above_gap1
-		"""
         f_read = open("PSOoutput.txt", "r")
         n = ast.literal_eval(f_read.readlines()[-1])
         f_read.close()
 
         score = Tetris.run_game(n, render=True)
-        print(score)
-        print(n)
+        print("SCORE:", score)
 
-if __name__ == '__main__':
+        heuristics = [
+        "count_gaps", 
+        "bumpiness", 
+        "blocks_over_gap1", 
+        "blocks_over_gap2", 
+        "tall_holes", 
+        "field_height", 
+        "stack_gaps", 
+        "stack_height", 
+        "sum_bumps_above_two", 
+        "row_trans_above_gap1"]
+        
+        for index, heuristic in enumerate(heuristics):
+            print(heuristic,":", "{0:.2f}".format(n[index]))
+
+if __name__ == "__main__":
     main()

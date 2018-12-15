@@ -6,7 +6,7 @@ import autopy
 import time
 from pynput import keyboard
 import pickle
-import numpy
+import numpy as np
 import keyboard as kb
 
 
@@ -21,7 +21,7 @@ best_drop_times = []
 move_execution_times = []
 garbage_update_times = []
 game_over_check_times = []
-max_bpm = 200
+max_bpm = 240
 min_time_per_piece = 1 / (max_bpm / 60)
 break_program = False
 
@@ -404,7 +404,7 @@ while True:
                                 6.760730777087559,
                                 0.7876033208193283,
                                 12.351036669926016,
-                                2.9693729446011448,
+                                1.5,
                                 17.853166241417732,
                                 8.531717290316418,
                                 1.5111635889673647,
@@ -484,16 +484,16 @@ while True:
                     if game_over == 1:
                         print("GAME OVER DETECTED")
                         times = [
-                            numpy.average(best_drop_times),
-                            numpy.average(move_execution_times),
-                            numpy.average(garbage_update_times),
-                            numpy.average(game_over_check_times),
+                            np.average(best_drop_times),
+                            np.average(move_execution_times),
+                            np.average(garbage_update_times),
+                            np.average(game_over_check_times),
                         ]
                         print("average time to get best move", times[0])
                         print("average time to get execute move", times[1])
                         print("average time to get update garbage", times[2])
                         print("average time to get check game over", times[3])
-                        print("bpm estimate:", float(60 / (numpy.sum(times))))
+                        print("bpm estimate:", float(60 / (np.sum(times))))
 
                         if sys.argv[1] == "-maserati" or sys.argv[1] == "-cheese":
                             time.sleep(0.5)

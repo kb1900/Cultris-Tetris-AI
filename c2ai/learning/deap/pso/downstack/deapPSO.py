@@ -5,7 +5,7 @@ from scoop import futures
 from c2ai import build_absolute_path
 
 from c2ai.learning.deap.pso.downstack.tetris import Tetris
-import numpy
+import numpy as np
 import time
 import operator
 import random
@@ -49,7 +49,7 @@ def evalOneMax(individual):
     for i in range(game_attempts):
         scores.append(Tetris.run_game(n=individual, render=False)[0])
 
-    return (numpy.average(scores),)
+    return (np.average(scores),)
 
 
 toolbox = base.Toolbox()
@@ -62,10 +62,10 @@ toolbox.register("evaluate", evalOneMax)
 def main():
     pop = toolbox.population(n=population_size)
     stats = tools.Statistics(lambda ind: ind.fitness.values)
-    stats.register("avg", numpy.mean)
-    stats.register("std", numpy.std)
-    stats.register("min", numpy.min)
-    stats.register("max", numpy.max)
+    stats.register("avg", np.mean)
+    stats.register("std", np.std)
+    stats.register("min", np.min)
+    stats.register("max", np.max)
 
     logbook = tools.Logbook()
     logbook.header = ["gen", "evals"] + stats.fields

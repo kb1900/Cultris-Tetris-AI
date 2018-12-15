@@ -1,8 +1,7 @@
 
 from c2ai.base.tetromino import Tetromino
-import heapq
 import random
-import numpy
+import numpy as np
 from operator import xor
 
 
@@ -146,21 +145,21 @@ class Field:
         self._place_null_tetromino(tetromino, row, column)
 
     def add_garbage(self):
-        board_array = numpy.array(self.state)
+        board_array = np.array(self.state)
 
         garbage_array = ["0" for _ in range(10)]
         gap = random.randint(0, self.WIDTH - 1)
         garbage_array[gap] = " "
 
-        final_board_array = numpy.vstack([board_array, garbage_array])
-        final_board_array = numpy.delete(final_board_array, (0), axis=0)
+        final_board_array = np.vstack([board_array, garbage_array])
+        final_board_array = np.delete(final_board_array, (0), axis=0)
 
         self.state = final_board_array.tolist()
 
         return True
 
     def update_garbage(self, garbage):
-        board_array = numpy.array(self.state)
+        board_array = np.array(self.state)
 
         # first we want to make sure the height of the board stays consistent...
         # garbage[::-1] contains rows of garbage that need to be added to the end of the field.
@@ -172,35 +171,35 @@ class Field:
         stack_h = len(stack_array)  # this is the stack height
 
         for garbage_row in garbage[::-1]:
-            stack_array = numpy.vstack([stack_array, garbage_row])
+            stack_array = np.vstack([stack_array, garbage_row])
 
-            # print('garbage', len(garbage))
-            # print('stack height', len(stack_array))
-            # print('height - len(garbage) + len(stack_array)', self.HEIGHT - len(stack_array)) ##we can just add empty rows on top of this to field height
+            # print("garbage", len(garbage))
+            # print("stack height", len(stack_array))
+            # print("height - len(garbage) + len(stack_array)", self.HEIGHT - len(stack_array)) ##we can just add empty rows on top of this to field height
 
         extra_rows_to_add = self.HEIGHT - len(stack_array)
         null = [" ", " ", " ", " ", " ", " ", " ", " ", " ", " "]
 
         for i in range(extra_rows_to_add):
-            stack_array = numpy.vstack([null, stack_array])
+            stack_array = np.vstack([null, stack_array])
 
         self.state = stack_array.tolist()
         return True
 
     def field_array(self):
-        return numpy.array(self.state)
+        return np.array(self.state)
 
     def heuristics(self):
 
         heuristics = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
         # first lets convert to an array
-        board_array = numpy.array(self.state)
+        board_array = np.array(self.state)
 
         """
 		true_gaps initialization
 		"""
-        gaps = numpy.argwhere(board_array == " ")
+        gaps = np.argwhere(board_array == " ")
         true_gaps = []
         for i in gaps:
             if (i[0] - 1) > 0 and board_array[i[0] - 1, i[1]] != " ":
@@ -209,9 +208,9 @@ class Field:
         """
 		stack_gaps
 		"""
-        stack_board_array = board_array[numpy.all(board_array != "0", axis=1)]
+        stack_board_array = board_array[np.all(board_array != "0", axis=1)]
 
-        stack_gaps = numpy.argwhere(stack_board_array == " ")
+        stack_gaps = np.argwhere(stack_board_array == " ")
         true_stack_gaps = []
         for i in stack_gaps:
             if (i[0] - 1) > 0 and stack_board_array[i[0] - 1, i[1]] != " ":
@@ -226,12 +225,12 @@ class Field:
         garbage_heights = []
         for i in range(Field.WIDTH):
             try:
-                j = numpy.where(board_array[:, i] != " ")[0][0]
+                j = np.where(board_array[:, i] != " ")[0][0]
                 x.append([i, j])
             except:
                 x.append([i, Field.HEIGHT])
             try:
-                garbage_j = numpy.where(board_array[:, i] == "0")[0][0]
+                garbage_j = np.where(board_array[:, i] == "0")[0][0]
                 y.append([i, garbage_j])
             except:
                 y.append([i, Field.HEIGHT])
@@ -243,7 +242,7 @@ class Field:
 
         stack_height = max(heights) - max(garbage_heights)
         field_height = max(heights)
-        abs_height_differences = numpy.absolute(numpy.ediff1d(heights))
+        abs_height_differences = np.absolute(np.ediff1d(heights))
         bumpiness = sum(abs_height_differences)
         sum_bumps_above_two = sum([x for x in abs_height_differences if x > 2])
 
@@ -255,9 +254,9 @@ class Field:
         for i in true_gaps:
             # print(i)
             fc = board_array[:, i[1]]
-            # print('full column', fc)
+            # print("full column", fc)
             sliced = fc[: i[0]]
-            blocks_above_gap = numpy.count_nonzero(sliced != " ")
+            blocks_above_gap = np.count_nonzero(sliced != " ")
             blocks_above_gaps.append(blocks_above_gap)
 
             height = 0
@@ -292,7 +291,7 @@ class Field:
                 transitions_indexes.append(y - 1) if xor(
                     new_row[y] != " ", new_row[y + 1] != " "
                 ) else None
-                # print('transitions_indexes = ', transitions_indexes)
+                # print("transitions_indexes = ", transitions_indexes)
 
             row_trans_above_gap1 = len(transitions_indexes)
         else:
@@ -315,8 +314,8 @@ class Field:
         """
 		NEW tall_holes
 		"""
-        board_array = numpy.array(self.state)
-        gaps = numpy.argwhere(board_array == " ")
+        board_array = np.array(self.state)
+        gaps = np.argwhere(board_array == " ")
 
         true_gaps = []
         for i in gaps:
@@ -346,9 +345,9 @@ class Field:
 		"""
 
         # first lets convert to an array
-        board_array = numpy.array(self.state)
+        board_array = np.array(self.state)
 
-        gaps = numpy.argwhere(board_array == " ")
+        gaps = np.argwhere(board_array == " ")
         true_gaps = []
 
         for i in gaps:
@@ -364,12 +363,12 @@ class Field:
 		"""
 
         # first lets convert to an array
-        board_array = numpy.array(self.state)
+        board_array = np.array(self.state)
 
         x = []
         for i in range(Field.WIDTH):
             try:
-                j = numpy.where(board_array[:, i] != " ")[0][0]
+                j = np.where(board_array[:, i] != " ")[0][0]
                 x.append([i, j])
             except:
                 x.append([i, self.HEIGHT])
@@ -377,17 +376,17 @@ class Field:
         for coord in x:
             heights.append(self.HEIGHT - coord[1])
 
-        abs_height_differences = numpy.absolute(numpy.ediff1d(heights))
+        abs_height_differences = np.absolute(np.ediff1d(heights))
         bumpiness = sum(abs_height_differences)
 
         return bumpiness
 
     def stack_gaps(self):
         # first lets convert to an array
-        board_array = numpy.array(self.state)
-        stack_board_array = board_array[numpy.all(board_array != "0", axis=1)]
+        board_array = np.array(self.state)
+        stack_board_array = board_array[np.all(board_array != "0", axis=1)]
 
-        stack_gaps = numpy.argwhere(stack_board_array == " ")
+        stack_gaps = np.argwhere(stack_board_array == " ")
         true_stack_gaps = []
 
         for i in stack_gaps:
@@ -399,40 +398,40 @@ class Field:
 
     def stack_height(self):
         # first lets convert to an array
-        board_array = numpy.array(self.state)
-        board_array = board_array[numpy.all(board_array != "0", axis=1)]
+        board_array = np.array(self.state)
+        board_array = board_array[np.all(board_array != "0", axis=1)]
 
         x = []
         for i in range(Field.WIDTH):
             try:
-                j = numpy.where(board_array[:, i] != " ")[0][0]
+                j = np.where(board_array[:, i] != " ")[0][0]
                 x.append([i, j])
             except:
-                x.append([i, numpy.size(board_array, 0)])
+                x.append([i, np.size(board_array, 0)])
         heights = []
         for coord in x:
-            heights.append(numpy.size(board_array, 0) - coord[1])
+            heights.append(np.size(board_array, 0) - coord[1])
 
-        max_stack_height = numpy.max(heights)
+        max_stack_height = np.max(heights)
 
         return max_stack_height
 
     def average_stack_height(self):
         # first lets convert to an array
-        board_array = numpy.array(self.state)
-        board_array = board_array[numpy.all(board_array != "0", axis=1)]
+        board_array = np.array(self.state)
+        board_array = board_array[np.all(board_array != "0", axis=1)]
 
         x = []
         for i in range(Field.WIDTH):
             try:
-                j = numpy.where(board_array[:, i] != " ")[0][0]
+                j = np.where(board_array[:, i] != " ")[0][0]
                 x.append([i, j])
             except:
-                x.append([i, numpy.size(board_array, 0)])
+                x.append([i, np.size(board_array, 0)])
         heights = []
         for coord in x:
-            heights.append(numpy.size(board_array, 0) - coord[1])
-        average_stack_height = numpy.average(heights)
+            heights.append(np.size(board_array, 0) - coord[1])
+        average_stack_height = np.average(heights)
 
         return average_stack_height
 
@@ -442,12 +441,12 @@ class Field:
 		field.
 		"""
         # first lets convert to an array
-        board_array = numpy.array(self.state)
+        board_array = np.array(self.state)
 
         x = []
         for i in range(Field.WIDTH):
             try:
-                j = numpy.where(board_array[:, i] != " ")[0][0]
+                j = np.where(board_array[:, i] != " ")[0][0]
                 x.append([i, j])
             except:
                 x.append([i, self.HEIGHT])
@@ -455,7 +454,7 @@ class Field:
         for coord in x:
             heights.append(self.HEIGHT - coord[1])
 
-        max_height = numpy.max(heights)
+        max_height = np.max(heights)
 
         return max_height
 
@@ -466,12 +465,12 @@ class Field:
 		"""
 
         # first lets convert to an array
-        board_array = numpy.array(self.state)
+        board_array = np.array(self.state)
 
         x = []
         for i in range(Field.WIDTH):
             try:
-                j = numpy.where(board_array[:, i] != " ")[0][0]
+                j = np.where(board_array[:, i] != " ")[0][0]
                 x.append([i, j])
             except:
                 x.append([i, self.HEIGHT])
@@ -479,15 +478,15 @@ class Field:
         for coord in x:
             heights.append(self.HEIGHT - coord[1])
 
-        average_height = numpy.average(heights)
+        average_height = np.average(heights)
 
         return average_height
 
     def row_trans_above_gap1(self):
         # first lets convert to an array
-        board_array = numpy.array(self.state)
+        board_array = np.array(self.state)
 
-        gaps = numpy.argwhere(board_array == " ")
+        gaps = np.argwhere(board_array == " ")
 
         true_gaps = []
         for i in gaps:
@@ -507,7 +506,7 @@ class Field:
                     new_row[y] != " ", new_row[y + 1] != " "
                 ) else None
 
-                # print('transitions_indexes = ', transitions_indexes)
+                # print("transitions_indexes = ", transitions_indexes)
 
             return len(transitions_indexes)
         else:
@@ -516,13 +515,13 @@ class Field:
     def parity(self):
 
         # first lets convert to an array
-        board_array = numpy.array(self.state)
+        board_array = np.array(self.state)
 
         # x will hold positions (i,j) all the top most occupied squares
         x = []
         for i in range(Field.WIDTH):
             try:
-                j = numpy.where(board_array[:, i] != " ")[0][0]
+                j = np.where(board_array[:, i] != " ")[0][0]
                 x.append([i, j])
             except:
                 pass
@@ -550,17 +549,17 @@ class Field:
                 else:  # j is odd:
                     black_squares += 1
 
-                    # print('black sq', black_squares)
-                    # print('white sq', white_squares)
+                    # print("black sq", black_squares)
+                    # print("white sq", white_squares)
 
         parity = abs(black_squares - white_squares)
         return parity
 
     def total_blocks_above_gap1(self):
         # first lets convert to an array
-        board_array = numpy.array(self.state)
+        board_array = np.array(self.state)
 
-        gaps = numpy.argwhere(board_array == " ")
+        gaps = np.argwhere(board_array == " ")
         every_gaps = []
 
         for i in gaps:
@@ -572,7 +571,7 @@ class Field:
         x = []
         for i in range(Field.WIDTH):
             try:
-                j = numpy.where(board_array[:, i] != " ")[0][0]
+                j = np.where(board_array[:, i] != " ")[0][0]
                 x.append([i, j])
             except:
                 x.append([i, self.HEIGHT])
@@ -583,9 +582,9 @@ class Field:
 
                 # print(every_gaps[0])
                 # print(heights_rows)
-                # print(sum(abs(numpy.array(heights_rows))))
+                # print(sum(abs(np.array(heights_rows))))
 
-        return sum(abs(numpy.array(heights_rows)))
+        return sum(abs(np.array(heights_rows)))
 
     def blocks_over_gap1(self):
         """
@@ -594,9 +593,9 @@ class Field:
 		"""
 
         # first lets convert to an array
-        board_array = numpy.array(self.state)
+        board_array = np.array(self.state)
 
-        gaps = numpy.argwhere(board_array == " ")
+        gaps = np.argwhere(board_array == " ")
 
         true_gaps = []
         for i in gaps:
@@ -608,13 +607,13 @@ class Field:
         for i in true_gaps:
             # print(i)
             fc = board_array[:, i[1]]
-            # print('full column', fc)
+            # print("full column", fc)
             sliced = fc[: i[0]]
-            blocks_above_gap = numpy.count_nonzero(sliced != " ")
+            blocks_above_gap = np.count_nonzero(sliced != " ")
             blocks_above_gaps.append(blocks_above_gap)
 
         if len(blocks_above_gaps) > 0:
-            # print('blocks_above_gap1', blocks_above_gaps[0])
+            # print("blocks_above_gap1", blocks_above_gaps[0])
             return blocks_above_gaps[0]
         else:
             return 0
@@ -626,9 +625,9 @@ class Field:
 		"""
 
         # first lets convert to an array
-        board_array = numpy.array(self.state)
+        board_array = np.array(self.state)
 
-        gaps = numpy.argwhere(board_array == " ")
+        gaps = np.argwhere(board_array == " ")
         true_gaps = []
         for i in gaps:
             if (i[0] - 1) > 0:
@@ -639,13 +638,13 @@ class Field:
         for i in true_gaps:
             # print(i)
             fc = board_array[:, i[1]]
-            # print('full column', fc)
+            # print("full column", fc)
             sliced = fc[: i[0]]
-            blocks_above_gap = numpy.count_nonzero(sliced != " ")
+            blocks_above_gap = np.count_nonzero(sliced != " ")
             blocks_above_gaps.append(blocks_above_gap)
 
         if len(blocks_above_gaps) > 1:
-            # print('blocks_above_gap2', blocks_above_gaps[1])
+            # print("blocks_above_gap2", blocks_above_gaps[1])
             return blocks_above_gaps[1]
         else:
             return 0

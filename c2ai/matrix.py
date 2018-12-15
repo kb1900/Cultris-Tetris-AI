@@ -1,6 +1,5 @@
 import time
 import mss
-import numpy
 from c2ai.base.field import Field
 from c2ai.base.tetromino import Tetromino
 from PIL import Image, ImageDraw

@@ -13,7 +13,7 @@ from c2ai.base.field import Field
 from c2ai.base.optimizer import Optimizer
 from plot import Regression
 from NN import neuralNetwork
-import numpy
+import numpy as np
 
 
 creator.create("FitnessMax", base.Fitness, weights=(1.0, -1.0))
@@ -48,7 +48,7 @@ def evalOneMax(individual):
     for attempt in range(game_attempts):
         scores.append(Tetris.run_game(n=individual, render=False))
 
-    return (numpy.mean(scores),)
+    return (np.mean(scores),)
 
 
 # ----------
