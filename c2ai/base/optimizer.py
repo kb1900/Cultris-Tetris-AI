@@ -1,15 +1,13 @@
 from c2ai.base.field import Field
 from c2ai.base.tetromino import Tetromino
+from c2ai.base import settings
 from operator import itemgetter
 
 
 class Optimizer:
     @staticmethod
-    def get_score(field, n, row=0, clears=0):
+    def get_score(field, clears,row=0):
         f = field
-        # row = row
-        # clears = clears
-        n = n
 
         """
 		heuristics[0] = count_gaps()
@@ -26,12 +24,20 @@ class Optimizer:
 		"""
         heuristics = f.heuristics()
         # features = [heuristics[0], heuristics[1], heuristics[3],heuristics[4],heuristics[5],heuristics[6],heuristics[7], heuristics[8],heuristics[9],heuristics[10]]
-        score = sum(x * y for x, y in zip(heuristics, n))
+        if settings.mode == 'upstack':
+            if clears > 0:
+                score = float('inf')
+            else:
+                score = sum(x * y for x, y in zip(heuristics, settings.upstack_model))
+        elif settings.mode == 'downstack':
+            score = sum(x * y for x, y in zip(heuristics, settings.downstack_model))
+        else:
+            print('Unhandeled settings.mode')
 
         return float(score)
 
     @staticmethod
-    def best_move(field, tetromino, next_tetromino, n):
+    def best_move(field, tetromino, next_tetromino):
         rotations = [
             tetromino,
             tetromino.copy().rotate_right(),
@@ -44,8 +50,8 @@ class Optimizer:
             for column in range(Field.WIDTH):
                 field_copy = field.copy()
                 try:
-                    field_copy.drop(tetromino_rotation, column)
-                    score = Optimizer.get_score(field=field_copy, n=n)
+                    clears = field_copy.drop(tetromino_rotation, column)[1]
+                    score = Optimizer.get_score(field=field_copy,clears=clears)
                     # print(tetromino_rotation, " ",column, "score:", score)
                     # print(field_copy)
                     all_boards_first.append(
@@ -63,9 +69,10 @@ class Optimizer:
         # 	print(i[3])
 
         if (
-            len(all_boards_first) > 4
-        ):  # for now this ensures that getting the best move doesnt take longer than 0.15s or so
-            all_boards_first = all_boards_first[:5]
+            len(all_boards_first) > 1
+        ):  # benchmarking suggests a linear increase of 0.02s per move for every increase in top current piece moves explored
+            # 1 = 0.050; 2 = 0.073; 3 = 0.095; 4 = 0.114; 5 = 0.143; 6 = 0.163
+            all_boards_first = all_boards_first[:settings.move_depth]
 
         next_rotations = [
             next_tetromino,
@@ -80,8 +87,8 @@ class Optimizer:
                 for column in range(Field.WIDTH):
                     next_field_copy = i[0].copy()
                     try:
-                        next_field_copy.drop(next_tetromino_rotation, column)
-                        score = Optimizer.get_score(field=next_field_copy, n=n)
+                        clears = next_field_copy.drop(next_tetromino_rotation, column)[1]
+                        score = Optimizer.get_score(field=next_field_copy,clears=clears)
                         second_scores.append(score)
 
                     except AssertionError:
@@ -434,8 +441,4 @@ class Optimizer:
 
 if __name__ == "__main__":
     f = Field()
-    f.drop(Tetromino.TTetromino(), 3)
-    opt = Optimizer.get_optimal_drop(
-        f["tetromino_rotation"], f["tetromino_column"], Tetromino.ITetromino()
-    )
-    print(opt["field"])
+    

@@ -16,13 +16,13 @@ from c2ai.base.optimizer import Optimizer
 from c2ai.cell_classifier import Classifier
 from c2ai.matrix import matrix_updater
 from c2ai import build_absolute_path
+from c2ai.base import settings
 
 best_drop_times = []
 move_execution_times = []
 garbage_update_times = []
 game_over_check_times = []
-max_bpm = 240
-min_time_per_piece = 1 / (max_bpm / 60)
+min_time_per_piece = 1 / (settings.max_bpm / 60)
 break_program = False
 
 # with open ('current_generation_dump', 'rb') as dump_file:
@@ -387,6 +387,12 @@ while True:
                     # try:
                 while count > 0 and break_program == False:
 
+                    if settings.mode == 'upstack':
+                        if field.height() > 15 or field.count_gaps() > 3:
+                            settings.mode = 'downstack'
+
+
+
                     next_rgb = Classifier.get_next_rgb(next_piece)
                     next_tetromino = Classifier.TETROMINO[next_rgb]()
                     next_tetromino_name = Classifier.TETROMINO_NAME[next_rgb]
@@ -397,19 +403,7 @@ while True:
                         best_drop = Optimizer.best_move(
                             field,
                             current_tetromino,
-                            next_tetromino,
-                            n=[
-                                17.266573527809562,
-                                2.777217126349192,
-                                6.760730777087559,
-                                0.7876033208193283,
-                                12.351036669926016,
-                                1.5,
-                                17.853166241417732,
-                                8.531717290316418,
-                                1.5111635889673647,
-                                4.507103638484812,
-                            ],
+                            next_tetromino
                         )
                     except IndexError:
                         print('Game Over, ran out of moves')
@@ -494,7 +488,7 @@ while True:
                         print("average time to get update garbage", times[2])
                         print("average time to get check game over", times[3])
                         print("bpm estimate:", float(60 / (np.sum(times))))
-
+                        settings.mode = 'upstack'
                         if sys.argv[1] == "-maserati" or sys.argv[1] == "-cheese":
                             time.sleep(0.5)
                             print("Leaving challenge and restarting")
