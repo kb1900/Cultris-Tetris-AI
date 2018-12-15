@@ -18,7 +18,7 @@ class Optimizer:
 		heuristics[3] = blocks_over_gap1
 		heuristics[4] = blocks_over_gap2
 		heuristics[5] = tall_holes
-		heuristics[6] = max(bump)
+		heuristics[6] = field_height
 		heuristics[7] = stack_gaps
 		heuristics[8] = stack_height
 		heuristics[9] = sum_bumps_above_two
@@ -26,10 +26,6 @@ class Optimizer:
 		"""
         heuristics = f.heuristics()
         # features = [heuristics[0], heuristics[1], heuristics[3],heuristics[4],heuristics[5],heuristics[6],heuristics[7], heuristics[8],heuristics[9],heuristics[10]]
-
-        # if f.height() > 20:
-        # 	score = float('inf')
-        # else:
         score = sum(x * y for x, y in zip(heuristics, n))
 
         return float(score)

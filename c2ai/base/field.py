@@ -242,6 +242,7 @@ class Field:
             garbage_heights.append(self.HEIGHT - coord[1])
 
         stack_height = max(heights) - max(garbage_heights)
+        field_height = max(heights)
         abs_height_differences = numpy.absolute(numpy.ediff1d(heights))
         bumpiness = sum(abs_height_differences)
         sum_bumps_above_two = sum([x for x in abs_height_differences if x > 2])
@@ -302,7 +303,7 @@ class Field:
         heuristics[2] = blocks_over_gap1
         heuristics[3] = blocks_over_gap2
         heuristics[4] = sum(tall_hole_heights)
-        heuristics[5] = numpy.max(abs_height_differences)
+        heuristics[5] = field_height
         heuristics[6] = len(true_stack_gaps)
         heuristics[7] = stack_height
         heuristics[8] = sum_bumps_above_two
