@@ -60,7 +60,7 @@ def login():
     target = Classifier.template_match(build_absolute_path("Images/Play_online.png"))
     pyautogui.moveTo(target)
     pyautogui.doubleClick(target)
-    time.sleep(.5)
+    time.sleep(0.5)
 
     target = Classifier.template_match(build_absolute_path("Images/Play_as_guest.png"))
     pyautogui.moveTo(target)
@@ -86,10 +86,9 @@ def login():
     pyautogui.doubleClick(target)
 
 
-
 def leave_room():
     pyautogui.press("escape")
-    time.sleep(.3)
+    time.sleep(0.3)
     target = Classifier.template_match(build_absolute_path("Images/yes.png"))
     pyautogui.moveTo(target)
     pyautogui.doubleClick(target)
@@ -97,10 +96,12 @@ def leave_room():
 
 def leave_challenge():
     pyautogui.press("escape")
-    time.sleep(.3)
+    time.sleep(0.3)
     target = Classifier.template_match(build_absolute_path("Images/yes.png"))
     if target == False:
-        target = Classifier.template_match(build_absolute_path("Images/back_to_menu.png"))
+        target = Classifier.template_match(
+            build_absolute_path("Images/back_to_menu.png")
+        )
     pyautogui.moveTo(target)
     pyautogui.doubleClick(target)
 
@@ -118,10 +119,15 @@ def find_lobby_chat():
             time.sleep(2)
         if is_loggedin() == True:
             print("we are logged in")
-            if Classifier.template_match(build_absolute_path("Images/online3.png")) != False:
+            if (
+                Classifier.template_match(build_absolute_path("Images/online3.png"))
+                != False
+            ):
                 print("we are on the lobby chat page!")
             else:
-                target = Classifier.template_match(build_absolute_path("Images/lobby.png"))
+                target = Classifier.template_match(
+                    build_absolute_path("Images/lobby.png")
+                )
                 pyautogui.moveTo(target)
                 pyautogui.doubleClick(target)
         else:
@@ -182,9 +188,13 @@ while True:
                     if sys.argv[1] == "-maserati":
                         os.system("open /Applications/cultris2.app")
                         print("maserati mode selected")
-                        maserati = Classifier.template_match(build_absolute_path("Images/maserati.png"))
+                        maserati = Classifier.template_match(
+                            build_absolute_path("Images/maserati.png")
+                        )
                         if maserati == False:
-                            maserati = Classifier.template_match(build_absolute_path("Images/maserati2.png"))
+                            maserati = Classifier.template_match(
+                                build_absolute_path("Images/maserati2.png")
+                            )
                         if maserati == False:
                             print("ERROR finding maserati template match")
                             count = -100
@@ -193,7 +203,9 @@ while True:
                         pyautogui.doubleClick(maserati)
                         time.sleep(0.25)
 
-                        No = Classifier.template_match(build_absolute_path("Images/No.png"))
+                        No = Classifier.template_match(
+                            build_absolute_path("Images/No.png")
+                        )
                         pyautogui.moveTo(No)
                         pyautogui.doubleClick(No)
                         time.sleep(2)  # 3,2,1 countdown
@@ -201,10 +213,13 @@ while True:
                     elif sys.argv[1] == "-cheese":
                         os.system("open /Applications/cultris2.app")
                         print("cheese mode selected")
-                        cheese = Classifier.template_match(build_absolute_path("Images/swiss_cheese.png"))
+                        cheese = Classifier.template_match(
+                            build_absolute_path("Images/swiss_cheese.png")
+                        )
                         if cheese == False:
                             cheese = Classifier.template_match(
-                                "Images/swiss_cheese2.png")
+                                "Images/swiss_cheese2.png"
+                            )
 
                         if cheese == False:
                             print("ERROR finding cheese template match")
@@ -214,7 +229,9 @@ while True:
                         pyautogui.doubleClick(cheese)
                         time.sleep(0.25)
 
-                        No = Classifier.template_match(build_absolute_path("Images/No.png"))
+                        No = Classifier.template_match(
+                            build_absolute_path("Images/No.png")
+                        )
                         pyautogui.moveTo(No)
                         pyautogui.doubleClick(No)
                         time.sleep(2)  # 3,2,1 countdonw
@@ -230,23 +247,22 @@ while True:
 
                     ############# ORIENTING FIELD MATRIX ################
                 while count == -1 and break_program == False:
-                    next_piece = Classifier.template_match(
-                        "Images/nextpiece.png")
-                      ## Define future coordinates relative to this template matched position
+                    next_piece = Classifier.template_match("Images/nextpiece.png")
+                    ## Define future coordinates relative to this template matched position
                     if next_piece == False:
                         print(
                             "ERROR finding nextpiece template match. ATTEMPTING 2nd TIME"
                         )
-                        next_piece = Classifier.template_match(
-                            "Images/nextpiece.png")
-                          ## Define future coordinates relative to this template matched position
+                        next_piece = Classifier.template_match("Images/nextpiece.png")
+                        ## Define future coordinates relative to this template matched position
                         if next_piece == False:
                             print(
                                 "ERROR finding nextpiece template match. ATTEMPTING 3rd TIME"
                             )
                             next_piece = Classifier.template_match(
-                                "Images/nextpiece.png")
-                              ## Define future coordinates relative to this template matched position
+                                "Images/nextpiece.png"
+                            )
+                            ## Define future coordinates relative to this template matched position
                             if next_piece == False:
                                 print(
                                     "ERROR finding nextpiece template match. Re-setting count to -2"
@@ -254,17 +270,23 @@ while True:
                                 count = -2
                                 break
 
-                    target = Classifier.template_match(build_absolute_path("Images/kb_baby_bot.png"))
+                    target = Classifier.template_match(
+                        build_absolute_path("Images/kb_baby_bot.png")
+                    )
                     if target == False:
                         print(
                             "ERROR finding kb_baby_bot template match. ATTEMPTING 2nd TIME"
                         )
-                        target = Classifier.template_match(build_absolute_path("Images/kb_baby_bot.png"))
+                        target = Classifier.template_match(
+                            build_absolute_path("Images/kb_baby_bot.png")
+                        )
                         if target == False:
                             print(
                                 "ERROR finding kb_baby_bot template match. ATTEMPTING 3rd TIME"
                             )
-                            target = Classifier.template_match(build_absolute_path("Images/kb_baby_bot.png"))
+                            target = Classifier.template_match(
+                                build_absolute_path("Images/kb_baby_bot.png")
+                            )
                             if target == False:
                                 print(
                                     "ERROR finding kb_baby_bot template match. Re-setting count to -2"
@@ -387,11 +409,9 @@ while True:
                     # try:
                 while count > 0 and break_program == False:
 
-                    if settings.mode == 'upstack':
+                    if settings.mode == "upstack":
                         if field.height() > 15 or field.count_gaps() > 3:
-                            settings.mode = 'downstack'
-
-
+                            settings.mode = "downstack"
 
                     next_rgb = Classifier.get_next_rgb(next_piece)
                     next_tetromino = Classifier.TETROMINO[next_rgb]()
@@ -401,12 +421,10 @@ while True:
                     start_time = time.time()
                     try:
                         best_drop = Optimizer.best_move(
-                            field,
-                            current_tetromino,
-                            next_tetromino
+                            field, current_tetromino, next_tetromino
                         )
                     except IndexError:
-                        print('Game Over, ran out of moves')
+                        print("Game Over, ran out of moves")
                         game_over = 1
                     best_drop_times.append(time.time() - t0)
 
@@ -473,7 +491,7 @@ while True:
                     ## Throttle speed if move would be faster than max speed
                     move_time = time.time() - start_time
                     if move_time < min_time_per_piece:
-                        time.sleep(min_time_per_piece-move_time)
+                        time.sleep(min_time_per_piece - move_time)
 
                     if game_over == 1:
                         print("GAME OVER DETECTED")
@@ -488,7 +506,7 @@ while True:
                         print("average time to get update garbage", times[2])
                         print("average time to get check game over", times[3])
                         print("bpm estimate:", float(60 / (np.sum(times))))
-                        settings.mode = 'upstack'
+                        settings.mode = "upstack"
                         if sys.argv[1] == "-maserati" or sys.argv[1] == "-cheese":
                             time.sleep(0.5)
                             print("Leaving challenge and restarting")

@@ -1,4 +1,3 @@
-
 from c2ai.base.tetromino import Tetromino
 import random
 import numpy as np

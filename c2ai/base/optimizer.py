@@ -6,33 +6,47 @@ from operator import itemgetter
 
 class Optimizer:
     @staticmethod
-    def get_score(field, clears,row=0):
+    def get_score(field, clears, row=0):
         f = field
 
         """
-		heuristics[0] = count_gaps()
-		heuristics[1] = bumpiness
-		heuristics[2] = parity
-		heuristics[3] = blocks_over_gap1
-		heuristics[4] = blocks_over_gap2
-		heuristics[5] = tall_holes
-		heuristics[6] = field_height
-		heuristics[7] = stack_gaps
-		heuristics[8] = stack_height
-		heuristics[9] = sum_bumps_above_two
-		heuristics[10] = row_trans_above_gap1
-		"""
+        heuristics[0] = count_gaps()
+        heuristics[1] = bumpiness
+        heuristics[2] = parity
+        heuristics[3] = blocks_over_gap1
+        heuristics[4] = blocks_over_gap2
+        heuristics[5] = tall_holes
+        heuristics[6] = field_height
+        heuristics[7] = stack_gaps
+        heuristics[8] = stack_height
+        heuristics[9] = sum_bumps_above_two
+        heuristics[10] = row_trans_above_gap1
+        """
         heuristics = f.heuristics()
         # features = [heuristics[0], heuristics[1], heuristics[3],heuristics[4],heuristics[5],heuristics[6],heuristics[7], heuristics[8],heuristics[9],heuristics[10]]
-        if settings.mode == 'upstack':
-            if clears > 0:
-                score = float('inf')
-            else:
+
+        if settings.modes == True:
+            if settings.mode == "upstack":
+                if clears > 0:
+                    score = float("inf")
+                else:
+                    score = sum(
+                        x * y for x, y in zip(heuristics, settings.upstack_model)
+                    )
+
+            elif settings.mode == "downstack":
+                score = sum(x * y for x, y in zip(heuristics, settings.downstack_model))
+
+            elif settings.mode == "test1":
+                score = sum(x * y for x, y in zip(heuristics, settings.test_model))
+
+            elif settings.mode == "test2":
                 score = sum(x * y for x, y in zip(heuristics, settings.upstack_model))
-        elif settings.mode == 'downstack':
-            score = sum(x * y for x, y in zip(heuristics, settings.downstack_model))
+
+            else:
+                print("Unhandeled settings.mode")
         else:
-            print('Unhandeled settings.mode')
+            score = sum(x * y for x, y in zip(heuristics, settings.test_model))
 
         return float(score)
 
@@ -51,7 +65,7 @@ class Optimizer:
                 field_copy = field.copy()
                 try:
                     clears = field_copy.drop(tetromino_rotation, column)[1]
-                    score = Optimizer.get_score(field=field_copy,clears=clears)
+                    score = Optimizer.get_score(field=field_copy, clears=clears)
                     # print(tetromino_rotation, " ",column, "score:", score)
                     # print(field_copy)
                     all_boards_first.append(
@@ -66,13 +80,13 @@ class Optimizer:
         )  # sort by first piece placed board scores
 
         # for i in all_boards_first:
-        # 	print(i[3])
+        #   print(i[3])
 
         if (
             len(all_boards_first) > 1
         ):  # benchmarking suggests a linear increase of 0.02s per move for every increase in top current piece moves explored
             # 1 = 0.050; 2 = 0.073; 3 = 0.095; 4 = 0.114; 5 = 0.143; 6 = 0.163
-            all_boards_first = all_boards_first[:settings.move_depth]
+            all_boards_first = all_boards_first[: settings.move_depth]
 
         next_rotations = [
             next_tetromino,
@@ -87,8 +101,12 @@ class Optimizer:
                 for column in range(Field.WIDTH):
                     next_field_copy = i[0].copy()
                     try:
-                        clears = next_field_copy.drop(next_tetromino_rotation, column)[1]
-                        score = Optimizer.get_score(field=next_field_copy,clears=clears)
+                        clears = next_field_copy.drop(next_tetromino_rotation, column)[
+                            1
+                        ]
+                        score = Optimizer.get_score(
+                            field=next_field_copy, clears=clears
+                        )
                         second_scores.append(score)
 
                     except AssertionError:
@@ -104,7 +122,7 @@ class Optimizer:
         )  # sort by minimum second piece placed board score
 
         # for i in all_boards_first:
-        # 	print("first move board score", i[-2], "min second piece board score", i[-1])
+        #   print("first move board score", i[-2], "min second piece board score", i[-1])
 
         return all_boards_first[0]
 
@@ -441,4 +459,3 @@ class Optimizer:
 
 if __name__ == "__main__":
     f = Field()
-    

@@ -20,7 +20,6 @@ class Classifier:
         img = cv2.cvtColor(img, cv2.COLOR_BGRA2GRAY)
         A, B = img.shape[::-1]
 
-
         template = cv2.imread(template, 0)
         w, h = template.shape[::-1]
 

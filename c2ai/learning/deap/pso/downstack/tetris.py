@@ -63,7 +63,11 @@ class Tetris:
                 if render == True:
                     if piece_count % 1 == 0:
                         print(field)
-                        print("GETTING BEST DROP TOOK", "{0:.4f}".format(t1 - t0), "seconds")
+                        print(
+                            "GETTING BEST DROP TOOK",
+                            "{0:.4f}".format(t1 - t0),
+                            "seconds",
+                        )
                         print(
                             "Current Piece:",
                             sequence[piece_count],
@@ -90,7 +94,7 @@ class Tetris:
                             heuristics[4],
                             "field_height",
                             heuristics[5],
-                            "\n"+"stack gaps",
+                            "\n" + "stack gaps",
                             heuristics[6],
                             "stack height",
                             heuristics[7],
@@ -137,10 +141,14 @@ class Tetris:
             #     print("unhandeled error occured")
             #     break
 
+
 def main():
 
     try:
-        with open(build_absolute_path("learning/deap/pso/downstack/current_generation_dump"), "rb") as dump_file:
+        with open(
+            build_absolute_path("learning/deap/pso/downstack/current_generation_dump"),
+            "rb",
+        ) as dump_file:
             dump = pickle.load(dump_file)
             current_generation = dump[0]
             n = current_generation[0]
@@ -149,7 +157,7 @@ def main():
             print(score)
             print(n.wih)
             print(n.who)
-    
+
     except:
         f_read = open("PSOoutput.txt", "r")
         n = ast.literal_eval(f_read.readlines()[-1])
@@ -159,19 +167,21 @@ def main():
         print("SCORE:", score)
 
         heuristics = [
-        "count_gaps", 
-        "bumpiness", 
-        "blocks_over_gap1", 
-        "blocks_over_gap2", 
-        "tall_holes", 
-        "field_height", 
-        "stack_gaps", 
-        "stack_height", 
-        "sum_bumps_above_two", 
-        "row_trans_above_gap1"]
-        
+            "count_gaps",
+            "bumpiness",
+            "blocks_over_gap1",
+            "blocks_over_gap2",
+            "tall_holes",
+            "field_height",
+            "stack_gaps",
+            "stack_height",
+            "sum_bumps_above_two",
+            "row_trans_above_gap1",
+        ]
+
         for index, heuristic in enumerate(heuristics):
-            print(heuristic,":", "{0:.2f}".format(n[index]))
+            print(heuristic, ":", "{0:.2f}".format(n[index]))
+
 
 if __name__ == "__main__":
     main()
