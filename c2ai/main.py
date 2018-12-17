@@ -22,6 +22,7 @@ best_drop_times = []
 move_execution_times = []
 garbage_update_times = []
 game_over_check_times = []
+game_over = False
 min_time_per_piece = 1 / (settings.max_bpm / 60)
 break_program = False
 
@@ -467,7 +468,7 @@ while True:
                     if count > 0:
                         count += 1
 
-                    if count % 5 == 0:
+                    if count % 10 == 0:
                         t0 - time.time()
                         game_over = matrix_updater.check_end_round()
                         game_over_check_times.append(time.time() - t0)
@@ -501,8 +502,9 @@ while True:
                             while True:
                                 i = matrix_updater.check_start_round()
                                 if i != 0:
-                                    time.sleep(i + 0.25)
+                                    time.sleep(i + 0.10)
                                     count = -1
+                                    game_over = False
                                     break
 
         listener.join()

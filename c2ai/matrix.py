@@ -47,8 +47,6 @@ class matrix_updater:
             sct_img = sct.grab(box)
             img = Image.frombytes("RGB", sct_img.size, sct_img.bgra, "raw", "BGRX")
 
-        im_array = array(img)
-        imshow(im_array)
         pixels = img.load()
 
         x = [375,470,426] # 1 location
@@ -80,8 +78,6 @@ class matrix_updater:
             sct_img = sct.grab(box)
             img = Image.frombytes("RGB", sct_img.size, sct_img.bgra, "raw", "BGRX")
 
-        im_array = array(img)
-        imshow(im_array)
         pixels = img.load()
 
         x = [166,347,466] 
@@ -90,7 +86,7 @@ class matrix_updater:
             print('Game Over detected')
             return True
 
-        x = [105,180,252] # The W in winner
+        x = [105,180,252] # The W in winner ## Need to edit this one
         y = [700,700,700]
         if pixels[x[0], y[0]] == (255, 255, 255) and pixels[x[1], y[1]] == (255, 255, 255) and pixels[x[2], y[2]] == (255, 255, 255):
             print('Winner detected')
