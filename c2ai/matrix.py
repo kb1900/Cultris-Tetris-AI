@@ -7,12 +7,6 @@ from pylab import *
 
 
 class matrix_updater:
-    def is_occupied(pixels):
-        if pixels[0] < 50 and pixels[1] < 50 and pixels[2] < 50:
-            return False
-        else:
-            return True
-
     def is_garbage(pixels):
         garbage = (85, 89, 91)
         if max(map(lambda a, b: abs(a - b), pixels, garbage)) < 5:
@@ -20,20 +14,52 @@ class matrix_updater:
         else:
             return False
 
-    def is_ghost(px):
-        ghosts = [
-            (42, 8, 48),
-            (4, 46, 48),
-            (40, 46, 14),
-            (1, 46, 7),
-            (8, 12, 48),
-            (42, 8, 10),
-            (42, 46, 48),
-        ]
-        for ghost_rgb in ghosts:
-            if max(map(lambda a, b: abs(a - b), px, ghost_rgb)) < 5:
-                return True
-        return False
+    def get_first_piece():
+        box = {"top": 234, "left": 106, "width": 420, "height": 756}
+        width, height = box["width"] * 2, box["height"] * 2
+        cell_widthx = width / 10
+        cell_widthy = height / 18
+        TETROMINO_FADED = {
+            (42, 8, 48): Tetromino.L_Tetromino,
+            (4, 46, 48): Tetromino.S_Tetromino,
+            (40, 46, 14): Tetromino.O_Tetromino,
+            (1, 46, 7): Tetromino.I_Tetromino,
+            (8, 12, 48): Tetromino.J_Tetromino,
+            (42, 8, 10): Tetromino.T_Tetromino,
+            (39, 24, 10): Tetromino.Z_Tetromino,
+        }
+
+        TETROMINO_FADED_NAME = {
+            (42, 8, 48): "L",
+            (4, 46, 48): "S",
+            (40, 46, 14): "O",
+            (1, 46, 7): "I",
+            (8, 12, 48): "J",
+            (42, 8, 10): "T",
+            (39, 24, 10): "Z",
+        }
+
+        column_cords = []
+        row_cords = []
+        for i in range(10):
+            column_cords.append((cell_widthx / 2) + cell_widthx * i)
+
+        for j in range(18):
+            row_cords.append((cell_widthy / 2) + cell_widthy * j + 4)
+
+        with mss.mss() as sct:
+            sct_img = sct.grab(box)
+            img = Image.frombytes("RGB", sct_img.size, sct_img.bgra, "raw", "BGRX")
+
+        pixels = img.load()
+        ghost_rgb = pixels[column_cords[4], row_cords[-1]]
+
+        return [TETROMINO_FADED[ghost_rgb](), TETROMINO_FADED_NAME[ghost_rgb]]
+
+        # im_array = array(img)
+        # imshow(im_array)
+        # plot(column_cords[4],row_cords[-1],'r*')
+        # show()
 
     def check_start_round():
         # the goal here is to detect the 3, 2, 1 countdown of the round starting
@@ -51,8 +77,7 @@ class matrix_updater:
 
         x = [375, 470, 426]  # 1 location
         y = [860, 860, 700]
-        # plot(x,y,'r*')
-        # show()
+
         if (
             pixels[x[0], y[0]] == (255, 255, 255)
             and pixels[x[1], y[1]] == (255, 255, 255)
@@ -87,8 +112,12 @@ class matrix_updater:
 
         pixels = img.load()
 
-        x = [166, 347, 466]
-        y = [600, 600, 600]
+        x = [166, 374, 523]
+        y = [600, 630, 860]
+        # im_array = array(img)
+        # imshow(im_array)
+        # plot(x,y,'r*')
+        # show()
         if (
             pixels[x[0], y[0]] == (255, 255, 255)
             and pixels[x[1], y[1]] == (255, 255, 255)
@@ -97,25 +126,55 @@ class matrix_updater:
             print("Game Over detected")
             return True
 
-        x = [105, 180, 252]  # The W in winner ## Need to edit this one
-        y = [700, 700, 700]
+        x = [180, 350, 695]
+        y = [700, 810, 758]
+        # im_array = array(img)
+        # imshow(im_array)
+        # plot(x,y,'r*')
+        # show()
+
         if (
             pixels[x[0], y[0]] == (255, 255, 255)
             and pixels[x[1], y[1]] == (255, 255, 255)
             and pixels[x[2], y[2]] == (255, 255, 255)
         ):
             print("Winner detected")
+            # im_array = array(img)
+            # imshow(im_array)
+            # plot(x,y,'r*')
+            # show()
             return True
 
-    def update_garbage(field):
+    def update_field(field):
         # the goal here is to get the bottom row
         # then check to see if it has garbage (Gray color)
         # then create a 1x10 array with ['0','0','0','0','0','0','0','0','0','0']
         # then identify where the gap is and garbage_array[gap] = ' '
         # then append this to the bottom of the field
 
-        box = {"top": 234, "left": 106, "width": 420, "height": 756}
-        width, height = box["width"] * 2, box["height"] * 2
+        # we will also return the next_piece for optimization
+        TETROMINO = {
+            (180, 28, 193): Tetromino.L_Tetromino,
+            (19, 189, 193): Tetromino.S_Tetromino,
+            (170, 189, 58): Tetromino.O_Tetromino,
+            (3, 255, 16): Tetromino.I_Tetromino,
+            (45, 54, 193): Tetromino.J_Tetromino,
+            (180, 28, 32): Tetromino.T_Tetromino,
+            (160, 100, 32): Tetromino.Z_Tetromino,
+        }
+
+        TETROMINO_NAME = {
+            (180, 28, 193): "L",
+            (19, 189, 193): "S",
+            (170, 189, 58): "O",
+            (3, 255, 16): "I",
+            (45, 54, 193): "J",
+            (180, 28, 32): "T",
+            (160, 100, 32): "Z",
+        }
+
+        box = {"top": 234, "left": 106, "width": 620, "height": 756}
+        width, height = 420 * 2, box["height"] * 2
         # print(width, height)
 
         cell_widthx = width / 10
@@ -162,100 +221,22 @@ class matrix_updater:
 
         newfield = field.copy()
 
-        if len(garbage) > 1:
+        if len(garbage) > 0:
             newfield.update_garbage(garbage)
             # print(newfield)
 
-        if [
-            "0",
-            "0",
-            "0",
-            "0",
-            "0",
-            "0",
-            "0",
-            "0",
-            "0",
-            "0",
-        ] in newfield.field_array().tolist():
-            print("full row bad error")
-            return field
-        return newfield
-
-    def update_field(field):
-        box = {"top": 234, "left": 106, "width": 420, "height": 756}
-        width, height = box["width"] * 2, box["height"] * 2
-        # print(width, height)
-
-        cell_widthx = width / 10
-        cell_widthy = height / 18
-
-        column_cords = []
-        row_cords = []
-        for i in range(10):
-            column_cords.append((cell_widthx / 2) + cell_widthx * i)
-
-        for j in range(18):
-            row_cords.append((cell_widthy / 2) + cell_widthy * j)
-            newfield = Field()
-
-        with mss.mss() as sct:
-            sct_img = sct.grab(box)
-            img = Image.frombytes("RGB", sct_img.size, sct_img.bgra, "raw", "BGRX")
-
-        pixels = img.load()
-        # im_array = array(img)
-        # imshow(im_array)
-        # plot the points with red star-markers
-        for i in range(len(column_cords)):
-            for j in range(len(row_cords) - 1, 0, -1):
-                # if matrix_updater.is_occupied(pixels[column_cords[i],row_cords[j]]) and matrix_updater.is_ghost(pixels[column_cords[i],row_cords[j]]) == False:
-                if (
-                    matrix_updater.is_occupied(pixels[column_cords[i], row_cords[j]])
-                    == True
-                    and matrix_updater.is_garbage(pixels[column_cords[i], row_cords[j]])
-                    == False
-                ):
-                    newfield.drop_null(Tetromino.null_Tetromino(), j + 2, i)
-
-                    # for i in field.field_array():
-                    # 	print(i)
-
-                    # print(newfield)
-
-        newfield_array = newfield.field_array()
-
-        if [
-            "x",
-            "x",
-            "x",
-            "x",
-            "x",
-            "x",
-            "x",
-            "x",
-            "x",
-            "x",
-        ] in newfield_array.tolist():
-            print("BAD FIELD UPDATE full row")
-            # print(field)
-            # print(newfield)
-            return field
-
-        else:
-            # print('old')
-            # print(field)
-            # print('new')
-            # print(newfield)
-            return newfield
+        return [
+            newfield,
+            TETROMINO[pixels[1093, 208]](),
+            TETROMINO_NAME[pixels[1093, 208]],
+        ]
 
 
 if __name__ == "__main__":
     field = Field()
     # while True:
     #     t = time.time()
-    #     field = matrix_updater.update_garbage(field)
+    #     field = matrix_updater.update_field(field)[0]
     #     print(field)
     #     print("fps: {0}".format(1 / (time.time() - t)))
-
-    matrix_updater.check_start_round()
+    matrix_updater.check_end_round()

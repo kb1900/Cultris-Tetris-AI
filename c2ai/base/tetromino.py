@@ -1,6 +1,3 @@
-#!/usr/bin/python
-
-
 class Tetromino:
 
     TYPES = ["I", "O", "T", "S", "Z", "J", "L"]
