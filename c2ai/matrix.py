@@ -38,7 +38,7 @@ class matrix_updater:
     def check_start_round():
         # the goal here is to detect the 3, 2, 1 countdown of the round starting
         # it will be checked in a loop when a game is not active
-        # and return true once it is detected leading to a 3 second sleep and bot resumption 
+        # and return true once it is detected leading to a 3 second sleep and bot resumption
 
         box = {"top": 234, "left": 106, "width": 420, "height": 756}
         width, height = box["width"] * 2, box["height"] * 2
@@ -49,22 +49,29 @@ class matrix_updater:
 
         pixels = img.load()
 
-        x = [375,470,426] # 1 location
-        y = [860,860,700]
+        x = [375, 470, 426]  # 1 location
+        y = [860, 860, 700]
         # plot(x,y,'r*')
         # show()
-        if pixels[x[0], y[0]] == (255, 255, 255) and pixels[x[1], y[1]] == (255, 255, 255) and pixels[x[2], y[2]] == (255, 255, 255):
-            print('Round Start 1 detected')
+        if (
+            pixels[x[0], y[0]] == (255, 255, 255)
+            and pixels[x[1], y[1]] == (255, 255, 255)
+            and pixels[x[2], y[2]] == (255, 255, 255)
+        ):
+            print("Round Start 1 detected")
             return 1
 
-        x = [375,470,471] # 2 location
-        y = [842,842,700]
-        if pixels[x[0], y[0]] == (255, 255, 255) and pixels[x[1], y[1]] == (255, 255, 255) and pixels[x[2], y[2]] == (255, 255, 255):
-            print('Round Start 2 detected')
+        x = [375, 470, 471]  # 2 location
+        y = [842, 842, 700]
+        if (
+            pixels[x[0], y[0]] == (255, 255, 255)
+            and pixels[x[1], y[1]] == (255, 255, 255)
+            and pixels[x[2], y[2]] == (255, 255, 255)
+        ):
+            print("Round Start 2 detected")
             return 2
 
         return 0
-
 
     def check_end_round():
         # the goal here is to detect the different states of the round ending
@@ -80,16 +87,24 @@ class matrix_updater:
 
         pixels = img.load()
 
-        x = [166,347,466] 
-        y = [600,600,600]
-        if pixels[x[0], y[0]] == (255, 255, 255) and pixels[x[1], y[1]] == (255, 255, 255) and pixels[x[2], y[2]] == (255, 255, 255):
-            print('Game Over detected')
+        x = [166, 347, 466]
+        y = [600, 600, 600]
+        if (
+            pixels[x[0], y[0]] == (255, 255, 255)
+            and pixels[x[1], y[1]] == (255, 255, 255)
+            and pixels[x[2], y[2]] == (255, 255, 255)
+        ):
+            print("Game Over detected")
             return True
 
-        x = [105,180,252] # The W in winner ## Need to edit this one
-        y = [700,700,700]
-        if pixels[x[0], y[0]] == (255, 255, 255) and pixels[x[1], y[1]] == (255, 255, 255) and pixels[x[2], y[2]] == (255, 255, 255):
-            print('Winner detected')
+        x = [105, 180, 252]  # The W in winner ## Need to edit this one
+        y = [700, 700, 700]
+        if (
+            pixels[x[0], y[0]] == (255, 255, 255)
+            and pixels[x[1], y[1]] == (255, 255, 255)
+            and pixels[x[2], y[2]] == (255, 255, 255)
+        ):
+            print("Winner detected")
             return True
 
     def update_garbage(field):
