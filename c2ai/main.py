@@ -410,7 +410,7 @@ while True:
                 while count > 0 and break_program == False:
 
                     if settings.mode == "upstack":
-                        if field.height() > 15 or field.count_gaps() > 3:
+                        if field.height() > 12 or field.count_gaps() > 3:
                             settings.mode = "downstack"
 
                     next_rgb = Classifier.get_next_rgb(next_piece)
@@ -425,7 +425,7 @@ while True:
                         )
                     except IndexError:
                         print("Game Over, ran out of moves")
-                        game_over = 1
+                        game_over = True
                     best_drop_times.append(time.time() - t0)
 
                     t0 = time.time()
@@ -467,33 +467,17 @@ while True:
                     if count > 0:
                         count += 1
 
-                    t0 - time.time()
-                    if autopy.screen.get_color(COLUMN[4], ROW[9]) == (
-                        255,
-                        255,
-                        255,
-                    ) and autopy.screen.get_color(COLUMN[4], ROW[13] - 14) == (
-                        255,
-                        255,
-                        255,
-                    ):
-                        game_over = 1
-                    elif autopy.screen.get_color(COLUMN[9] + 56, ROW[8]) == (
-                        255,
-                        255,
-                        255,
-                    ):
-                        game_over = 1
-                    else:
-                        game_over = 0
-                    game_over_check_times.append(time.time() - t0)
+                    if count % 5 == 0:
+                        t0 - time.time()
+                        game_over = matrix_updater.check_end_round()
+                        game_over_check_times.append(time.time() - t0)
 
                     ## Throttle speed if move would be faster than max speed
                     move_time = time.time() - start_time
                     if move_time < min_time_per_piece:
                         time.sleep(min_time_per_piece - move_time)
 
-                    if game_over == 1:
+                    if game_over == True:
                         print("GAME OVER DETECTED")
                         times = [
                             np.average(best_drop_times),
@@ -506,7 +490,7 @@ while True:
                         print("average time to get update garbage", times[2])
                         print("average time to get check game over", times[3])
                         print("bpm estimate:", float(60 / (np.sum(times))))
-                        settings.mode = "upstack"
+
                         if sys.argv[1] == "-maserati" or sys.argv[1] == "-cheese":
                             time.sleep(0.5)
                             print("Leaving challenge and restarting")
@@ -514,10 +498,11 @@ while True:
                             time.sleep(0.5)
                             count = -2
                         else:
-                            print("press UP to continue @ next round start")
-                            break_program = True
-                            count = -1
-                            break
-                            # ### write winner check a la above and improve game over check since it is non-specific!! can be triggered by z
+                            while True:
+                                i = matrix_updater.check_start_round()
+                                if i != 0:
+                                    time.sleep(i + 0.25)
+                                    count = -1
+                                    break
 
         listener.join()
