@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='c2ai',
-    version='0.0.8',
+    version='0.0.9',
     author='kb1900',
     packages=['c2ai'],
     python_requires='>=3.6.0',

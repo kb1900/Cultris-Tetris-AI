@@ -1,6 +1,6 @@
-max_bpm = 250
+max_bpm = 260
 move_depth = 5
-mode = "test2"
+mode = "upstack"
 
 downstack_model = [
     17.266573527809562,
