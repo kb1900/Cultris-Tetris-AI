@@ -411,8 +411,13 @@ while True:
                 while count > 0 and break_program == False:
 
                     if settings.mode == "upstack":
-                        if field.height() > 12 or field.count_gaps() > 3:
+                        if field.height() > 12 or field.count_gaps() > 2:
+                            print('MODE SWITCH TO DOWNSTACK', field.height(), field.count_gaps())
                             settings.mode = "downstack"
+                    if settings.mode == "downstack":
+                        if field.height() < 2 and field.count_gaps() < 3:
+                            print('MODE SWITCH TO UPSTACK', field.height(), field.count_gaps())
+                            settings.mode = "upstack"
 
                     next_rgb = Classifier.get_next_rgb(next_piece)
                     next_tetromino = Classifier.TETROMINO[next_rgb]()
@@ -434,7 +439,12 @@ while True:
                     column = best_drop[2]
 
                     current_tetromino.rotate(rotation)
-                    field.drop(current_tetromino, column)
+                    try:
+                        field.drop(current_tetromino, column)
+                    except AssertionError:
+                        print("Game Over, ran out of moves")
+                        game_over = True
+
 
                     keys = Optimizer.get_keystrokes(
                         rotation,
@@ -471,6 +481,10 @@ while True:
                     if count % 10 == 0:
                         t0 - time.time()
                         game_over = matrix_updater.check_end_round()
+                        if game_over == True:
+                            time.sleep(.5)
+                            game_over = matrix_updater.check_end_round()
+
                         game_over_check_times.append(time.time() - t0)
 
                     ## Throttle speed if move would be faster than max speed
