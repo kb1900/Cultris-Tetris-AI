@@ -162,7 +162,7 @@ class matrix_updater:
 
         newfield = field.copy()
 
-        if len(garbage) > 1:
+        if len(garbage) > 0:
             newfield.update_garbage(garbage)
             # print(newfield)
 
