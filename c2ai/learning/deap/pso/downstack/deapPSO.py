@@ -3,7 +3,6 @@ from deap import creator
 from deap import tools
 from scoop import futures
 from c2ai import build_absolute_path
-
 from c2ai.learning.deap.pso.downstack.tetris import Tetris
 import numpy as np
 import time
@@ -60,6 +59,7 @@ toolbox.register("evaluate", evalOneMax)
 
 
 def main():
+
     pop = toolbox.population(n=population_size)
     stats = tools.Statistics(lambda ind: ind.fitness.values)
     stats.register("avg", np.mean)
@@ -89,10 +89,11 @@ def main():
 
         # Gather all the fitnesses in one list and print the stats
         logbook.record(gen=g, evals=len(pop), **stats.compile(pop))
-        print(logbook.stream)
+        log = logbook.stream
+        print(log)
 
         print(
-            "Time for generation:",
+            "Generation",g, "took:",
             time.strftime("%H:%M:%S", time.gmtime(time.time() - start_time)),
         )
 
@@ -101,13 +102,13 @@ def main():
         with open(
             build_absolute_path("learning/deap/pso/downstack/PSOoutput.txt"), "a"
         ) as text_file:
-            text_file.writelines([logbook.stream, str(best), "\n"])
+            text_file.writelines([log,"\n", str(best)])
 
     return pop, logbook, best
 
 
 population_size = 100
-game_attempts = 5
+game_attempts = 3
 
 if __name__ == "__main__":
     main()

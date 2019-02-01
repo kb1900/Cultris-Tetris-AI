@@ -6,7 +6,7 @@ from operator import itemgetter
 
 class Optimizer:
     @staticmethod
-    def get_score(field, clears, row=0):
+    def get_score(field, clears, row=0,n=0):
         f = field
 
         """
@@ -26,7 +26,13 @@ class Optimizer:
         # features = [heuristics[0], heuristics[1], heuristics[3],heuristics[4],heuristics[5],heuristics[6],heuristics[7], heuristics[8],heuristics[9],heuristics[10]]
 
         if settings.modes == True:
-            if settings.mode == "upstack":
+            if settings.mode == "train":
+                score = sum(
+                        x * y for x, y in zip(heuristics, n)
+                    )
+
+
+            elif settings.mode == "upstack":
                 if clears > 0:
                     score = float("inf")
                 else:
@@ -45,13 +51,14 @@ class Optimizer:
 
             else:
                 print("Unhandeled settings.mode")
+                print(settings.mode)
         else:
             score = sum(x * y for x, y in zip(heuristics, settings.test_model))
 
         return float(score)
 
     @staticmethod
-    def best_move(field, tetromino, next_tetromino):
+    def best_move(field, tetromino, next_tetromino,n=0):
         rotations = [
             tetromino,
             tetromino.copy().rotate_right(),
@@ -65,7 +72,7 @@ class Optimizer:
                 field_copy = field.copy()
                 try:
                     clears = field_copy.drop(tetromino_rotation, column)[1]
-                    score = Optimizer.get_score(field=field_copy, clears=clears)
+                    score = Optimizer.get_score(field=field_copy, clears=clears,n=n)
                     # print(tetromino_rotation, " ",column, "score:", score)
                     # print(field_copy)
                     all_boards_first.append(
@@ -105,7 +112,7 @@ class Optimizer:
                             1
                         ]
                         score = Optimizer.get_score(
-                            field=next_field_copy, clears=clears
+                            field=next_field_copy, clears=clears, n=n
                         )
                         second_scores.append(score)
 
