@@ -6,7 +6,7 @@ from operator import itemgetter
 
 class Optimizer:
     @staticmethod
-    def get_score(field, clears, row=0,n=0):
+    def get_score(field, clears, row=0, n=0):
         f = field
 
         """
@@ -27,10 +27,7 @@ class Optimizer:
 
         if settings.modes == True:
             if settings.mode == "train":
-                score = sum(
-                        x * y for x, y in zip(heuristics, n)
-                    )
-
+                score = sum(x * y for x, y in zip(heuristics, n))
 
             elif settings.mode == "upstack":
                 if clears > 0:
@@ -58,7 +55,7 @@ class Optimizer:
         return float(score)
 
     @staticmethod
-    def best_move(field, tetromino, next_tetromino,n=0):
+    def best_move(field, tetromino, next_tetromino, n=0):
         rotations = [
             tetromino,
             tetromino.copy().rotate_right(),
@@ -72,7 +69,7 @@ class Optimizer:
                 field_copy = field.copy()
                 try:
                     clears = field_copy.drop(tetromino_rotation, column)[1]
-                    score = Optimizer.get_score(field=field_copy, clears=clears,n=n)
+                    score = Optimizer.get_score(field=field_copy, clears=clears, n=n)
                     # print(tetromino_rotation, " ",column, "score:", score)
                     # print(field_copy)
                     all_boards_first.append(

@@ -103,6 +103,7 @@ def leave_challenge():
         target = Classifier.template_match(
             build_absolute_path("Images/back_to_menu.png")
         )
+        game_over = False
     pyautogui.moveTo(target)
     pyautogui.doubleClick(target)
 
@@ -412,11 +413,19 @@ while True:
 
                     if settings.mode == "upstack":
                         if field.height() > 12 or field.count_gaps() > 2:
-                            print('MODE SWITCH TO DOWNSTACK', field.height(), field.count_gaps())
+                            print(
+                                "MODE SWITCH TO DOWNSTACK",
+                                field.height(),
+                                field.count_gaps(),
+                            )
                             settings.mode = "downstack"
                     if settings.mode == "downstack":
                         if field.height() < 2 and field.count_gaps() < 3:
-                            print('MODE SWITCH TO UPSTACK', field.height(), field.count_gaps())
+                            print(
+                                "MODE SWITCH TO UPSTACK",
+                                field.height(),
+                                field.count_gaps(),
+                            )
                             settings.mode = "upstack"
 
                     next_rgb = Classifier.get_next_rgb(next_piece)
@@ -444,7 +453,6 @@ while True:
                     except AssertionError:
                         print("Game Over, ran out of moves")
                         game_over = True
-
 
                     keys = Optimizer.get_keystrokes(
                         rotation,
@@ -478,14 +486,16 @@ while True:
                     if count > 0:
                         count += 1
 
-                    if count % 10 == 0:
+                    if count % 10 == 0 and sys.argv[1] != "-maserati":
                         t0 - time.time()
                         game_over = matrix_updater.check_end_round()
                         if game_over == True:
-                            time.sleep(.5)
+                            time.sleep(0.5)
                             game_over = matrix_updater.check_end_round()
 
                         game_over_check_times.append(time.time() - t0)
+                    else:
+                        game_over = matrix_updater.check_end_round()
 
                     ## Throttle speed if move would be faster than max speed
                     move_time = time.time() - start_time

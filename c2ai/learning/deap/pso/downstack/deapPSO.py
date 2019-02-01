@@ -93,7 +93,9 @@ def main():
         print(log)
 
         print(
-            "Generation",g, "took:",
+            "Generation",
+            g,
+            "took:",
             time.strftime("%H:%M:%S", time.gmtime(time.time() - start_time)),
         )
 
@@ -102,7 +104,7 @@ def main():
         with open(
             build_absolute_path("learning/deap/pso/downstack/PSOoutput.txt"), "a"
         ) as text_file:
-            text_file.writelines([log,"\n", str(best)])
+            text_file.writelines([log, "\n", str(best)])
 
     return pop, logbook, best
 
