@@ -486,16 +486,16 @@ while True:
                     if count > 0:
                         count += 1
 
-                    if count % 10 == 0 and sys.argv[1] != "-maserati":
-                        t0 - time.time()
-                        game_over = matrix_updater.check_end_round()
-                        if game_over == True:
-                            time.sleep(0.5)
+                    if count % 10 == 0:
+                        if sys.argv[1] != "-maserati":
+                            t0 - time.time()
                             game_over = matrix_updater.check_end_round()
-
-                        game_over_check_times.append(time.time() - t0)
-                    else:
-                        game_over = matrix_updater.check_end_round()
+                            if game_over == True:
+                                time.sleep(0.5)
+                                game_over = matrix_updater.check_end_round()
+                            game_over_check_times.append(time.time() - t0)
+                        else:
+                            game_over = matrix_updater.check_end_round()
 
                     ## Throttle speed if move would be faster than max speed
                     move_time = time.time() - start_time
