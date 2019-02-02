@@ -190,7 +190,7 @@ class Tetris:
                 )
                 combo_time = ct[0]
                 combo_counter = ct[1]
-                print("combo_counter", combo_counter)
+                # print("combo_counter", combo_counter)
 
                 ## SET UP NEXT INSTANCE ##
                 previous_tetromino = current_tetromino
@@ -208,8 +208,8 @@ class Tetris:
                     if combo_counter != 0:
                         combos.append(combo_counter)
                     combo_counter = 0
-                print("combo_time", combo_time)
-                print("TOTAL LINES SENT:", compute_score(combos))
+                # print("combo_time", combo_time)
+                # print("TOTAL LINES SENT:", compute_score(combos))
 
                 if piece_count % 18 == 0:
                     for i in range(4):
@@ -223,7 +223,7 @@ class Tetris:
 
                 if piece_count == max_piece_count:
                     score = compute_score(combos=combos)
-                    return score
+                    return [score]
                     break
 
                 piece_count += 1
@@ -233,7 +233,7 @@ class Tetris:
                     print(combos)
                     print("GAME OVER")
                 score = compute_score(combos=combos)
-                return score
+                return [score]
                 break
             # except:
             #     print("unhandeled error occured")
@@ -261,7 +261,7 @@ def main():
         n = ast.literal_eval(f_read.readlines()[-1])
         f_read.close()
 
-        score = Tetris.run_game(n, render=True)
+        score = Tetris.run_game(n, render=True)[0]
 
         print("")
         if score >= 250:

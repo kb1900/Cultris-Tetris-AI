@@ -3,7 +3,7 @@ from deap import creator
 from deap import tools
 from scoop import futures
 from c2ai import build_absolute_path
-from c2ai.learning.deap.pso.downstack.tetris import Tetris
+from c2ai.learning.deap.pso.downstack.uberleet import Tetris
 import numpy as np
 import time
 import operator
