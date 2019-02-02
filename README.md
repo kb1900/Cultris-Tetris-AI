@@ -4,13 +4,17 @@
 This repo contains a preliminary attempt at creating a tetris AI to play the block-based puzzle game, Cultris 2 (available at http://gewaltig.net/cultris2.aspx). It uses a combination of internal game heuristics,particle swarm optimization and genetic algorithms to generate weight based and neural network based models to iterate through possible moves and play those that yield the best gamestates. Currently the AI has been well-trained to downstack and survive as long as possible in all online and offline modes.
 
 
-# To do:
+# Long Term To do:
   - Remove dependencies requrired for interfacing with Cultris
   - Make interfacing with Cultris cross-platform
   - Create evaluation functions/additional heuristics to train upstacking + comboing
   - Continue refactoring heuristic generation
   - Explore novel training methods and better NN structures
 
+# Short Term To do:
+  - Integrate a simulated combo system that mimics Cultris (in progress)
+  - Reduce board scoring iterations for redundant boards (e.g. only checking 10 O piece boards as opposed to 30)
+  - Create a self-play one vs one environment for the agents to train with
 
 ### Installation
 
