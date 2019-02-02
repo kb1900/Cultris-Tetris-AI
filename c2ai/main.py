@@ -434,6 +434,7 @@ while True:
 
                     t0 = time.time()
                     start_time = time.time()
+                    # print('tetromino_name', tetromino_name)
                     try:
                         best_drop = Optimizer.best_move(
                             field, current_tetromino, next_tetromino
