@@ -412,7 +412,11 @@ while True:
                 while count > 0 and break_program == False:
 
                     if settings.mode == "upstack":
-                        if field.height() > 12 or field.count_gaps() > 2:
+                        if (
+                            field.height() > 12
+                            or field.count_gaps() > 2
+                            or field.max_bump() > 6
+                        ):
                             print(
                                 "MODE SWITCH TO DOWNSTACK",
                                 field.height(),
@@ -522,6 +526,7 @@ while True:
                             print("Leaving challenge and restarting")
                             leave_challenge()
                             time.sleep(0.5)
+                            game_over = False
                             count = -2
                         else:
                             while True:

@@ -380,6 +380,30 @@ class Field:
 
         return bumpiness
 
+    def max_bump(self):
+        """
+        Returns max of the list of differences between adjacent heights
+        """
+
+        # first lets convert to an array
+        board_array = np.array(self.state)
+
+        x = []
+        for i in range(Field.WIDTH):
+            try:
+                j = np.where(board_array[:, i] != " ")[0][0]
+                x.append([i, j])
+            except:
+                x.append([i, self.HEIGHT])
+        heights = []
+        for coord in x:
+            heights.append(self.HEIGHT - coord[1])
+
+        abs_height_differences = np.absolute(np.ediff1d(heights))
+        max_bump = max(abs_height_differences)
+
+        return max_bump
+
     def stack_gaps(self):
         # first lets convert to an array
         board_array = np.array(self.state)

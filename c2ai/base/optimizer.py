@@ -62,22 +62,21 @@ class Optimizer:
         # S (only tetromino + rotate_right)
         # Z (only tetromino + rotate_right)
         rotations = [
-                tetromino,
-                tetromino.copy().rotate_right(),
-                tetromino.copy().flip(),
-                tetromino.copy().rotate_left(),
-            ]
+            tetromino,
+            tetromino.copy().rotate_right(),
+            tetromino.copy().flip(),
+            tetromino.copy().rotate_left(),
+        ]
         if tetromino.state == Tetromino.O_Tetromino().state:
             # print('O DETECTED')
-            rotations = [
-                tetromino,
-            ]
-        if tetromino.state == Tetromino.I_Tetromino().state or tetromino.state == Tetromino.S_Tetromino().state or tetromino.state == Tetromino.Z_Tetromino().state:
+            rotations = [tetromino]
+        if (
+            tetromino.state == Tetromino.I_Tetromino().state
+            or tetromino.state == Tetromino.S_Tetromino().state
+            or tetromino.state == Tetromino.Z_Tetromino().state
+        ):
             # print('I/S/Z DETECTED')
-            rotations = [
-                tetromino,
-                tetromino.copy().rotate_right(),
-            ]
+            rotations = [tetromino, tetromino.copy().rotate_right()]
         all_boards_first = []
         for rotation_counter, tetromino_rotation in enumerate(rotations):
             for column in range(Field.WIDTH):
@@ -119,17 +118,16 @@ class Optimizer:
             next_tetromino.copy().rotate_left(),
         ]
         if next_tetromino.state == Tetromino.O_Tetromino().state:
-            next_rotations = [
-                next_tetromino,
-            ]
-        if next_tetromino.state == Tetromino.I_Tetromino().state or next_tetromino.state == Tetromino.S_Tetromino().state or next_tetromino.state == Tetromino.Z_Tetromino().state:
-            next_rotations = [
-                next_tetromino,
-                next_tetromino.copy().rotate_right(),
-            ]
+            next_rotations = [next_tetromino]
+        if (
+            next_tetromino.state == Tetromino.I_Tetromino().state
+            or next_tetromino.state == Tetromino.S_Tetromino().state
+            or next_tetromino.state == Tetromino.Z_Tetromino().state
+        ):
+            next_rotations = [next_tetromino, next_tetromino.copy().rotate_right()]
         for i in all_boards_first:
             second_scores = []
-            for next_tetromino_rotation in next_rotations:  
+            for next_tetromino_rotation in next_rotations:
                 for column in range(Field.WIDTH):
                     next_field_copy = i[0].copy()
                     try:
@@ -152,7 +150,7 @@ class Optimizer:
         all_boards_first.sort(
             key=lambda x: x[-1]
         )  # sort by minimum second piece placed board score
-        
+
         # for i in all_boards_first:
         #     print('rotation', i[1], 'column', i[2], 'score1', i[3], 'score2', i[4])
         # print('')
