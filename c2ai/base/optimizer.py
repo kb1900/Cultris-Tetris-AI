@@ -32,17 +32,12 @@ class Optimizer:
                         score = float("inf")
                     else:
                         score = sum(
-                            x * y for x, y in zip(heuristics, settings.upstack_model)
+                            x * y for x, y in zip(heuristics, n)
                         )
                 elif settings.mode == "downstack":
                     score = sum(
-                        x * y for x, y in zip(heuristics, settings.downstack_model)
+                        x * y for x, y in zip(heuristics, n)
                     )
-                    if clears > 0 and heuristics[0] < 4:
-                        modifier = (
-                            clears * n[0] + combo_time * n[1] + combo_counter * n[2]
-                        )
-                        score = score / modifier
             else:
                 if settings.mode == "upstack":
                     if clears > 0:
@@ -51,19 +46,10 @@ class Optimizer:
                         score = sum(
                             x * y for x, y in zip(heuristics, settings.upstack_model)
                         )
-
                 elif settings.mode == "downstack":
                     score = sum(
                         x * y for x, y in zip(heuristics, settings.downstack_model)
                     )
-                    if clears > 0 and heuristics[0] < 4:
-                        modifier = (
-                            clears * settings.combo_modifier[0]
-                            + combo_time * settings.combo_modifier[1]
-                            + combo_counter * settings.combo_modifier[2]
-                        )
-                        score = score / modifier
-
                 elif settings.mode == "test1":
                     score = sum(x * y for x, y in zip(heuristics, settings.test_model))
 
@@ -71,7 +57,6 @@ class Optimizer:
                     score = sum(
                         x * y for x, y in zip(heuristics, settings.downstack_model)
                     )
-
         else:
             score = sum(x * y for x, y in zip(heuristics, settings.test_model))
 

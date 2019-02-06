@@ -28,8 +28,6 @@ upstack_model = [
     6.190027155117337,
 ]
 
-combo_modifier = [0, 0, 0]
-
 modes = True
 train = True
 

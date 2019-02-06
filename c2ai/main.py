@@ -162,7 +162,7 @@ def timer(combo_time=0, clears=0, combo_counter=0):
                 if combo_counter < 5:
                     combo_time = combo_time - (combo_counter - 1) * 0.015
                 else:
-                    combo_time = combo_time - (combo_counter - 1) * 0.025
+                    combo_time = combo_time - (combo_counter - 1) * 0.03
         else:
             if combo_counter == 1:
                 combo_time = combo_time + 2.4 + clears * 1.2
@@ -177,11 +177,11 @@ def timer(combo_time=0, clears=0, combo_counter=0):
             elif combo_counter == 6:
                 combo_time = combo_time + 0 + clears * 0.0375
             elif combo_counter == 7:
-                combo_time = combo_time + 0 + clears * 0.01875
+                combo_time = combo_time + 0 + clears * 0.01875 - 0.2
             elif combo_counter == 8:
-                combo_time = combo_time + 0 + clears * 0.009375 - 0.1
+                combo_time = combo_time + 0 + clears * 0.009375 - 0.3
             elif combo_counter == 9:
-                combo_time = combo_time + 0 + clears * 0.0046875 - 0.1
+                combo_time = combo_time + 0 + clears * 0.0046875 - 0.4
             # elif combo_counter > 9:
             #     # combo_time = combo_time + (-0.775 * combo_counter + 2.925) + clears * 1.2/(2^(combo_counter-1))
             #     # a + b*x + c*x^2 + d*x^3
@@ -504,7 +504,11 @@ while True:
                     # print('tetromino_name', tetromino_name)
                     try:
                         best_drop = Optimizer.best_move(
-                            field, current_tetromino, next_tetromino
+                            field=field,
+                            tetromino=current_tetromino,
+                            next_tetromino=next_tetromino,
+                            combo_time=combo_time,
+                            combo_counter=combo_counter,
                         )
                     except IndexError:
                         print("Game Over, ran out of moves")

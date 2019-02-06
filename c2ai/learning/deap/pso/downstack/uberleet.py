@@ -39,7 +39,12 @@ def timer(combo_time=0, clears=0, combo_counter=0):
 
     if combo_time >= 0:
         if clears == 0:  # punish for not clearing
-            combo_time = combo_time - 0.4
+            combo_time = combo_time - 0.42
+            if combo_counter > 1:
+                if combo_counter < 5:
+                    combo_time = combo_time - (combo_counter - 1) * 0.015
+                else:
+                    combo_time = combo_time - (combo_counter - 1) * 0.03
         else:
             if combo_counter == 1:
                 combo_time = combo_time + 2.4 + clears * 1.2
@@ -48,26 +53,32 @@ def timer(combo_time=0, clears=0, combo_counter=0):
             elif combo_counter == 3:
                 combo_time = combo_time + 0.4 + clears * 0.3
             elif combo_counter == 4:
-                combo_time = combo_time + 0.05 + clears * 0.2
+                combo_time = combo_time + 0.05 + clears * 0.15
             elif combo_counter == 5:
-                combo_time = combo_time + 0.0167 + clears * 0.1
+                combo_time = combo_time + 0 + clears * 0.075
             elif combo_counter == 6:
-                combo_time = combo_time + 0.005 + clears * 0.05
-            elif combo_counter > 9:
-                # combo_time = combo_time + (-0.775 * combo_counter + 2.925) + clears * 1.2/(2^(combo_counter-1))
-                # a + b*x + c*x^2 + d*x^3
-                combo_time = (
-                    combo_time
-                    + (
-                        4.55
-                        - 2.6583 * (combo_counter)
-                        + 0.55 * (combo_counter ^ 2)
-                        - 0.042 * (combo_counter ^ 3)
-                    )
-                    + clears * 1.2 / (2 ^ (combo_counter - 1))
-                )
-                # y0 + a/x
-                # combo_time = combo_time - 0.61 + 3.0677/combo_counter + clears * 1.2/(2^(combo_counter-1))
+                combo_time = combo_time + 0 + clears * 0.0375
+            elif combo_counter == 7:
+                combo_time = combo_time + 0 + clears * 0.01875 - 0.2
+            elif combo_counter == 8:
+                combo_time = combo_time + 0 + clears * 0.009375 - 0.3
+            elif combo_counter == 9:
+                combo_time = combo_time + 0 + clears * 0.0046875 - 0.4
+            # elif combo_counter > 9:
+            #     # combo_time = combo_time + (-0.775 * combo_counter + 2.925) + clears * 1.2/(2^(combo_counter-1))
+            #     # a + b*x + c*x^2 + d*x^3
+            #     combo_time = (
+            #         combo_time
+            #         + (
+            #             4.55
+            #             - 2.6583 * (combo_counter)
+            #             + 0.55 * (combo_counter ^ 2)
+            #             - 0.042 * (combo_counter ^ 3)
+            #         )
+            #         + clears * 1.2 / (2 ^ (combo_counter - 1))
+            #     )
+            # y0 + a/x
+            # combo_time = combo_time - 0.61 + 3.0677/combo_counter + clears * 1.2/(2^(combo_counter-1))
 
     return [combo_time, combo_counter]
 
@@ -124,7 +135,12 @@ class Tetris:
                 ## GET BEST MOVE ##
                 t0 = time.time()
                 best_drop = Optimizer.best_move(
-                    field, current_tetromino, next_tetromino, n
+                    field=field,
+                    tetromino=current_tetromino,
+                    next_tetromino=next_tetromino,
+                    n=n,
+                    combo_time=combo_time,
+                    combo_counter=combo_counter,
                 )
                 t1 = time.time()
 
