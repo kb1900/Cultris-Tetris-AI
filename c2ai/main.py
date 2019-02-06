@@ -23,7 +23,6 @@ move_execution_times = []
 garbage_update_times = []
 game_over_check_times = []
 game_over = False
-min_time_per_piece = 1 / (settings.max_bpm / 60)
 break_program = False
 
 # with open ('current_generation_dump', 'rb') as dump_file:
@@ -182,6 +181,12 @@ def timer(combo_time=0, clears=0, combo_counter=0):
                 combo_time = combo_time + 0 + clears * 0.009375 - 0.3
             elif combo_counter == 9:
                 combo_time = combo_time + 0 + clears * 0.0046875 - 0.4
+            elif combo_counter == 10:
+                combo_time = combo_time + 0 + clears * 0 - 0.6
+            elif combo_counter == 11:
+                combo_time = combo_time + 0 + clears * 0 - 0.8
+            elif combo_counter == 11:
+                combo_time = combo_time + 0 + clears * 0 - 1
             # elif combo_counter > 9:
             #     # combo_time = combo_time + (-0.775 * combo_counter + 2.925) + clears * 1.2/(2^(combo_counter-1))
             #     # a + b*x + c*x^2 + d*x^3
@@ -472,7 +477,7 @@ while True:
 
                     if settings.mode == "upstack":
                         if (
-                            field.height() > 14
+                            field.height() > 12
                             or field.count_gaps() > 2
                             or field.max_bump() > 6
                         ):
@@ -483,10 +488,19 @@ while True:
                             )
                             settings.mode = "downstack"
                     if settings.mode == "downstack":
+                        if combo_counter > 6:
+                            settings.combo = True
+                            settings.max_bpm = 400
+                            print(
+                                "COMBO ACTIVE",
+                            )
+                        else:
+                            settings.combo = False
+                            settings.max_bpm = 240
                         if (
                             field.height() < 4
                             and field.count_gaps() < 3
-                            and combo_counter < 5
+                            and combo_counter < 3
                         ):
                             print(
                                 "MODE SWITCH TO UPSTACK",
@@ -594,6 +608,7 @@ while True:
 
                     ## Throttle speed if move would be faster than max speed
                     move_time = time.time() - start_time
+                    min_time_per_piece = 1 / (settings.max_bpm / 60)
                     if move_time < min_time_per_piece:
                         time.sleep(min_time_per_piece - move_time)
 

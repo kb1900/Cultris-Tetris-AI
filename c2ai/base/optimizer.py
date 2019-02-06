@@ -60,6 +60,10 @@ class Optimizer:
         else:
             score = sum(x * y for x, y in zip(heuristics, settings.test_model))
 
+        if settings.combo == True:
+            if combo_time < 1:
+                combo_time += 1
+            score = score / (combo_time)
         return float(score)
 
     @staticmethod
@@ -90,10 +94,10 @@ class Optimizer:
             for column in range(Field.WIDTH):
                 field_copy = field.copy()
                 try:
-                    clears = field_copy.drop(tetromino_rotation, column)[1]
+                    clears1 = field_copy.drop(tetromino_rotation, column)[1]
                     score = Optimizer.get_score(
                         field=field_copy,
-                        clears=clears,
+                        clears=clears1,
                         n=n,
                         combo_time=combo_time,
                         combo_counter=combo_counter,
@@ -145,12 +149,12 @@ class Optimizer:
                 for column in range(Field.WIDTH):
                     next_field_copy = i[0].copy()
                     try:
-                        clears = next_field_copy.drop(next_tetromino_rotation, column)[
+                        clears2 = next_field_copy.drop(next_tetromino_rotation, column)[
                             1
                         ]
                         score = Optimizer.get_score(
                             field=next_field_copy,
-                            clears=clears,
+                            clears=clears2,
                             n=n,
                             combo_time=combo_time,
                             combo_counter=combo_counter,
@@ -164,13 +168,18 @@ class Optimizer:
 
             min_score_second = min(second_scores)
             i.append(min_score_second)
+            if settings.combo == True and clears1 != 0:
+                final_score = min_score_second + i[3]
+            else:
+                final_score = min_score_second
+            i.append(final_score)
 
         all_boards_first.sort(
             key=lambda x: x[-1]
         )  # sort by minimum second piece placed board score
 
         # for i in all_boards_first:
-        #     print('rotation', i[1], 'column', i[2], 'score1', i[3], 'score2', i[4])
+        #     print('rotation', i[1], 'column', i[2], 'score1', round(i[3], 2), 'score2', round(i[4], 2), 'final_score', round(i[5], 2))
         # print('')
         return all_boards_first[0]
 
