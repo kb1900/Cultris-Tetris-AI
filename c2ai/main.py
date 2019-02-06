@@ -491,9 +491,7 @@ while True:
                         if combo_counter > 6:
                             settings.combo = True
                             settings.max_bpm = 400
-                            print(
-                                "COMBO ACTIVE",
-                            )
+                            print("COMBO ACTIVE")
                         else:
                             settings.combo = False
                             settings.max_bpm = 240
@@ -562,7 +560,6 @@ while True:
 
                     t0 = time.time()
                     if count % 1 == 0:
-                        # updated_field = matrix_updater.update_field(field)
                         newfield = matrix_updater.update_garbage(field)
                         field = newfield
                     garbage_update_times.append(time.time() - t0)
@@ -577,7 +574,8 @@ while True:
                     combo_counter = ct[1]
                     # print(field)
                     # print("combos", combos)
-                    # print("next_tetromino", next_tetromino_name)
+                    print("piece_count", count)
+                    print("next_tetromino", next_tetromino_name)
                     print("combo_counter", combo_counter)
 
                     current_tetromino = next_tetromino

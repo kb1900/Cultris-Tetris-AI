@@ -2,6 +2,17 @@ max_bpm = 240
 move_depth = 8
 mode = "downstack"
 
+modes = True
+train = False
+combo = False
+
+## debug will save a screenshot of the field with overlayed red dots of the grid
+## and print the newfield in console. this is to tackle issues with garbage_updating mistakes
+# when the grid overlays a "edge" causing failed garbage detection
+# debug code @ in matrix.py ln 171
+debug = False
+i = 1
+
 downstack_model = [
     17.266573527809562,
     2.777217126349192,
@@ -28,9 +39,6 @@ upstack_model = [
     6.190027155117337,
 ]
 
-modes = True
-train = False
-combo = False 
 
 test_model = [
     17.32625049964644,

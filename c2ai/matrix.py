@@ -2,6 +2,7 @@ import time
 import mss
 from c2ai.base.field import Field
 from c2ai.base.tetromino import Tetromino
+from c2ai.base import settings
 from PIL import Image, ImageDraw
 from pylab import *
 
@@ -127,7 +128,7 @@ class matrix_updater:
             column_cords.append((cell_widthx / 2) + cell_widthx * i)
 
         for j in range(18):
-            row_cords.append((cell_widthy / 2) + cell_widthy * j + 4)
+            row_cords.append((cell_widthy / 2) + cell_widthy * j)
             newfield = Field()
 
         with mss.mss() as sct:
@@ -157,6 +158,7 @@ class matrix_updater:
                     == True
                 ):  # check if there is a gray block
                     garbage_row[i] = "0"  # put 0 where there is a gray block
+
             if garbage_row.count(" ") == 1:
                 garbage.append(garbage_row)
 
@@ -164,22 +166,18 @@ class matrix_updater:
 
         if len(garbage) > 0:
             newfield.update_garbage(garbage)
-            # print(newfield)
 
-        if [
-            "0",
-            "0",
-            "0",
-            "0",
-            "0",
-            "0",
-            "0",
-            "0",
-            "0",
-            "0",
-        ] in newfield.field_array().tolist():
-            print("full row bad error")
-            return field
+        if settings.debug == True:
+            for j in range(len(row_cords) - 1, 0, -1):
+                for i in range(len(column_cords)):
+                    pixels[column_cords[i], row_cords[j]] = (255, 99, 71)
+
+            img.save("data_%d.png" % (settings.i,))
+            settings.i += 1
+            # input()
+
+        print(newfield)
+
         return newfield
 
     def update_field(field):
@@ -222,7 +220,6 @@ class matrix_updater:
                     # 	print(i)
 
                     # print(newfield)
-
         newfield_array = newfield.field_array()
 
         if [
