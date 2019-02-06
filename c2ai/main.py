@@ -146,6 +146,61 @@ def find_lobby_chat():
         print("we are on the lobby chat page!")
 
 
+def timer(combo_time=0, clears=0, combo_counter=0):
+    combo_time = combo_time  # current timer
+    clears = clears  # lines cleared (returns[1])
+
+    # additional time per Line clear is Base(counter) + NumberOfClearedLines * Bonus(counter)
+
+    if clears > 0 and combo_time >= 0:
+        combo_counter += 1
+
+    if combo_time >= 0:
+        if clears == 0:  # punish for not clearing
+            combo_time = combo_time - 0.42
+            if combo_counter > 1:
+                if combo_counter < 5:
+                    combo_time = combo_time - (combo_counter - 1) * 0.015
+                else:
+                    combo_time = combo_time - (combo_counter - 1) * 0.025
+        else:
+            if combo_counter == 1:
+                combo_time = combo_time + 2.4 + clears * 1.2
+            elif combo_counter == 2:
+                combo_time = combo_time + 1.1 + clears * 0.6
+            elif combo_counter == 3:
+                combo_time = combo_time + 0.4 + clears * 0.3
+            elif combo_counter == 4:
+                combo_time = combo_time + 0.05 + clears * 0.15
+            elif combo_counter == 5:
+                combo_time = combo_time + 0 + clears * 0.075
+            elif combo_counter == 6:
+                combo_time = combo_time + 0 + clears * 0.0375
+            elif combo_counter == 7:
+                combo_time = combo_time + 0 + clears * 0.01875
+            elif combo_counter == 8:
+                combo_time = combo_time + 0 + clears * 0.009375 - 0.1
+            elif combo_counter == 9:
+                combo_time = combo_time + 0 + clears * 0.0046875 - 0.1
+            # elif combo_counter > 9:
+            #     # combo_time = combo_time + (-0.775 * combo_counter + 2.925) + clears * 1.2/(2^(combo_counter-1))
+            #     # a + b*x + c*x^2 + d*x^3
+            #     combo_time = (
+            #         combo_time
+            #         + (
+            #             4.55
+            #             - 2.6583 * (combo_counter)
+            #             + 0.55 * (combo_counter ^ 2)
+            #             - 0.042 * (combo_counter ^ 3)
+            #         )
+            #         + clears * 1.2 / (2 ^ (combo_counter - 1))
+            #     )
+            # y0 + a/x
+            # combo_time = combo_time - 0.61 + 3.0677/combo_counter + clears * 1.2/(2^(combo_counter-1))
+
+    return [combo_time, combo_counter]
+
+
 ############# LAUNCHING GAME ################
 
 # if c2_open() == False:
@@ -350,6 +405,10 @@ while True:
 
                 while count == 0 and break_program == False:
                     field = Field()
+                    combo_counter = 0
+                    combo_time = 0
+                    combos = []
+
                     if sys.argv[1] != "-cheese" and sys.argv[1] != "-cheesemp":
                         try:
                             current_rgb = Classifier.get_first_piece_rgb(COLUMN, ROW)
@@ -413,22 +472,26 @@ while True:
 
                     if settings.mode == "upstack":
                         if (
-                            field.height() > 12
+                            field.height() > 14
                             or field.count_gaps() > 2
                             or field.max_bump() > 6
                         ):
                             print(
                                 "MODE SWITCH TO DOWNSTACK",
-                                field.height(),
-                                field.count_gaps(),
+                                # field.height(),
+                                # field.count_gaps(),
                             )
                             settings.mode = "downstack"
                     if settings.mode == "downstack":
-                        if field.height() < 2 and field.count_gaps() < 3:
+                        if (
+                            field.height() < 4
+                            and field.count_gaps() < 3
+                            and combo_counter < 5
+                        ):
                             print(
                                 "MODE SWITCH TO UPSTACK",
-                                field.height(),
-                                field.count_gaps(),
+                                # field.height(),
+                                # field.count_gaps(),
                             )
                             settings.mode = "upstack"
 
@@ -454,7 +517,7 @@ while True:
 
                     current_tetromino.rotate(rotation)
                     try:
-                        field.drop(current_tetromino, column)
+                        returns = field.drop(current_tetromino, column)
                     except AssertionError:
                         print("Game Over, ran out of moves")
                         game_over = True
@@ -486,6 +549,19 @@ while True:
                         field = newfield
                     garbage_update_times.append(time.time() - t0)
 
+                    ct = timer(
+                        combo_time=combo_time,
+                        clears=returns[1],
+                        combo_counter=combo_counter,
+                    )
+
+                    combo_time = ct[0]
+                    combo_counter = ct[1]
+                    # print(field)
+                    # print("combos", combos)
+                    # print("next_tetromino", next_tetromino_name)
+                    print("combo_counter", combo_counter)
+
                     current_tetromino = next_tetromino
                     tetromino_name = next_tetromino_name
                     if count > 0:
@@ -501,6 +577,16 @@ while True:
                             game_over_check_times.append(time.time() - t0)
                         else:
                             game_over = matrix_updater.check_end_round()
+
+                    combo_time = combo_time - (time.time() - start_time)
+
+                    if combo_time < 0:
+                        combo_time = 0
+                        if combo_counter != 0:
+                            combos.append(combo_counter)
+                        combo_counter = 0
+                    print("combo_time", combo_time)
+                    print("")
 
                     ## Throttle speed if move would be faster than max speed
                     move_time = time.time() - start_time

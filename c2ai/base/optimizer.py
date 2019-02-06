@@ -6,56 +6,79 @@ from operator import itemgetter
 
 class Optimizer:
     @staticmethod
-    def get_score(field, clears, row=0, n=0):
+    def get_score(field, clears, row=0, n=0, combo_time=0, combo_counter=0):
         f = field
 
         """
         heuristics[0] = count_gaps()
         heuristics[1] = bumpiness
-        heuristics[2] = parity
-        heuristics[3] = blocks_over_gap1
-        heuristics[4] = blocks_over_gap2
-        heuristics[5] = tall_holes
-        heuristics[6] = field_height
-        heuristics[7] = stack_gaps
-        heuristics[8] = stack_height
-        heuristics[9] = sum_bumps_above_two
-        heuristics[10] = row_trans_above_gap1
+        heuristics[2] = blocks_over_gap1
+        heuristics[3] = blocks_over_gap2
+        heuristics[4] = tall_holes
+        heuristics[5] = field_height
+        heuristics[6] = stack_gaps
+        heuristics[7] = stack_height
+        heuristics[8] = sum_bumps_above_two
+        heuristics[9] = row_trans_above_gap1
         """
         heuristics = f.heuristics()
+
         # features = [heuristics[0], heuristics[1], heuristics[3],heuristics[4],heuristics[5],heuristics[6],heuristics[7], heuristics[8],heuristics[9],heuristics[10]]
 
         if settings.modes == True:
-            if settings.mode == "train":
-                score = sum(x * y for x, y in zip(heuristics, n))
-
-            elif settings.mode == "upstack":
-                if clears > 0:
-                    score = float("inf")
-                else:
+            if settings.train == True:
+                if settings.mode == "upstack":
+                    if clears > 0:
+                        score = float("inf")
+                    else:
+                        score = sum(
+                            x * y for x, y in zip(heuristics, settings.upstack_model)
+                        )
+                elif settings.mode == "downstack":
                     score = sum(
-                        x * y for x, y in zip(heuristics, settings.upstack_model)
+                        x * y for x, y in zip(heuristics, settings.downstack_model)
+                    )
+                    if clears > 0 and heuristics[0] < 4:
+                        modifier = (
+                            clears * n[0] + combo_time * n[1] + combo_counter * n[2]
+                        )
+                        score = score / modifier
+            else:
+                if settings.mode == "upstack":
+                    if clears > 0:
+                        score = float("inf")
+                    else:
+                        score = sum(
+                            x * y for x, y in zip(heuristics, settings.upstack_model)
+                        )
+
+                elif settings.mode == "downstack":
+                    score = sum(
+                        x * y for x, y in zip(heuristics, settings.downstack_model)
+                    )
+                    if clears > 0 and heuristics[0] < 4:
+                        modifier = (
+                            clears * settings.combo_modifier[0]
+                            + combo_time * settings.combo_modifier[1]
+                            + combo_counter * settings.combo_modifier[2]
+                        )
+                        score = score / modifier
+
+                elif settings.mode == "test1":
+                    score = sum(x * y for x, y in zip(heuristics, settings.test_model))
+
+                elif settings.mode == "test2":
+                    score = sum(
+                        x * y for x, y in zip(heuristics, settings.downstack_model)
                     )
 
-            elif settings.mode == "downstack":
-                score = sum(x * y for x, y in zip(heuristics, settings.downstack_model))
-
-            elif settings.mode == "test1":
-                score = sum(x * y for x, y in zip(heuristics, settings.test_model))
-
-            elif settings.mode == "test2":
-                score = sum(x * y for x, y in zip(heuristics, settings.downstack_model))
-
-            else:
-                print("Unhandeled settings.mode")
-                print(settings.mode)
         else:
             score = sum(x * y for x, y in zip(heuristics, settings.test_model))
 
         return float(score)
 
     @staticmethod
-    def best_move(field, tetromino, next_tetromino, n=0):
+    def best_move(field, tetromino, next_tetromino, n=0, combo_time=0, combo_counter=0):
         # Here we should limit the number of rotations checked for symetric pieces like O, S, Z, I
         # O (only tetromino)
         # I (only tetromino + rotate_right)
@@ -83,7 +106,13 @@ class Optimizer:
                 field_copy = field.copy()
                 try:
                     clears = field_copy.drop(tetromino_rotation, column)[1]
-                    score = Optimizer.get_score(field=field_copy, clears=clears, n=n)
+                    score = Optimizer.get_score(
+                        field=field_copy,
+                        clears=clears,
+                        n=n,
+                        combo_time=combo_time,
+                        combo_counter=combo_counter,
+                    )
                     # print(tetromino_rotation, " ",column, "score:", score)
                     # print(field_copy)
                     all_boards_first.append(
@@ -135,7 +164,11 @@ class Optimizer:
                             1
                         ]
                         score = Optimizer.get_score(
-                            field=next_field_copy, clears=clears, n=n
+                            field=next_field_copy,
+                            clears=clears,
+                            n=n,
+                            combo_time=combo_time,
+                            combo_counter=combo_counter,
                         )
                         second_scores.append(score)
 
