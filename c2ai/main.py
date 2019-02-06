@@ -488,7 +488,7 @@ while True:
                             )
                             settings.mode = "downstack"
                     if settings.mode == "downstack":
-                        if combo_counter > 6:
+                        if combo_counter > 6 or combo_counter + combo_time > 8.5:
                             settings.combo = True
                             settings.max_bpm = 400
                             print("COMBO ACTIVE")

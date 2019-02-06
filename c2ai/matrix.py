@@ -176,7 +176,7 @@ class matrix_updater:
             settings.i += 1
             # input()
 
-        print(newfield)
+            print(newfield)
 
         return newfield
 
