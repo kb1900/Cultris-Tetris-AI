@@ -52,7 +52,7 @@ def evalOneMax(individual):
 
 
 toolbox = base.Toolbox()
-toolbox.register("particle", generate, size=10, pmin=-3, pmax=15, smin=-3, smax=3)
+toolbox.register("particle", generate, size=10, pmin=-3, pmax=25, smin=-0.5, smax=0.5)
 toolbox.register("population", tools.initRepeat, list, toolbox.particle)
 toolbox.register("update", updateParticle, phi1=2.0, phi2=2.0)
 toolbox.register("evaluate", evalOneMax)
@@ -109,8 +109,8 @@ def main():
     return pop, logbook, best
 
 
-population_size = 100
-game_attempts = 3
+population_size = 500
+game_attempts = 5
 
 if __name__ == "__main__":
     main()

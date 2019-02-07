@@ -1,6 +1,7 @@
 from c2ai.base.tetromino import Tetromino
 from c2ai.base.field import Field
 from c2ai.base.optimizer import Optimizer
+from c2ai.base import settings
 from c2ai.learning.deap.pso.downstack.tetris import Tetris
 from c2ai import build_absolute_path
 
@@ -64,6 +65,12 @@ def timer(combo_time=0, clears=0, combo_counter=0):
                 combo_time = combo_time + 0 + clears * 0.009375 - 0.3
             elif combo_counter == 9:
                 combo_time = combo_time + 0 + clears * 0.0046875 - 0.4
+            elif combo_counter == 10:
+                combo_time = combo_time + 0 + clears * 0 - 0.6
+            elif combo_counter == 11:
+                combo_time = combo_time + 0 + clears * 0 - 0.8
+            elif combo_counter == 11:
+                combo_time = combo_time + 0 + clears * 0 - 1
             # elif combo_counter > 9:
             #     # combo_time = combo_time + (-0.775 * combo_counter + 2.925) + clears * 1.2/(2^(combo_counter-1))
             #     # a + b*x + c*x^2 + d*x^3
@@ -131,6 +138,36 @@ class Tetris:
         while exit == 1:
             try:
                 next_tetromino = Tetromino.create(sequence[piece_count + 1])
+
+                if settings.mode == "upstack":
+                    if (
+                        field.height() > 12
+                        or field.count_gaps() > 2
+                        or field.max_bump() > 6
+                    ):
+                        # print(
+                        #     "MODE SWITCH TO DOWNSTACK",
+                        #     # field.height(),
+                        #     # field.count_gaps(),
+                        # )
+                        settings.mode = "downstack"
+                if settings.mode == "downstack":
+                    if combo_counter > 6 or combo_counter + combo_time > 8.5:
+                        settings.combo = True
+                        # print("COMBO ACTIVE")
+                    else:
+                        settings.combo = False
+                    if (
+                        field.height() < 4
+                        and field.count_gaps() < 3
+                        and combo_counter < 3
+                    ):
+                        # print(
+                        #     "MODE SWITCH TO UPSTACK",
+                        #     # field.height(),
+                        #     # field.count_gaps(),
+                        # )
+                        settings.mode = "upstack"
 
                 ## GET BEST MOVE ##
                 t0 = time.time()
@@ -227,7 +264,7 @@ class Tetris:
                 # print("combo_time", combo_time)
                 # print("TOTAL LINES SENT:", compute_score(combos))
 
-                if piece_count % 18 == 0:
+                if piece_count % 21 == 0:
                     for i in range(4):
                         field.add_garbage()
 

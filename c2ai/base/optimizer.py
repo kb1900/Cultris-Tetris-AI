@@ -31,7 +31,7 @@ class Optimizer:
                     if clears > 0:
                         score = float("inf")
                     else:
-                        score = sum(x * y for x, y in zip(heuristics, n))
+                        score = sum(x * y for x, y in zip(heuristics, settings.upstack_model))
                 elif settings.mode == "downstack":
                     score = sum(x * y for x, y in zip(heuristics, n))
             else:
