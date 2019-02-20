@@ -3,7 +3,7 @@ move_depth = 8
 mode = "downstack"
 
 modes = True
-train = True
+train = False
 combo = False
 
 ## debug will save a screenshot of the field with overlayed red dots of the grid

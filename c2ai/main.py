@@ -8,7 +8,7 @@ from pynput import keyboard
 import pickle
 import numpy as np
 import keyboard as kb
-
+import tkinter
 
 from c2ai.base.tetromino import Tetromino
 from c2ai.base.field import Field
@@ -25,6 +25,29 @@ game_over_check_times = []
 game_over = False
 break_program = False
 
+root = tkinter.Tk()
+combo_label = tkinter.Label(root, text='', font=('Times','30'), fg='red')
+timer_label = tkinter.Label(root, text='', font=('Times','30'), fg='red')
+piece_count_label = tkinter.Label(root, text='', font=('Times','30'), fg='red')
+next_tetromino_label = tkinter.Label(root, text='', font=('Times','30'), fg='red')
+combo_label.master.overrideredirect(True)
+combo_label.master.geometry("+750+650")
+combo_label.master.lift()
+combo_label.master.wm_attributes("-topmost", True)
+combo_label.master.wm_attributes("-transparent", 1)
+combo_label.pack()
+timer_label.pack()
+piece_count_label.pack()
+next_tetromino_label.pack()
+
+
+
+def update_labels():
+    combo_label[ "text" ]="Combo: " + str(combo_counter)
+    timer_label["text"]="Time: " + str("{0:.2f}".format(combo_time))
+    piece_count_label["text"]="Piece #: " + str(count)
+    next_tetromino_label["text"]="Next: : " + str(next_tetromino_name)
+    root.update()
 # with open ('current_generation_dump', 'rb') as dump_file:
 #           dump = pickle.load(dump_file)
 #           current_generation = dump[0]
@@ -510,6 +533,7 @@ while True:
                     next_rgb = Classifier.get_next_rgb(next_piece)
                     next_tetromino = Classifier.TETROMINO[next_rgb]()
                     next_tetromino_name = Classifier.TETROMINO_NAME[next_rgb]
+                    update_labels()
 
                     t0 = time.time()
                     start_time = time.time()
@@ -580,6 +604,7 @@ while True:
 
                     current_tetromino = next_tetromino
                     tetromino_name = next_tetromino_name
+
                     if count > 0:
                         count += 1
 
@@ -603,6 +628,7 @@ while True:
                         combo_counter = 0
                     print("combo_time", combo_time)
                     print("")
+
 
                     ## Throttle speed if move would be faster than max speed
                     move_time = time.time() - start_time
