@@ -46,7 +46,7 @@ def updateParticle(part, best, phi1, phi2):
 def evalOneMax(individual):
     scores = []
     for i in range(game_attempts):
-        scores.append(Tetris.run_game(n=individual, render=False)[0])
+        scores.append(Tetris.run_game(n=individual, render=False))
 
     return (np.average(scores),)
 
