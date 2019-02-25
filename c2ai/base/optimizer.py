@@ -31,7 +31,9 @@ class Optimizer:
                     if clears > 0:
                         score = float("inf")
                     else:
-                        score = sum(x * y for x, y in zip(heuristics, settings.upstack_model))
+                        score = sum(
+                            x * y for x, y in zip(heuristics, settings.upstack_model)
+                        )
                 elif settings.mode == "downstack":
                     score = sum(x * y for x, y in zip(heuristics, n))
             else:
@@ -99,15 +101,19 @@ class Optimizer:
                     )
                     # print(tetromino_rotation, " ",column, "score:", score)
                     # print(field_copy)
-                    all_boards_first.append([field_copy, rotation_counter, column, score])
+                    all_boards_first.append(
+                        [field_copy, rotation_counter, column, score]
+                    )
                 except AssertionError:
-                    #print(tetromino_rotation, column, "AssertionError")
+                    # print(tetromino_rotation, column, "AssertionError")
                     continue
 
         # benchmarking suggests a linear increase of 0.02s per move for every increase in top current piece moves explored
-        all_boards_first.sort(key=itemgetter(3))  # sort by first piece placed board scores
+        all_boards_first.sort(
+            key=itemgetter(3)
+        )  # sort by first piece placed board scores
         # 1 = 0.050; 2 = 0.073; 3 = 0.095; 4 = 0.114; 5 = 0.143; 6 = 0.163
-        all_boards_first = all_boards_first[:settings.move_depth]
+        all_boards_first = all_boards_first[: settings.move_depth]
 
         for i in all_boards_first:
             second_scores = []

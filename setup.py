@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='c2ai',
-    version='0.1.0',
+    version='0.1.1',
     author='kb1900',
     packages=['c2ai'],
     python_requires='>=3.6.0',
@@ -23,6 +23,7 @@ setup(
         'autopy',
         'pynput',
         'keyboard',
-        'opencv-python'
+        'opencv-python',
+        'tkinter',
     ]
 )

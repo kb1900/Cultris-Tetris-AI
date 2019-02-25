@@ -47,7 +47,9 @@ class Field:
         assert column + tetromino.width() <= Field.WIDTH
         assert row - tetromino.height() + 1 >= 0
         assert row < Field.HEIGHT
-        for ti, si in reversed(list(enumerate(range(row - tetromino.height() + 1, row + 1)))):
+        for ti, si in reversed(
+            list(enumerate(range(row - tetromino.height() + 1, row + 1)))
+        ):
             for tj, sj in enumerate(range(column, column + tetromino.width())):
                 if tetromino[ti][tj] != " " and self.state[si][sj] != " ":
                     return False
@@ -64,7 +66,9 @@ class Field:
         assert column + tetromino.width() <= Field.WIDTH
         assert row - tetromino.height() + 1 >= 0
         assert row < Field.HEIGHT
-        for ti, si in reversed(list(enumerate(range(row - tetromino.height() + 1, row + 1)))):
+        for ti, si in reversed(
+            list(enumerate(range(row - tetromino.height() + 1, row + 1)))
+        ):
             for tj, sj in enumerate(range(column, column + tetromino.width())):
                 if tetromino[ti][tj] != " ":
                     self.state[si][sj] = tetromino[ti][tj]
@@ -76,7 +80,9 @@ class Field:
         row and column. This function does not perform checks and will overwrite
         filled spaces in the field.
         """
-        for ti, si in reversed(list(enumerate(range(row - tetromino.height() + 1, row + 1)))):
+        for ti, si in reversed(
+            list(enumerate(range(row - tetromino.height() + 1, row + 1)))
+        ):
             for tj, sj in enumerate(range(column, column + tetromino.width())):
                 self.state[si][sj] = tetromino[ti][tj]
 
