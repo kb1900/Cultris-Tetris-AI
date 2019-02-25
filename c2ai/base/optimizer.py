@@ -25,8 +25,8 @@ class Optimizer:
 
         # features = [heuristics[0], heuristics[1], heuristics[3],heuristics[4],heuristics[5],heuristics[6],heuristics[7], heuristics[8],heuristics[9],heuristics[10]]
 
-        if settings.modes == True:
-            if settings.train == True:
+        if settings.modes:
+            if settings.train:
                 if settings.mode == "upstack":
                     if clears > 0:
                         score = float("inf")
@@ -56,7 +56,7 @@ class Optimizer:
         else:
             score = sum(x * y for x, y in zip(heuristics, settings.test_model))
 
-        if settings.combo == True:
+        if settings.combo:
             if combo_time < 1:
                 combo_time += 1
             score = score / (combo_time)
@@ -64,30 +64,29 @@ class Optimizer:
 
     @staticmethod
     def best_move(field, tetromino, next_tetromino, n=0, combo_time=0, combo_counter=0):
-        # Here we should limit the number of rotations checked for symetric pieces like O, S, Z, I
-        # O (only tetromino)
-        # I (only tetromino + rotate_right)
-        # S (only tetromino + rotate_right)
-        # Z (only tetromino + rotate_right)
-        rotations = [
-            tetromino,
-            tetromino.copy().rotate_right(),
-            tetromino.copy().flip(),
-            tetromino.copy().rotate_left(),
-        ]
-        if tetromino.state == Tetromino.O_Tetromino().state:
-            # print('O DETECTED')
+        # Here we should limit the number of rotations checked for symmetric pieces like O, S, Z, I
+        if tetromino.type == "O":
             rotations = [tetromino]
-        if (
-            tetromino.state == Tetromino.I_Tetromino().state
-            or tetromino.state == Tetromino.S_Tetromino().state
-            or tetromino.state == Tetromino.Z_Tetromino().state
-        ):
-            # print('I/S/Z DETECTED')
-            rotations = [tetromino, tetromino.copy().rotate_right()]
+        elif tetromino.type in ("I", "S", "Z"):
+            rotations = [tetromino.copy() for r in range(2)]
+        else:
+            rotations = [tetromino.copy() for r in range(4)]
+        for i in range(len(rotations)):
+            rotations[i].rotate(i)
+
+        # Again we should limit the number of rotations checked for symmetric pieces like O, S, Z, I
+        if next_tetromino.type == "O":
+            next_rotations = [next_tetromino]
+        elif next_tetromino.type in ("I", "S", "Z"):
+            next_rotations = [next_tetromino.copy() for r in range(2)]
+        else:
+            next_rotations = [next_tetromino.copy() for r in range(4)]
+        for i in range(len(next_rotations)):
+            next_rotations[i].rotate(i)
+
         all_boards_first = []
         for rotation_counter, tetromino_rotation in enumerate(rotations):
-            for column in range(Field.WIDTH):
+            for column in range(Field.WIDTH - tetromino_rotation.width() + 1):
                 field_copy = field.copy()
                 try:
                     clears1 = field_copy.drop(tetromino_rotation, column)[1]
@@ -100,49 +99,20 @@ class Optimizer:
                     )
                     # print(tetromino_rotation, " ",column, "score:", score)
                     # print(field_copy)
-                    all_boards_first.append(
-                        [field_copy, rotation_counter, column, score]
-                    )
+                    all_boards_first.append([field_copy, rotation_counter, column, score])
                 except AssertionError:
-                    # print(tetromino_rotation, column, "AssertionError")
+                    #print(tetromino_rotation, column, "AssertionError")
                     continue
 
-        all_boards_first.sort(
-            key=itemgetter(3)
-        )  # sort by first piece placed board scores
+        # benchmarking suggests a linear increase of 0.02s per move for every increase in top current piece moves explored
+        all_boards_first.sort(key=itemgetter(3))  # sort by first piece placed board scores
+        # 1 = 0.050; 2 = 0.073; 3 = 0.095; 4 = 0.114; 5 = 0.143; 6 = 0.163
+        all_boards_first = all_boards_first[:settings.move_depth]
 
-        # for i in all_boards_first:
-        #   print(i[3])
-
-        if (
-            len(all_boards_first) > 1
-        ):  # benchmarking suggests a linear increase of 0.02s per move for every increase in top current piece moves explored
-            # 1 = 0.050; 2 = 0.073; 3 = 0.095; 4 = 0.114; 5 = 0.143; 6 = 0.163
-            all_boards_first = all_boards_first[: settings.move_depth]
-
-        # Again we should limit the number of rotations checked for symetric pieces like O, S, Z, I
-        # O (only tetromino)
-        # I (only tetromino + rotate_right)
-        # S (only tetromino + rotate_right)
-        # Z (only tetromino + rotate_right)
-        next_rotations = [
-            next_tetromino,
-            next_tetromino.copy().rotate_right(),
-            next_tetromino.copy().flip(),
-            next_tetromino.copy().rotate_left(),
-        ]
-        if next_tetromino.state == Tetromino.O_Tetromino().state:
-            next_rotations = [next_tetromino]
-        if (
-            next_tetromino.state == Tetromino.I_Tetromino().state
-            or next_tetromino.state == Tetromino.S_Tetromino().state
-            or next_tetromino.state == Tetromino.Z_Tetromino().state
-        ):
-            next_rotations = [next_tetromino, next_tetromino.copy().rotate_right()]
         for i in all_boards_first:
             second_scores = []
             for next_tetromino_rotation in next_rotations:
-                for column in range(Field.WIDTH):
+                for column in range(Field.WIDTH - next_tetromino_rotation.width() + 1):
                     next_field_copy = i[0].copy()
                     try:
                         clears2 = next_field_copy.drop(next_tetromino_rotation, column)[
@@ -164,7 +134,7 @@ class Optimizer:
 
             min_score_second = min(second_scores)
             i.append(min_score_second)
-            if settings.combo == True and clears1 != 0:
+            if settings.combo and clears1:
                 final_score = min_score_second + i[3]
             else:
                 final_score = min_score_second
@@ -184,7 +154,6 @@ class Optimizer:
 
         keys = []
         ############# NO ROTATION ################
-
         if rotation == 0 or tetromino_name == "O":
             if tetromino_name == "O":
                 # print("moving O piece to column #", column)
@@ -263,7 +232,7 @@ class Optimizer:
                     for i in range(3 - column):
                         keys.append(keymap["move_left"])
 
-                ############# 180 DEG ROTATION ################
+        ############# 180 DEG ROTATION ################
         elif rotation == 2:
             keys.append(keymap["rotate_180"])
 
@@ -311,7 +280,7 @@ class Optimizer:
                     for i in range(3 - column):
                         keys.append(keymap["move_left"])
 
-                ############# TEST AREA ROTATION ################
+        ############# TEST AREA ROTATION ################
         elif rotation == 1 and tetromino_name == "I":
             keys.append(keymap["rotate_right"])
 
@@ -479,7 +448,7 @@ class Optimizer:
                 elif column < 3:
                     for i in range(3 - column):
                         keys.append(keymap["move_left"])
-                ############# UNHANDELED FINESSE CASES ################
+        ############# UNHANDELED FINESSE CASES ################
         else:
             print("UNFINISHED FINESSE CASE", tetromino_name)
             # First we orient the tetronimo
@@ -504,7 +473,7 @@ class Optimizer:
             for i in range(column):
                 keys.append(keymap["move_right"])
 
-                ############# ADDING HARDDROP TO END OF KEYS ################
+        ############# ADDING HARDDROP TO END OF KEYS ################
         keys.append(keymap["drop"])
 
         return keys
