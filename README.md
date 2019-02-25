@@ -49,10 +49,12 @@ Early videos of the AI's progress can be found below and will be updated infrequ
 
 | Date | Link |
 | ------ | ------ |
+| January 19 | https://youtu.be/hsjIWPmh-a4 |
 | December 14 | https://youtu.be/VbvWcnWdpLQ |
 | October 8 | https://youtu.be/16yfSYFDXKQ |
 | October 2 | https://youtu.be/0DMhihKoAgo |
 | August 11 | https://youtu.be/VLiaSU1tr74 |
 | August 10 | https://youtu.be/Jz3FvLdF1VU |
+
 
 

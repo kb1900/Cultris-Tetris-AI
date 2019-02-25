@@ -39,17 +39,15 @@ class Field:
 
     def _test_tetromino(self, tetromino, row, column):
         """
-		Tests to see if a tetromino can be placed at the specified row and
-		column. It performs the test with the bottom left corner of the
-		tetromino at the specified row and column.
-		"""
+        Tests to see if a tetromino can be placed at the specified row and
+        column. It performs the test with the bottom left corner of the
+        tetromino at the specified row and column.
+        """
         assert column >= 0
         assert column + tetromino.width() <= Field.WIDTH
         assert row - tetromino.height() + 1 >= 0
         assert row < Field.HEIGHT
-        for ti, si in list(enumerate(range(row - tetromino.height() + 1, row + 1)))[
-            ::-1
-        ]:
+        for ti, si in reversed(list(enumerate(range(row - tetromino.height() + 1, row + 1)))):
             for tj, sj in enumerate(range(column, column + tetromino.width())):
                 if tetromino[ti][tj] != " " and self.state[si][sj] != " ":
                     return False
@@ -57,42 +55,38 @@ class Field:
 
     def _place_tetromino(self, tetromino, row, column):
         """
-		Place a tetromino at the specified row and column.
-		The bottom left corner of the tetromino will be placed at the specified
-		row and column. This function does not perform checks and will overwrite
-		filled spaces in the field.
-		"""
+        Place a tetromino at the specified row and column.
+        The bottom left corner of the tetromino will be placed at the specified
+        row and column. This function does not perform checks and will overwrite
+        filled spaces in the field.
+        """
         assert column >= 0
         assert column + tetromino.width() <= Field.WIDTH
         assert row - tetromino.height() + 1 >= 0
         assert row < Field.HEIGHT
-        for ti, si in list(enumerate(range(row - tetromino.height() + 1, row + 1)))[
-            ::-1
-        ]:
+        for ti, si in reversed(list(enumerate(range(row - tetromino.height() + 1, row + 1)))):
             for tj, sj in enumerate(range(column, column + tetromino.width())):
                 if tetromino[ti][tj] != " ":
                     self.state[si][sj] = tetromino[ti][tj]
 
     def _place_null_tetromino(self, tetromino, row, column):
         """
-		Place a tetromino at the specified row and column.
-		The bottom left corner of the tetromino will be placed at the specified
-		row and column. This function does not perform checks and will overwrite
-		filled spaces in the field.
-		"""
-        for ti, si in list(enumerate(range(row - tetromino.height() + 1, row + 1)))[
-            ::-1
-        ]:
+        Place a tetromino at the specified row and column.
+        The bottom left corner of the tetromino will be placed at the specified
+        row and column. This function does not perform checks and will overwrite
+        filled spaces in the field.
+        """
+        for ti, si in reversed(list(enumerate(range(row - tetromino.height() + 1, row + 1)))):
             for tj, sj in enumerate(range(column, column + tetromino.width())):
                 self.state[si][sj] = tetromino[ti][tj]
 
     def _get_tetromino_drop_row(self, tetromino, column):
         """
-		Given a tetromino and a column, return the row that the tetromino
-		would end up in if it were dropped in that column.
-		Assumes the leftmost column of the tetromino will be aligned with the
-		specified column.
-		"""
+        Given a tetromino and a column, return the row that the tetromino
+        would end up in if it were dropped in that column.
+        Assumes the leftmost column of the tetromino will be aligned with the
+        specified column.
+        """
         assert isinstance(tetromino, Tetromino)
         assert column >= 0
         assert column + tetromino.width() <= Field.WIDTH
@@ -106,8 +100,8 @@ class Field:
 
     def _line_clear(self):
         """
-		Checks and removes all filled lines.
-		"""
+        Checks and removes all filled lines.
+        """
         self.state = list(filter(lambda row: row.count(" ") != 0, self.state))
         c = 0
         while len(self.state) < Field.HEIGHT:
@@ -117,17 +111,17 @@ class Field:
 
     def copy(self):
         """
-		Returns a shallow copy of the field.
-		"""
+        Returns a shallow copy of the field.
+        """
         return Field([row[:] for row in self.state])
 
     def drop(self, tetromino, column):
         """
-		Drops a tetromino in the specified column.
-		The leftmost column of the tetromino will be aligned with the specified
-		column.
-		Returns the row it was dropped in for computations.
-		"""
+        Drops a tetromino in the specified column.
+        The leftmost column of the tetromino will be aligned with the specified
+        column.
+        Returns the row it was dropped in for computations.
+        """
         assert isinstance(tetromino, Tetromino)
         assert column >= 0
         assert column + tetromino.width() <= Field.WIDTH
@@ -161,15 +155,15 @@ class Field:
         board_array = np.array(self.state)
 
         # first we want to make sure the height of the board stays consistent...
-        # garbage[::-1] contains rows of garbage that need to be added to the end of the field.
-        # so essentially we want to get the stack field (rows without garbage) then append (vstack) the garbage[::-1]
+        # reversed(garbage) contains rows of garbage that need to be added to the end of the field.
+        # so essentially we want to get the stack field (rows without garbage) then append (vstack) reversed(garbage)
         # then we must delete rows at the top of the board so the height is correct
 
         row_mask = (board_array == "x").any(axis=1)  # we get a mask
         stack_array = board_array[row_mask, :]  # this is the stack field with pieces
         stack_h = len(stack_array)  # this is the stack height
 
-        for garbage_row in garbage[::-1]:
+        for garbage_row in reversed(garbage):
             stack_array = np.vstack([stack_array, garbage_row])
 
             # print("garbage", len(garbage))
@@ -196,8 +190,8 @@ class Field:
         board_array = np.array(self.state)
 
         """
-		true_gaps initialization
-		"""
+        true_gaps initialization
+        """
         gaps = np.argwhere(board_array == " ")
         true_gaps = []
         for i in gaps:
@@ -205,8 +199,8 @@ class Field:
                 true_gaps.append(i)
 
         """
-		stack_gaps
-		"""
+        stack_gaps
+        """
         stack_board_array = board_array[np.all(board_array != "0", axis=1)]
 
         stack_gaps = np.argwhere(stack_board_array == " ")
@@ -216,8 +210,8 @@ class Field:
                 true_stack_gaps.append(i)
 
         """
-		stack_hegiht, bumpiness, max_bump, sum_bumps_above_2
-		"""
+        stack_hegiht, bumpiness, max_bump, sum_bumps_above_2
+        """
         y = []
         x = []
         heights = []
@@ -246,8 +240,8 @@ class Field:
         sum_bumps_above_two = sum([x for x in abs_height_differences if x > 2])
 
         """
-		tall_holes, blocks over gaps 1, 2
-		"""
+        tall_holes, blocks over gaps 1, 2
+        """
         blocks_above_gaps = []
         tall_hole_heights = []
         for i in true_gaps:
@@ -278,8 +272,8 @@ class Field:
             blocks_over_gap1 = 0
 
         """
-		row_trans_above_gap1
-		"""
+        row_trans_above_gap1
+        """
         if len(true_gaps) > 0:
             row_above_gap1 = board_array[true_gaps[0][0] - 1, :]
             new_row = ["x"] + row_above_gap1.tolist() + ["x"]
@@ -311,8 +305,8 @@ class Field:
 
     def tall_holes(self):
         """
-		NEW tall_holes
-		"""
+        NEW tall_holes
+        """
         board_array = np.array(self.state)
         gaps = np.argwhere(board_array == " ")
 
@@ -339,9 +333,9 @@ class Field:
 
     def count_gaps(self):
         """
-		Check each column one by one to make sure there are no gaps in the
-		column.
-		"""
+        Check each column one by one to make sure there are no gaps in the
+        column.
+        """
 
         # first lets convert to an array
         board_array = np.array(self.state)
@@ -358,8 +352,8 @@ class Field:
 
     def bumpiness(self):
         """
-		Returns sum of the list of differences between adjacent heights
-		"""
+        Returns sum of the list of differences between adjacent heights
+        """
 
         # first lets convert to an array
         board_array = np.array(self.state)
@@ -460,9 +454,9 @@ class Field:
 
     def height(self):
         """
-		Returns the height on the field of the highest placed tetromino on the
-		field.
-		"""
+        Returns the height on the field of the highest placed tetromino on the
+        field.
+        """
         # first lets convert to an array
         board_array = np.array(self.state)
 
@@ -483,9 +477,9 @@ class Field:
 
     def average_height(self):
         """
-		Returns the average height on the field of the highest placed tetromino on the
-		field.
-		"""
+        Returns the average height on the field of the highest placed tetromino on the
+        field.
+        """
 
         # first lets convert to an array
         board_array = np.array(self.state)
@@ -611,9 +605,9 @@ class Field:
 
     def blocks_over_gap1(self):
         """
-		Returns the row and column of the highest most gap in the matrix
-		GOAL: find the index (column) of each "hole"
-		"""
+        Returns the row and column of the highest most gap in the matrix
+        GOAL: find the index (column) of each "hole"
+        """
 
         # first lets convert to an array
         board_array = np.array(self.state)
@@ -643,9 +637,9 @@ class Field:
 
     def blocks_over_gap2(self):
         """
-		Returns the row and column of the highest most gap in the matrix
-		GOAL: find the index (column) of each "hole"
-		"""
+        Returns the row and column of the highest most gap in the matrix
+        GOAL: find the index (column) of each "hole"
+        """
 
         # first lets convert to an array
         board_array = np.array(self.state)
