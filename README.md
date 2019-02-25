@@ -1,7 +1,7 @@
 # Cultris-Tetris-AI
 [![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
 
-This repo contains a preliminary attempt at creating a tetris AI to play the block-based puzzle game, Cultris 2 (available at http://gewaltig.net/cultris2.aspx). It uses a combination of internal game heuristics,particle swarm optimization and genetic algorithms to generate weight based and neural network based models to iterate through possible moves and play those that yield the best gamestates. Currently the AI has been well-trained to downstack and survive as long as possible in all online and offline modes.
+This repo contains a preliminary attempt at creating a tetris AI to play the block-based puzzle game, Cultris 2 (available at http://gewaltig.net/cultris2.aspx). It uses a combination of internal game heuristics, particle swarm optimization and genetic algorithms to generate weight based and neural network based models to iterate through possible moves and play those that yield the best gamestates. Currently the AI has been well-trained to upstack, downstack, combo/attack and survive as long as possible in multiplayer and singleplayer modes.
 
 
 # Long Term To do:
@@ -12,9 +12,12 @@ This repo contains a preliminary attempt at creating a tetris AI to play the blo
   - Explore novel training methods and better NN structures
 
 # Short Term To do:
-  - Integrate a simulated combo system that mimics Cultris (in progress)
-  - Reduce board scoring iterations for redundant boards (e.g. only checking 10 O piece boards as opposed to 30)
+  - ~Integrate a simulated combo system that mimics Cultris~ (Complete!)
+  - ~Reduce board scoring iterations for redundant boards~ (Complete!)
+  - Create an autoencoder environment to generate training data for CNN training (in progress)
+  - Integrate keras + tensorflow backend for CNN model creation
   - Create a self-play one vs one environment for the agents to train with
+  - Fix matrix desync with Cultris due to sliding garbage detection issues (in progress)
 
 ### Installation
 
