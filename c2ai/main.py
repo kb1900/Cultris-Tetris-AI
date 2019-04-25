@@ -25,28 +25,33 @@ game_over_check_times = []
 game_over = False
 break_program = False
 
+
+def init_label():
+    label = tkinter.Label(root, text='', font=('Times','30'), fg='red')
+    label.master.overrideredirect(True)
+    label.master.geometry("+750+650")
+    label.master.lift()
+    label.master.wm_attributes("-topmost", True)
+    label.master.wm_attributes("-transparent", 1)
+    label.pack()
+
+    return label
+
 root = tkinter.Tk()
-combo_label = tkinter.Label(root, text='', font=('Times','30'), fg='red')
-timer_label = tkinter.Label(root, text='', font=('Times','30'), fg='red')
-piece_count_label = tkinter.Label(root, text='', font=('Times','30'), fg='red')
-next_tetromino_label = tkinter.Label(root, text='', font=('Times','30'), fg='red')
-combo_label.master.overrideredirect(True)
-combo_label.master.geometry("+750+650")
-combo_label.master.lift()
-combo_label.master.wm_attributes("-topmost", True)
-combo_label.master.wm_attributes("-transparent", 1)
-combo_label.pack()
-timer_label.pack()
-piece_count_label.pack()
-next_tetromino_label.pack()
-
-
+combo_label = init_label()
+timer_label = init_label()
+piece_count_label = init_label()
+next_tetromino_label = init_label()
+mode_label = init_label()
+active_combo_label = init_label()
 
 def update_labels():
     combo_label[ "text" ]="Combo: " + str(combo_counter)
     timer_label["text"]="Time: " + str("{0:.2f}".format(combo_time))
-    piece_count_label["text"]="Piece #: " + str(count)
-    next_tetromino_label["text"]="Next: : " + str(next_tetromino_name)
+    piece_count_label["text"]="Piece #" + str(count)
+    next_tetromino_label["text"]="Next: " + str(next_tetromino_name)
+    mode_label["text"]="Mode: : " + str(settings.mode)
+    active_combo_label["text"]="Combo Active: " + str(settings.combo)
     root.update()
 # with open ('current_generation_dump', 'rb') as dump_file:
 #           dump = pickle.load(dump_file)
@@ -208,7 +213,7 @@ def timer(combo_time=0, clears=0, combo_counter=0):
                 combo_time = combo_time + 0 + clears * 0 - 0.6
             elif combo_counter == 11:
                 combo_time = combo_time + 0 + clears * 0 - 0.8
-            elif combo_counter == 11:
+            elif combo_counter > 11:
                 combo_time = combo_time + 0 + clears * 0 - 1
             # elif combo_counter > 9:
             #     # combo_time = combo_time + (-0.775 * combo_counter + 2.925) + clears * 1.2/(2^(combo_counter-1))
@@ -333,51 +338,56 @@ while True:
                     ############# ORIENTING FIELD MATRIX ################
                 while count == -1 and break_program == False:
                     next_piece = Classifier.template_match("Images/nextpiece.png")
+                    # print('NEXT PIECE:,', next_piece)
                     ## Define future coordinates relative to this template matched position
                     if next_piece == False:
                         print(
-                            "ERROR finding nextpiece template match. ATTEMPTING 2nd TIME"
+                            "ERROR finding nextpiece template match. hardcoding"
                         )
-                        next_piece = Classifier.template_match("Images/nextpiece.png")
-                        ## Define future coordinates relative to this template matched position
-                        if next_piece == False:
-                            print(
-                                "ERROR finding nextpiece template match. ATTEMPTING 3rd TIME"
-                            )
-                            next_piece = Classifier.template_match(
-                                "Images/nextpiece.png"
-                            )
-                            ## Define future coordinates relative to this template matched position
-                            if next_piece == False:
-                                print(
-                                    "ERROR finding nextpiece template match. Re-setting count to -2"
-                                )
-                                count = -2
-                                break
+                        next_piece = (689.0, 199.0)
+                        # next_piece = Classifier.template_match("Images/nextpiece.png")
+                        # ## Define future coordinates relative to this template matched position
+                        # if next_piece == False:
+                        #     print(
+                        #         "ERROR finding nextpiece template match. ATTEMPTING 3rd TIME"
+                        #     )
+                        #     next_piece = Classifier.template_match(
+                        #         "Images/nextpiece.png"
+                        #     )
+                        #     ## Define future coordinates relative to this template matched position
+                        #     if next_piece == False:
+                        #         print(
+                        #             "ERROR finding nextpiece template match. Hardcoding location"
+                        #         )
+                        #         next_piece = (689.0, 199.0)
+                        #         print(next_piece)
+                        #         break
 
                     target = Classifier.template_match(
                         build_absolute_path("Images/kb_baby_bot.png")
                     )
+                    print('TAGRGET', target)
                     if target == False:
                         print(
-                            "ERROR finding kb_baby_bot template match. ATTEMPTING 2nd TIME"
+                            "ERROR finding kb_baby_bot template match. hardcoding"
                         )
-                        target = Classifier.template_match(
-                            build_absolute_path("Images/kb_baby_bot.png")
-                        )
-                        if target == False:
-                            print(
-                                "ERROR finding kb_baby_bot template match. ATTEMPTING 3rd TIME"
-                            )
-                            target = Classifier.template_match(
-                                build_absolute_path("Images/kb_baby_bot.png")
-                            )
-                            if target == False:
-                                print(
-                                    "ERROR finding kb_baby_bot template match. Re-setting count to -2"
-                                )
-                                count = -2
-                                break
+                        target = (351.5, 184.5)
+                        # target = Classifier.template_match(
+                        #     build_absolute_path("Images/kb_baby_bot.png")
+                        # )
+                        # if target == False:
+                        #     print(
+                        #         "ERROR finding kb_baby_bot template match. ATTEMPTING 3rd TIME"
+                        #     )
+                        #     target = Classifier.template_match(
+                        #         build_absolute_path("Images/kb_baby_bot.png")
+                        #     )
+                        #     if target == False:
+                        #         print(
+                        #             "ERROR finding kb_baby_bot template match. Re-setting count to -2"
+                        #         )
+                        #         count = -2
+                        #         break
 
                     ROW = {
                         19: (target[1] + 773),
@@ -511,15 +521,16 @@ while True:
                             )
                             settings.mode = "downstack"
                     if settings.mode == "downstack":
-                        if combo_counter > 6 or combo_counter + combo_time > 8.5:
-                            settings.combo = True
-                            settings.max_bpm = 400
-                            print("COMBO ACTIVE")
+                        if combo_counter > 5 or combo_counter + combo_time > 8.5:
+                        	if field.height() < 14:
+	                            settings.combo = True
+	                            settings.max_bpm = 400
+	                            print("COMBO ACTIVE")
                         else:
                             settings.combo = False
-                            settings.max_bpm = 240
+                            settings.max_bpm = 400
                         if (
-                            field.height() < 4
+                            field.height() < 2
                             and field.count_gaps() < 3
                             and combo_counter < 3
                         ):
@@ -529,6 +540,7 @@ while True:
                                 # field.count_gaps(),
                             )
                             settings.mode = "upstack"
+                            settings.combo = False
 
                     next_rgb = Classifier.get_next_rgb(next_piece)
                     next_tetromino = Classifier.TETROMINO[next_rgb]()
@@ -661,7 +673,7 @@ while True:
                             while True:
                                 i = matrix_updater.check_start_round()
                                 if i != 0:
-                                    time.sleep(i + 0.10)
+                                    time.sleep(i - 0.5)
                                     count = -1
                                     game_over = False
                                     break

@@ -1,5 +1,5 @@
 max_bpm = 240
-move_depth = 8
+move_depth = 12
 mode = "downstack"
 
 modes = True
