@@ -72,7 +72,7 @@ def on_press(key):
     if key == keyboard.Key.shift_r:
         print("SHIFT_R pressed: Press UP to continue")
         break_program = True
-        os.system("open /Applications/cultris2.app")
+        os.system("open /Applications/cultris4.app")
         return True
     elif key == keyboard.Key.up:
         print("UP pressed, resuming operations!")
@@ -80,7 +80,7 @@ def on_press(key):
         keys = None
         break_program = False
         count = -1
-        os.system("open /Applications/cultris2.app")
+        os.system("open /Applications/cultris4.app")
         return True
 
 
@@ -238,17 +238,17 @@ def timer(combo_time=0, clears=0, combo_counter=0):
 
 # if c2_open() == False:
 #   print('Starting up Cultris')
-#   os.system("open /Applications/cultris2.app")
+#   os.system("open /Applications/cultris4.app")
 #   time.sleep(5)
 #   pyautogui.press('enter')
 #   time.sleep(.5)
 
 # elif c2_open() == True:
 #   print('C2 is open, navigating to login page')
-#   os.system("open /Applications/cultris2.app")
+#   os.system("open /Applications/cultris4.app")
 #   time.sleep(.5)
 # else:
-#   print('error on launching cultris2')
+#   print('error on launching cultris4')
 
 
 # find_lobby_chat()
@@ -276,7 +276,7 @@ while True:
                 while count == -2 and break_program == False:
                     ############# STARTING GAME MODE ################
                     if sys.argv[1] == "-maserati":
-                        os.system("open /Applications/cultris2.app")
+                        os.system("open /Applications/cultris4.app")
                         print("maserati mode selected")
                         maserati = Classifier.template_match(
                             build_absolute_path("Images/maserati.png")
@@ -301,7 +301,7 @@ while True:
                         time.sleep(2)  # 3,2,1 countdown
 
                     elif sys.argv[1] == "-cheese":
-                        os.system("open /Applications/cultris2.app")
+                        os.system("open /Applications/cultris4.app")
                         print("cheese mode selected")
                         cheese = Classifier.template_match(
                             build_absolute_path("Images/swiss_cheese.png")
@@ -328,7 +328,7 @@ while True:
 
                     else:
                         # input() #3,2,1 countdown
-                        os.system("open /Applications/cultris2.app")
+                        os.system("open /Applications/cultris4.app")
                         pass
                         count = -1
                     count = -1
@@ -337,54 +337,55 @@ while True:
 
                     ############# ORIENTING FIELD MATRIX ################
                 while count == -1 and break_program == False:
-                    next_piece = Classifier.template_match("Images/nextpiece.png")
+                    next_piece = Classifier.template_match("Images/nextpiece4.png")
+                    # pyautogui.moveTo(next_piece[0], (next_piece[1] + 110))
                     # print('NEXT PIECE:,', next_piece)
                     ## Define future coordinates relative to this template matched position
                     if next_piece == False:
                         print(
-                            "ERROR finding nextpiece template match. hardcoding"
+                            "ERROR finding nextpiece4 template match. hardcoding"
                         )
-                        next_piece = (689.0, 199.0)
-                        # next_piece = Classifier.template_match("Images/nextpiece.png")
+                        # next_piece = (689.0, 199.0)
+                        # next_piece = Classifier.template_match("Images/nextpiece4.png")
                         # ## Define future coordinates relative to this template matched position
                         # if next_piece == False:
                         #     print(
-                        #         "ERROR finding nextpiece template match. ATTEMPTING 3rd TIME"
+                        #         "ERROR finding nextpiece4 template match. ATTEMPTING 3rd TIME"
                         #     )
                         #     next_piece = Classifier.template_match(
-                        #         "Images/nextpiece.png"
+                        #         "Images/nextpiece4.png"
                         #     )
                         #     ## Define future coordinates relative to this template matched position
                         #     if next_piece == False:
                         #         print(
-                        #             "ERROR finding nextpiece template match. Hardcoding location"
+                        #             "ERROR finding nextpiece4 template match. Hardcoding location"
                         #         )
                         #         next_piece = (689.0, 199.0)
                         #         print(next_piece)
                         #         break
 
                     target = Classifier.template_match(
-                        build_absolute_path("Images/kb_baby_bot.png")
+                        build_absolute_path("Images/kb_baby_bot4.png")
                     )
                     print('TAGRGET', target)
                     if target == False:
                         print(
-                            "ERROR finding kb_baby_bot template match. hardcoding"
+                            "ERROR finding kb_baby_bot4 template match. hardcoding"
                         )
-                        target = (351.5, 184.5)
+                        # target = (351.5, 184.5)
                         # target = Classifier.template_match(
-                        #     build_absolute_path("Images/kb_baby_bot.png")
+                        #     build_absolute_path("Images/kb_baby_bot4.png")
                         # )
                         # if target == False:
                         #     print(
-                        #         "ERROR finding kb_baby_bot template match. ATTEMPTING 3rd TIME"
+                        #         "ERROR finding kb_baby_bot4 template match. ATTEMPTING 3rd TIME"
                         #     )
                         #     target = Classifier.template_match(
-                        #         build_absolute_path("Images/kb_baby_bot.png")
+                        #         build_absolute_path("Images/kb_baby_bot4.png")
                         #     )
                         #     if target == False:
                         #         print(
-                        #             "ERROR finding kb_baby_bot template match. Re-setting count to -2"
+                        #             "ERROR finding kb_baby_bot4 template match. Re-setting count to -2"
                         #         )
                         #         count = -2
                         #         break
@@ -450,6 +451,9 @@ while True:
                     if sys.argv[1] != "-cheese" and sys.argv[1] != "-cheesemp":
                         try:
                             current_rgb = Classifier.get_first_piece_rgb(COLUMN, ROW)
+                            # pyautogui.moveTo(COLUMN[4], (ROW[19]))
+                            print(current_rgb)
+
                             current_tetromino = Classifier.TETROMINO_FADED[
                                 current_rgb
                             ]()
@@ -458,19 +462,20 @@ while True:
                             ]
                             print("detected ghost as:", tetromino_name)
                         except:
-                            next_rgb = Classifier.get_next_rgb(next_piece)
-                            next_tetromino = Classifier.TETROMINO[next_rgb]()
-                            next_tetromino_name = Classifier.TETROMINO_NAME[next_rgb]
+                            # next_rgb = Classifier.get_next_rgb(next_piece)
+                            # next_tetromino = Classifier.TETROMINO[next_rgb]()
+                            # next_tetromino_name = Classifier.TETROMINO_NAME[next_rgb]
                             print("did not detect ghost")
-                            print("detected next piece as", next_tetromino_name)
+                            input()
+                            # print("detected next piece as", next_tetromino_name)
 
-                            pyautogui.typewrite(
-                                " "
-                            )  # place 1st piece at spawn location
-                            Classifier.get_occupied(field, COLUMN, ROW)
+                            # pyautogui.typewrite(
+                            #     " "
+                            # )  # place 1st piece at spawn location
+                            # Classifier.get_occupied(field, COLUMN, ROW)
 
-                            current_tetromino = next_tetromino
-                            tetromino_name = next_tetromino_name
+                            # current_tetromino = next_tetromino
+                            # tetromino_name = next_tetromino_name
                     elif sys.argv[1] == "-cheese" or sys.argv[1] == "-cheesemp":
                         try:
                             current_rgb = Classifier.get_first_cheese_piece_rgb(

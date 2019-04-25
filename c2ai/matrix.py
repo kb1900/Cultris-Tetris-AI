@@ -15,7 +15,7 @@ class matrix_updater:
             return True
 
     def is_garbage(pixels):
-        garbage = (85, 89, 91)
+        garbage = (53, 53, 53)
         if max(map(lambda a, b: abs(a - b), pixels, garbage)) < 5:
             return True
         else:

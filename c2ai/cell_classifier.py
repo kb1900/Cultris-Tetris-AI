@@ -56,6 +56,7 @@ class Classifier:
 
     @staticmethod
     def get_next_rgb(next_piece):
+        # pyautogui.moveTo(next_piece[0], (next_piece[1] + 110))
         next_rgb = autopy.screen.get_color(next_piece[0], (next_piece[1] + 110))
         return next_rgb
 
@@ -114,41 +115,41 @@ class Classifier:
             field.drop_null(Tetromino.null_Tetromino(), key_r, 9)
 
     TETROMINO = {
-        (241, 36, 254): Tetromino.L_Tetromino,
-        (19, 188, 193): Tetromino.S_Tetromino,
-        (170, 188, 58): Tetromino.O_Tetromino,
-        (3, 188, 16): Tetromino.I_Tetromino,
-        (60, 68, 254): Tetromino.J_Tetromino,
-        (180, 27, 32): Tetromino.T_Tetromino,
-        (180, 188, 193): Tetromino.Z_Tetromino,
+        (118, 26, 118): Tetromino.L_Tetromino,
+        (26, 118, 118): Tetromino.S_Tetromino,
+        (113, 118, 41): Tetromino.O_Tetromino,
+        (16, 118, 16): Tetromino.I_Tetromino,
+        (41, 41, 118): Tetromino.J_Tetromino,
+        (118, 26, 26): Tetromino.T_Tetromino,
+        (118, 118, 118): Tetromino.Z_Tetromino,
     }
     TETROMINO_NAME = {
-        (241, 36, 254): "L",
-        (19, 188, 193): "S",
-        (170, 188, 58): "O",
-        (3, 188, 16): "I",
-        (60, 68, 254): "J",
-        (180, 27, 32): "T",
-        (180, 188, 193): "Z",
+        (118, 26, 118): "L",
+        (26, 118, 118): "S",
+        (113, 118, 41): "O",
+        (16, 118, 16): "I",
+        (41, 41, 118): "J",
+        (118, 26, 26): "T",
+        (118, 118, 118): "Z",
     }
 
     TETROMINO_FADED = {
-        (42, 8, 48): Tetromino.L_Tetromino,
-        (4, 46, 48): Tetromino.S_Tetromino,
-        (40, 46, 14): Tetromino.O_Tetromino,
-        (1, 46, 7): Tetromino.I_Tetromino,
-        (8, 12, 48): Tetromino.J_Tetromino,
-        (42, 8, 10): Tetromino.T_Tetromino,
-        (42, 46, 48): Tetromino.Z_Tetromino,
+        (27, 5, 27): Tetromino.L_Tetromino,
+        (5, 27, 27): Tetromino.S_Tetromino,
+        (26, 27, 8): Tetromino.O_Tetromino,
+        (2, 27, 2): Tetromino.I_Tetromino,
+        (8, 8, 27): Tetromino.J_Tetromino,
+        (27, 5, 5): Tetromino.T_Tetromino,
+        (27, 27, 27): Tetromino.Z_Tetromino,
     }
     TETROMINO_FADED_NAME = {
-        (42, 8, 48): "L",
-        (4, 46, 48): "S",
-        (40, 46, 14): "O",
-        (1, 46, 7): "I",
-        (8, 12, 48): "J",
-        (42, 8, 10): "T",
-        (42, 46, 48): "Z",
+        (27, 5, 27): "L",
+        (5, 27, 27): "S",
+        (26, 27, 8): "O",
+        (2, 27, 2): "I",
+        (8, 8, 27): "J",
+        (27, 5, 5): "T",
+        (27, 27, 27): "Z",
     }
 
     TETROMINO_FADED_CHEESE = {
