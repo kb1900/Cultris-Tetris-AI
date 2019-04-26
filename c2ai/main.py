@@ -27,7 +27,7 @@ break_program = False
 
 
 def init_label():
-    label = tkinter.Label(root, text='', font=('Times','30'), fg='red')
+    label = tkinter.Label(root, text="", font=("Times", "30"), fg="red")
     label.master.overrideredirect(True)
     label.master.geometry("+750+650")
     label.master.lift()
@@ -37,6 +37,7 @@ def init_label():
 
     return label
 
+
 root = tkinter.Tk()
 combo_label = init_label()
 timer_label = init_label()
@@ -45,14 +46,17 @@ next_tetromino_label = init_label()
 mode_label = init_label()
 active_combo_label = init_label()
 
+
 def update_labels():
-    combo_label[ "text" ]="Combo: " + str(combo_counter)
-    timer_label["text"]="Time: " + str("{0:.2f}".format(combo_time))
-    piece_count_label["text"]="Piece #" + str(count)
-    next_tetromino_label["text"]="Next: " + str(next_tetromino_name)
-    mode_label["text"]="Mode: : " + str(settings.mode)
-    active_combo_label["text"]="Combo Active: " + str(settings.combo)
+    combo_label["text"] = "Combo: " + str(combo_counter)
+    timer_label["text"] = "Time: " + str("{0:.2f}".format(combo_time))
+    piece_count_label["text"] = "Piece #" + str(count)
+    next_tetromino_label["text"] = "Next: " + str(next_tetromino_name)
+    mode_label["text"] = "Mode: : " + str(settings.mode)
+    active_combo_label["text"] = "Combo Active: " + str(settings.combo)
     root.update()
+
+
 # with open ('current_generation_dump', 'rb') as dump_file:
 #           dump = pickle.load(dump_file)
 #           current_generation = dump[0]
@@ -342,9 +346,7 @@ while True:
                     # print('NEXT PIECE:,', next_piece)
                     ## Define future coordinates relative to this template matched position
                     if next_piece == False:
-                        print(
-                            "ERROR finding nextpiece4 template match. hardcoding"
-                        )
+                        print("ERROR finding nextpiece4 template match. hardcoding")
                         # next_piece = (689.0, 199.0)
                         # next_piece = Classifier.template_match("Images/nextpiece4.png")
                         # ## Define future coordinates relative to this template matched position
@@ -367,11 +369,9 @@ while True:
                     target = Classifier.template_match(
                         build_absolute_path("Images/kb_baby_bot4.png")
                     )
-                    print('TAGRGET', target)
+                    print("TAGRGET", target)
                     if target == False:
-                        print(
-                            "ERROR finding kb_baby_bot4 template match. hardcoding"
-                        )
+                        print("ERROR finding kb_baby_bot4 template match. hardcoding")
                         # target = (351.5, 184.5)
                         # target = Classifier.template_match(
                         #     build_absolute_path("Images/kb_baby_bot4.png")
@@ -527,13 +527,13 @@ while True:
                             settings.mode = "downstack"
                     if settings.mode == "downstack":
                         if combo_counter > 5 or combo_counter + combo_time > 8.5:
-                        	if field.height() < 14:
-	                            settings.combo = True
-	                            settings.max_bpm = 260
-	                            print("COMBO ACTIVE")
+                            if field.height() < 14:
+                                settings.combo = True
+                                settings.max_bpm = 280
+                                print("COMBO ACTIVE")
                         else:
                             settings.combo = False
-                            settings.max_bpm = 260
+                            settings.max_bpm = 280
                         if (
                             field.height() < 2
                             and field.count_gaps() < 3
@@ -645,7 +645,6 @@ while True:
                         combo_counter = 0
                     print("combo_time", combo_time)
                     print("")
-
 
                     ## Throttle speed if move would be faster than max speed
                     move_time = time.time() - start_time

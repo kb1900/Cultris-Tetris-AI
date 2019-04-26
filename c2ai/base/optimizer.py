@@ -115,7 +115,7 @@ class Optimizer:
             key=itemgetter(3)
         )  # sort by first piece placed board scores
         # 1 = 0.050; 2 = 0.073; 3 = 0.095; 4 = 0.114; 5 = 0.143; 6 = 0.163
-        # all_boards_first = all_boards_first[: settings.move_depth]
+        all_boards_first = all_boards_first[: settings.move_depth]
 
         for i in all_boards_first:
             second_scores = []
@@ -139,7 +139,7 @@ class Optimizer:
                         # print(tetromino_rotation, column, "AssertionError")
                         score = float("inf")
                         second_scores.append(score)
-                    node +=1
+                    node += 1
 
             min_score_second = min(second_scores)
             i.append(min_score_second)
@@ -158,8 +158,8 @@ class Optimizer:
         # for i in all_boards_first:
         #     print('rotation', i[1], 'column', i[2], 'score1', round(i[3], 2), 'score2', round(i[4], 2), 'final_score', round(i[5], 2))
         # print('')
-        print(len(all_boards_first))
-        print('NODES', node)
+        # print(len(all_boards_first))
+        # print('Nodes Checked', node, 'of', (len(rotations) * (Field.WIDTH - tetromino_rotation.width() + 1)) * (len(next_rotations) * (Field.WIDTH - next_tetromino_rotation.width() + 1)))
         return all_boards_first[0]
 
     @staticmethod

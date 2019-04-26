@@ -1,6 +1,6 @@
-max_bpm = 240
-# move_depth = 16 #deprecated
-max_nodes = 612
+max_bpm = 260
+move_depth = 16
+max_nodes = float("inf")
 mode = "downstack"
 
 modes = True
