@@ -4,7 +4,7 @@ from c2ai.base.field import Field
 from c2ai.base.tetromino import Tetromino
 from c2ai.base import settings
 from PIL import Image, ImageDraw
-from pylab import *
+# from pylab import *
 
 
 class matrix_updater:
@@ -15,7 +15,7 @@ class matrix_updater:
             return True
 
     def is_garbage(pixels):
-        garbage = (85, 89, 91)
+        garbage = (53, 53, 53)
         if max(map(lambda a, b: abs(a - b), pixels, garbage)) < 5:
             return True
         else:

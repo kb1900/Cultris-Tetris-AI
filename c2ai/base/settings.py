@@ -1,9 +1,10 @@
 max_bpm = 240
-move_depth = 8
+# move_depth = 16 #deprecated
+max_nodes = 612
 mode = "downstack"
 
 modes = True
-train = True
+train = False
 combo = False
 
 ## debug will save a screenshot of the field with overlayed red dots of the grid

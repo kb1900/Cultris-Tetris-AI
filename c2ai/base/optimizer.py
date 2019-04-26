@@ -31,7 +31,9 @@ class Optimizer:
                     if clears > 0:
                         score = float("inf")
                     else:
-                        score = sum(x * y for x, y in zip(heuristics, settings.upstack_model))
+                        score = sum(
+                            x * y for x, y in zip(heuristics, settings.upstack_model)
+                        )
                 elif settings.mode == "downstack":
                     score = sum(x * y for x, y in zip(heuristics, n))
             else:
@@ -64,6 +66,7 @@ class Optimizer:
 
     @staticmethod
     def best_move(field, tetromino, next_tetromino, n=0, combo_time=0, combo_counter=0):
+        node = 0
         # Here we should limit the number of rotations checked for symmetric pieces like O, S, Z, I
         if tetromino.type == "O":
             rotations = [tetromino]
@@ -99,15 +102,20 @@ class Optimizer:
                     )
                     # print(tetromino_rotation, " ",column, "score:", score)
                     # print(field_copy)
-                    all_boards_first.append([field_copy, rotation_counter, column, score])
+                    all_boards_first.append(
+                        [field_copy, rotation_counter, column, score]
+                    )
                 except AssertionError:
-                    #print(tetromino_rotation, column, "AssertionError")
+                    # print(tetromino_rotation, column, "AssertionError")
                     continue
+                node += 1
 
         # benchmarking suggests a linear increase of 0.02s per move for every increase in top current piece moves explored
-        all_boards_first.sort(key=itemgetter(3))  # sort by first piece placed board scores
+        all_boards_first.sort(
+            key=itemgetter(3)
+        )  # sort by first piece placed board scores
         # 1 = 0.050; 2 = 0.073; 3 = 0.095; 4 = 0.114; 5 = 0.143; 6 = 0.163
-        all_boards_first = all_boards_first[:settings.move_depth]
+        # all_boards_first = all_boards_first[: settings.move_depth]
 
         for i in all_boards_first:
             second_scores = []
@@ -131,6 +139,7 @@ class Optimizer:
                         # print(tetromino_rotation, column, "AssertionError")
                         score = float("inf")
                         second_scores.append(score)
+                    node +=1
 
             min_score_second = min(second_scores)
             i.append(min_score_second)
@@ -139,6 +148,8 @@ class Optimizer:
             else:
                 final_score = min_score_second
             i.append(final_score)
+            if node > settings.max_nodes:
+                break
 
         all_boards_first.sort(
             key=lambda x: x[-1]
@@ -147,6 +158,8 @@ class Optimizer:
         # for i in all_boards_first:
         #     print('rotation', i[1], 'column', i[2], 'score1', round(i[3], 2), 'score2', round(i[4], 2), 'final_score', round(i[5], 2))
         # print('')
+        print(len(all_boards_first))
+        print('NODES', node)
         return all_boards_first[0]
 
     @staticmethod

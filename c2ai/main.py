@@ -8,7 +8,7 @@ from pynput import keyboard
 import pickle
 import numpy as np
 import keyboard as kb
-
+import tkinter
 
 from c2ai.base.tetromino import Tetromino
 from c2ai.base.field import Field
@@ -25,6 +25,34 @@ game_over_check_times = []
 game_over = False
 break_program = False
 
+
+def init_label():
+    label = tkinter.Label(root, text='', font=('Times','30'), fg='red')
+    label.master.overrideredirect(True)
+    label.master.geometry("+750+650")
+    label.master.lift()
+    label.master.wm_attributes("-topmost", True)
+    label.master.wm_attributes("-transparent", 1)
+    label.pack()
+
+    return label
+
+root = tkinter.Tk()
+combo_label = init_label()
+timer_label = init_label()
+piece_count_label = init_label()
+next_tetromino_label = init_label()
+mode_label = init_label()
+active_combo_label = init_label()
+
+def update_labels():
+    combo_label[ "text" ]="Combo: " + str(combo_counter)
+    timer_label["text"]="Time: " + str("{0:.2f}".format(combo_time))
+    piece_count_label["text"]="Piece #" + str(count)
+    next_tetromino_label["text"]="Next: " + str(next_tetromino_name)
+    mode_label["text"]="Mode: : " + str(settings.mode)
+    active_combo_label["text"]="Combo Active: " + str(settings.combo)
+    root.update()
 # with open ('current_generation_dump', 'rb') as dump_file:
 #           dump = pickle.load(dump_file)
 #           current_generation = dump[0]
@@ -44,7 +72,7 @@ def on_press(key):
     if key == keyboard.Key.shift_r:
         print("SHIFT_R pressed: Press UP to continue")
         break_program = True
-        os.system("open /Applications/cultris2.app")
+        os.system("open /Applications/cultris4.app")
         return True
     elif key == keyboard.Key.up:
         print("UP pressed, resuming operations!")
@@ -52,7 +80,7 @@ def on_press(key):
         keys = None
         break_program = False
         count = -1
-        os.system("open /Applications/cultris2.app")
+        os.system("open /Applications/cultris4.app")
         return True
 
 
@@ -185,7 +213,7 @@ def timer(combo_time=0, clears=0, combo_counter=0):
                 combo_time = combo_time + 0 + clears * 0 - 0.6
             elif combo_counter == 11:
                 combo_time = combo_time + 0 + clears * 0 - 0.8
-            elif combo_counter == 11:
+            elif combo_counter > 11:
                 combo_time = combo_time + 0 + clears * 0 - 1
             # elif combo_counter > 9:
             #     # combo_time = combo_time + (-0.775 * combo_counter + 2.925) + clears * 1.2/(2^(combo_counter-1))
@@ -210,17 +238,17 @@ def timer(combo_time=0, clears=0, combo_counter=0):
 
 # if c2_open() == False:
 #   print('Starting up Cultris')
-#   os.system("open /Applications/cultris2.app")
+#   os.system("open /Applications/cultris4.app")
 #   time.sleep(5)
 #   pyautogui.press('enter')
 #   time.sleep(.5)
 
 # elif c2_open() == True:
 #   print('C2 is open, navigating to login page')
-#   os.system("open /Applications/cultris2.app")
+#   os.system("open /Applications/cultris4.app")
 #   time.sleep(.5)
 # else:
-#   print('error on launching cultris2')
+#   print('error on launching cultris4')
 
 
 # find_lobby_chat()
@@ -248,7 +276,7 @@ while True:
                 while count == -2 and break_program == False:
                     ############# STARTING GAME MODE ################
                     if sys.argv[1] == "-maserati":
-                        os.system("open /Applications/cultris2.app")
+                        os.system("open /Applications/cultris4.app")
                         print("maserati mode selected")
                         maserati = Classifier.template_match(
                             build_absolute_path("Images/maserati.png")
@@ -273,7 +301,7 @@ while True:
                         time.sleep(2)  # 3,2,1 countdown
 
                     elif sys.argv[1] == "-cheese":
-                        os.system("open /Applications/cultris2.app")
+                        os.system("open /Applications/cultris4.app")
                         print("cheese mode selected")
                         cheese = Classifier.template_match(
                             build_absolute_path("Images/swiss_cheese.png")
@@ -300,7 +328,7 @@ while True:
 
                     else:
                         # input() #3,2,1 countdown
-                        os.system("open /Applications/cultris2.app")
+                        os.system("open /Applications/cultris4.app")
                         pass
                         count = -1
                     count = -1
@@ -309,52 +337,58 @@ while True:
 
                     ############# ORIENTING FIELD MATRIX ################
                 while count == -1 and break_program == False:
-                    next_piece = Classifier.template_match("Images/nextpiece.png")
+                    next_piece = Classifier.template_match("Images/nextpiece4.png")
+                    # pyautogui.moveTo(next_piece[0], (next_piece[1] + 110))
+                    # print('NEXT PIECE:,', next_piece)
                     ## Define future coordinates relative to this template matched position
                     if next_piece == False:
                         print(
-                            "ERROR finding nextpiece template match. ATTEMPTING 2nd TIME"
+                            "ERROR finding nextpiece4 template match. hardcoding"
                         )
-                        next_piece = Classifier.template_match("Images/nextpiece.png")
-                        ## Define future coordinates relative to this template matched position
-                        if next_piece == False:
-                            print(
-                                "ERROR finding nextpiece template match. ATTEMPTING 3rd TIME"
-                            )
-                            next_piece = Classifier.template_match(
-                                "Images/nextpiece.png"
-                            )
-                            ## Define future coordinates relative to this template matched position
-                            if next_piece == False:
-                                print(
-                                    "ERROR finding nextpiece template match. Re-setting count to -2"
-                                )
-                                count = -2
-                                break
+                        # next_piece = (689.0, 199.0)
+                        # next_piece = Classifier.template_match("Images/nextpiece4.png")
+                        # ## Define future coordinates relative to this template matched position
+                        # if next_piece == False:
+                        #     print(
+                        #         "ERROR finding nextpiece4 template match. ATTEMPTING 3rd TIME"
+                        #     )
+                        #     next_piece = Classifier.template_match(
+                        #         "Images/nextpiece4.png"
+                        #     )
+                        #     ## Define future coordinates relative to this template matched position
+                        #     if next_piece == False:
+                        #         print(
+                        #             "ERROR finding nextpiece4 template match. Hardcoding location"
+                        #         )
+                        #         next_piece = (689.0, 199.0)
+                        #         print(next_piece)
+                        #         break
 
                     target = Classifier.template_match(
-                        build_absolute_path("Images/kb_baby_bot.png")
+                        build_absolute_path("Images/kb_baby_bot4.png")
                     )
+                    print('TAGRGET', target)
                     if target == False:
                         print(
-                            "ERROR finding kb_baby_bot template match. ATTEMPTING 2nd TIME"
+                            "ERROR finding kb_baby_bot4 template match. hardcoding"
                         )
-                        target = Classifier.template_match(
-                            build_absolute_path("Images/kb_baby_bot.png")
-                        )
-                        if target == False:
-                            print(
-                                "ERROR finding kb_baby_bot template match. ATTEMPTING 3rd TIME"
-                            )
-                            target = Classifier.template_match(
-                                build_absolute_path("Images/kb_baby_bot.png")
-                            )
-                            if target == False:
-                                print(
-                                    "ERROR finding kb_baby_bot template match. Re-setting count to -2"
-                                )
-                                count = -2
-                                break
+                        # target = (351.5, 184.5)
+                        # target = Classifier.template_match(
+                        #     build_absolute_path("Images/kb_baby_bot4.png")
+                        # )
+                        # if target == False:
+                        #     print(
+                        #         "ERROR finding kb_baby_bot4 template match. ATTEMPTING 3rd TIME"
+                        #     )
+                        #     target = Classifier.template_match(
+                        #         build_absolute_path("Images/kb_baby_bot4.png")
+                        #     )
+                        #     if target == False:
+                        #         print(
+                        #             "ERROR finding kb_baby_bot4 template match. Re-setting count to -2"
+                        #         )
+                        #         count = -2
+                        #         break
 
                     ROW = {
                         19: (target[1] + 773),
@@ -417,6 +451,9 @@ while True:
                     if sys.argv[1] != "-cheese" and sys.argv[1] != "-cheesemp":
                         try:
                             current_rgb = Classifier.get_first_piece_rgb(COLUMN, ROW)
+                            # pyautogui.moveTo(COLUMN[4], (ROW[19]))
+                            print(current_rgb)
+
                             current_tetromino = Classifier.TETROMINO_FADED[
                                 current_rgb
                             ]()
@@ -425,19 +462,20 @@ while True:
                             ]
                             print("detected ghost as:", tetromino_name)
                         except:
-                            next_rgb = Classifier.get_next_rgb(next_piece)
-                            next_tetromino = Classifier.TETROMINO[next_rgb]()
-                            next_tetromino_name = Classifier.TETROMINO_NAME[next_rgb]
+                            # next_rgb = Classifier.get_next_rgb(next_piece)
+                            # next_tetromino = Classifier.TETROMINO[next_rgb]()
+                            # next_tetromino_name = Classifier.TETROMINO_NAME[next_rgb]
                             print("did not detect ghost")
-                            print("detected next piece as", next_tetromino_name)
+                            input()
+                            # print("detected next piece as", next_tetromino_name)
 
-                            pyautogui.typewrite(
-                                " "
-                            )  # place 1st piece at spawn location
-                            Classifier.get_occupied(field, COLUMN, ROW)
+                            # pyautogui.typewrite(
+                            #     " "
+                            # )  # place 1st piece at spawn location
+                            # Classifier.get_occupied(field, COLUMN, ROW)
 
-                            current_tetromino = next_tetromino
-                            tetromino_name = next_tetromino_name
+                            # current_tetromino = next_tetromino
+                            # tetromino_name = next_tetromino_name
                     elif sys.argv[1] == "-cheese" or sys.argv[1] == "-cheesemp":
                         try:
                             current_rgb = Classifier.get_first_cheese_piece_rgb(
@@ -488,15 +526,16 @@ while True:
                             )
                             settings.mode = "downstack"
                     if settings.mode == "downstack":
-                        if combo_counter > 6 or combo_counter + combo_time > 8.5:
-                            settings.combo = True
-                            settings.max_bpm = 400
-                            print("COMBO ACTIVE")
+                        if combo_counter > 5 or combo_counter + combo_time > 8.5:
+                        	if field.height() < 14:
+	                            settings.combo = True
+	                            settings.max_bpm = 260
+	                            print("COMBO ACTIVE")
                         else:
                             settings.combo = False
-                            settings.max_bpm = 240
+                            settings.max_bpm = 260
                         if (
-                            field.height() < 4
+                            field.height() < 2
                             and field.count_gaps() < 3
                             and combo_counter < 3
                         ):
@@ -506,10 +545,12 @@ while True:
                                 # field.count_gaps(),
                             )
                             settings.mode = "upstack"
+                            settings.combo = False
 
                     next_rgb = Classifier.get_next_rgb(next_piece)
                     next_tetromino = Classifier.TETROMINO[next_rgb]()
                     next_tetromino_name = Classifier.TETROMINO_NAME[next_rgb]
+                    update_labels()
 
                     t0 = time.time()
                     start_time = time.time()
@@ -580,6 +621,7 @@ while True:
 
                     current_tetromino = next_tetromino
                     tetromino_name = next_tetromino_name
+
                     if count > 0:
                         count += 1
 
@@ -603,6 +645,7 @@ while True:
                         combo_counter = 0
                     print("combo_time", combo_time)
                     print("")
+
 
                     ## Throttle speed if move would be faster than max speed
                     move_time = time.time() - start_time
@@ -635,7 +678,7 @@ while True:
                             while True:
                                 i = matrix_updater.check_start_round()
                                 if i != 0:
-                                    time.sleep(i + 0.10)
+                                    time.sleep(i - 0.5)
                                     count = -1
                                     game_over = False
                                     break

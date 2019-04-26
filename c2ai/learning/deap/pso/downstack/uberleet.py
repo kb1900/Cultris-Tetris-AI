@@ -226,7 +226,7 @@ class Tetris:
                 current_tetromino = next_tetromino
                 combo_time = (
                     combo_time
-                    - 0.08914639647649374   # Average compute time for scoring boards
+                    - 0.08914639647649374  # Average compute time for scoring boards
                     - 0.028502932752664096  # Average compute time for executing moves
                     - 0.061450676715120355  # Average compute time for field image processing
                     - (t1 - t0)
