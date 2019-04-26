@@ -17,7 +17,7 @@ This repo contains a preliminary attempt at creating a tetris AI to play the blo
   - Create an autoencoder environment to generate training data for CNN training (in progress)
   - Integrate keras + tensorflow backend for CNN model creation
   - Create a self-play one vs one environment for the agents to train with
-  - Fix matrix desync with Cultris due to sliding garbage detection issues (in progress)
+  - ~Fix matrix desync with Cultris due to sliding garbage detection issues (Complete!)~
 
 ### Installation
 
