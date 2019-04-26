@@ -74,8 +74,9 @@ def timer(combo_time=0, clears=0, combo_counter=0):
 def compute_score(detailed_combos):
     sent_from_combos = sum(lines_sent[len(combo)] for combo in detailed_combos)
     sent_from_clears = sum(sum(combo) - len(combo) for combo in detailed_combos)
-    print("Lines Sent From Combos: ", sent_from_combos)
-    print("Lines Sent From Clears: ", sent_from_clears)
+    # print("Lines Sent From Combos: ", sent_from_combos)
+    # print("Lines Sent From Clears: ", sent_from_clears)
+    # print("Lines Sent", sent_from_clears + sent_from_combos)
     return sent_from_clears + sent_from_combos
 
 
@@ -226,10 +227,10 @@ class Tetris:
                 current_tetromino = next_tetromino
                 combo_time = (
                     combo_time
-                    - 0.08914639647649374  # Average compute time for scoring boards
-                    - 0.028502932752664096  # Average compute time for executing moves
-                    - 0.061450676715120355  # Average compute time for field image processing
-                    - (t1 - t0)
+                    - 0.0900634319213337  # Average compute time for executing moves
+                    - 0.024662579271626208  # Average compute time for field image processing
+                    - 0.007466887216673049  # time to check game over
+                    - (t1 - t0) # time to get/compute best move based on nodes + depth
                 )
 
                 if combo_time < 0:

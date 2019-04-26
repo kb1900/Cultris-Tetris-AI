@@ -5,17 +5,23 @@ from deap import creator
 from deap import tools
 from scoop import futures
 
-
+from c2ai import build_absolute_path
 from c2ai.learning.deap.pso.downstack.tetris import Tetris
-from c2ai.base.tetromino import Tetromino
-from c2ai.base.field import Field
-from c2ai.base.optimizer import Optimizer
-from plot import Regression
-from NN import neuralNetwork
 import numpy as np
 
 
-creator.create("FitnessMax", base.Fitness, weights=(1.0, -1.0))
+# ----------
+
+population_size = 500
+game_attempts = 3
+CXPB = 0.35  # CXPB  is the probability with which two individuals are crossed
+MUTPB = 0.2  # MUTPB is the probability for mutating an individual
+NGEN = 10 # number of generations to run
+RCALCGEN = 5
+
+
+
+creator.create("FitnessMax", base.Fitness, weights=(1.0,))
 creator.create("Individual", list, fitness=creator.FitnessMax)
 
 toolbox = base.Toolbox()
@@ -25,13 +31,13 @@ toolbox = base.Toolbox()
 #                      which corresponds to integers sampled uniformly
 #                      from the range [0,1] (i.e. 0 or 1 with equal
 #                      probability)
-toolbox.register("attr_bool", random.uniform, -1, 1)
+toolbox.register("attr_bool", random.uniform, -10, 30)
 
 # Structure initializers
 #                         define 'individual' to be an individual
 #                         consisting of 100 'attr_bool' elements ('genes')
 toolbox.register(
-    "individual", tools.initRepeat, creator.Individual, toolbox.attr_bool, 8
+    "individual", tools.initRepeat, creator.Individual, toolbox.attr_bool, 10
 )
 
 # define the population to be a list of individuals
@@ -47,8 +53,8 @@ def evalOneMax(individual):
     for attempt in range(game_attempts):
         scores.append(Tetris.run_game(n=individual, render=False))
 
+    print("Individual had fitness of", np.mean(scores))
     return (np.mean(scores),)
-
 
 # ----------
 # Operator registration
@@ -65,17 +71,9 @@ toolbox.register("mutate", tools.mutFlipBit, indpb=0.05)
 
 # operator for selecting individuals for breeding the next
 # generation: each individual of the current generation
-# is replaced by the 'fittest' (best) of three individuals
+# is replaced by the 'fittest' (best) of tournsize individuals
 # drawn randomly from the current generation.
-toolbox.register("select", tools.selTournament, tournsize=10)
-
-
-# ----------
-
-population_size = 500
-game_attempts = 3
-CXPB = 0.3  # CXPB  is the probability with which two individuals are crossed
-MUTPB = 0.05  # MUTPB is the probability for mutating an individual
+toolbox.register("select", tools.selTournament, tournsize=int(population_size*0.01))
 
 
 def main():
@@ -91,7 +89,7 @@ def main():
     fitnesses = list(toolbox.map(toolbox.evaluate, pop))
     for ind, fit in zip(pop, fitnesses):
         ind.fitness.values = fit
-
+        
     print("  Evaluated %i individuals" % len(pop))
 
     # Extracting all the fitnesses of
@@ -101,7 +99,7 @@ def main():
     g = 0
 
     # Begin the evolution
-    while max(fits) < 100000 and g < 100:
+    while max(fits) < 100000 and g < NGEN:
         # A new generation
         g = g + 1
         print("-- Generation %i --" % g)
@@ -130,6 +128,12 @@ def main():
                 toolbox.mutate(mutant)
                 del mutant.fitness.values
 
+        if g % RECALCGEN == 0:
+
+            # recalculate all individuals fitness every kth generation
+            for ind in offspring:
+                del ind.fitness.values
+
         # Evaluate the individuals with an invalid fitness
         invalid_ind = [ind for ind in offspring if not ind.fitness.valid]
         fitnesses = toolbox.map(toolbox.evaluate, invalid_ind)
@@ -155,6 +159,10 @@ def main():
         print("  Std %s" % std)
         best_ind = tools.selBest(pop, 1)[0]
         print("Best individual so far is %s, %s" % (best_ind, best_ind.fitness.values))
+        with open(
+            build_absolute_path("learning/deap/pso/downstack/GAoutput.txt"), "a"
+        ) as text_file:
+            text_file.writelines(["\n", str(best_ind)])
 
     print("-- End of (successful) evolution --")
 

@@ -84,8 +84,11 @@ def main():
             if not best or best.fitness < part.fitness:
                 best = creator.Particle(part)
                 best.fitness.values = part.fitness.values
+            print('Particle had fitness of', part.fitness)
+            print('Best Particle has fitness of', part.best.fitness)
         for part in pop:
             toolbox.update(part, best)
+            
 
         # Gather all the fitnesses in one list and print the stats
         logbook.record(gen=g, evals=len(pop), **stats.compile(pop))
