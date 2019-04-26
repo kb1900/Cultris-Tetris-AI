@@ -529,11 +529,11 @@ while True:
                         if combo_counter > 5 or combo_counter + combo_time > 8.5:
                         	if field.height() < 14:
 	                            settings.combo = True
-	                            settings.max_bpm = 400
+	                            settings.max_bpm = 260
 	                            print("COMBO ACTIVE")
                         else:
                             settings.combo = False
-                            settings.max_bpm = 400
+                            settings.max_bpm = 260
                         if (
                             field.height() < 2
                             and field.count_gaps() < 3
