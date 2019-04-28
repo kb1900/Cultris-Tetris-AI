@@ -16,8 +16,8 @@ population_size = 500
 game_attempts = 3
 CXPB = 0.35  # CXPB  is the probability with which two individuals are crossed
 MUTPB = 0.2  # MUTPB is the probability for mutating an individual
-NGEN = 10 # number of generations to run
-RCALCGEN = 5
+NGEN = 60 # number of generations to run
+RCALCGEN = 10
 
 
 

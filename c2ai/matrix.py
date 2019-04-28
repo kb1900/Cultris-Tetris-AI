@@ -95,8 +95,8 @@ class matrix_updater:
             and pixels[x[1], y[1]] == (255, 255, 255)
             and pixels[x[2], y[2]] == (255, 255, 255)
         ):
-            print("Game Over detected")
-            return True
+            # print("Game Over detected")
+            return 1
 
         x = [105, 180, 252]  # The W in winner ## Need to edit this one
         y = [700, 700, 700]
@@ -105,8 +105,10 @@ class matrix_updater:
             and pixels[x[1], y[1]] == (255, 255, 255)
             and pixels[x[2], y[2]] == (255, 255, 255)
         ):
-            print("Winner detected")
-            return True
+            # print("Winner detected")
+            return 2
+
+        return 0
 
     def update_garbage(field):
         # the goal here is to get the bottom row

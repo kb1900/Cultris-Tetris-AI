@@ -24,6 +24,8 @@ garbage_update_times = []
 game_over_check_times = []
 game_over = False
 break_program = False
+wins = 0
+losses = 0
 
 
 def init_label():
@@ -45,6 +47,7 @@ piece_count_label = init_label()
 next_tetromino_label = init_label()
 mode_label = init_label()
 active_combo_label = init_label()
+Win_Loss_label = init_label()
 
 
 def update_labels():
@@ -52,8 +55,10 @@ def update_labels():
     timer_label["text"] = "Time: " + str("{0:.2f}".format(combo_time))
     piece_count_label["text"] = "Piece #" + str(count)
     next_tetromino_label["text"] = "Next: " + str(next_tetromino_name)
-    mode_label["text"] = "Mode: : " + str(settings.mode)
+    mode_label["text"] = "Mode: " + str(settings.mode)
     active_combo_label["text"] = "Combo Active: " + str(settings.combo)
+    Win_Loss_label["text"] = "Wins:" + str(wins) + " Losses:" + str(losses)
+
     root.update()
 
 
@@ -237,7 +242,50 @@ def timer(combo_time=0, clears=0, combo_counter=0):
 
     return [combo_time, combo_counter]
 
+def game_over_sequence(game_over):
+    global losses
+    global wins
 
+    if sys.argv[1] == "-maserati" or sys.argv[1] == "-cheese":
+        time.sleep(0.5)
+        print("Leaving challenge and restarting")
+        leave_challenge()
+        time.sleep(0.5)
+        game_over = 0
+        count = -2
+    else:
+        if sys.argv[1] == "-multi":
+            os.system("open /Applications/cultris4.app")
+            if game_over == 1:
+                print("Game Over Detected")
+                losses += 1
+                kb.write("=")
+                kb.write("I lost")
+                pyautogui.press('enter')
+                kb.write(str(wins) + " Wins " + str(losses) + " Losses")
+                pyautogui.press('enter')
+                kb.write("Questions or Concerns - pm my creator on discord")
+                pyautogui.press('enter')
+                kb.write("=")
+            elif game_over == 2:
+                print ("Winner Detected")
+                wins += 1
+                kb.write("=")
+                kb.write("I won")
+                pyautogui.press('enter')
+                kb.write(str(wins) + " Wins " + str(losses) + " Losses")
+                pyautogui.press('enter')
+                kb.write("Questions or Concerns - pm my creator on discord at kb1900 0178")
+                pyautogui.press('enter')
+                kb.write("=")
+            else:
+                return True
+            
+        while True:
+            i = matrix_updater.check_start_round()
+            if i != 0:
+                time.sleep(i - 0.5)
+                break
 ############# LAUNCHING GAME ################
 
 # if c2_open() == False:
@@ -278,7 +326,9 @@ while True:
         while break_program == False:
             while count > -5:
                 while count == -2 and break_program == False:
+
                     ############# STARTING GAME MODE ################
+
                     if sys.argv[1] == "-maserati":
                         os.system("open /Applications/cultris4.app")
                         print("maserati mode selected")
@@ -511,8 +561,8 @@ while True:
 
                     ############# MAIN PLAYING LOOP STARTS HERE ################
                     # try:
+                
                 while count > 0 and break_program == False:
-
                     if settings.mode == "upstack":
                         if (
                             field.height() > 12
@@ -527,7 +577,7 @@ while True:
                             settings.mode = "downstack"
                     if settings.mode == "downstack":
                         if combo_counter > 5 or combo_counter + combo_time > 8.5:
-                            if field.height() < 14:
+                            if field.height() < 15:
                                 settings.combo = True
                                 settings.max_bpm = 280
                                 print("COMBO ACTIVE")
@@ -565,7 +615,7 @@ while True:
                         )
                     except IndexError:
                         print("Game Over, ran out of moves")
-                        game_over = True
+                        game_over = 1
                     best_drop_times.append(time.time() - t0)
 
                     t0 = time.time()
@@ -577,7 +627,7 @@ while True:
                         returns = field.drop(current_tetromino, column)
                     except AssertionError:
                         print("Game Over, ran out of moves")
-                        game_over = True
+                        game_over = 1
 
                     keys = Optimizer.get_keystrokes(
                         rotation,
@@ -627,14 +677,17 @@ while True:
 
                     if count % 10 == 0:
                         if sys.argv[1] != "-maserati":
-                            t0 - time.time()
                             game_over = matrix_updater.check_end_round()
                             if game_over == True:
                                 time.sleep(0.5)
                                 game_over = matrix_updater.check_end_round()
-                            game_over_check_times.append(time.time() - t0)
                         else:
                             game_over = matrix_updater.check_end_round()
+
+                    if game_over != 0:
+                        game_over_sequence(game_over)
+                        game_over = 0
+                        count = -1
 
                     combo_time = combo_time - (time.time() - start_time)
 
@@ -652,34 +705,5 @@ while True:
                     if move_time < min_time_per_piece:
                         time.sleep(min_time_per_piece - move_time)
 
-                    if game_over == True:
-                        print("GAME OVER DETECTED")
-                        times = [
-                            np.average(best_drop_times),
-                            np.average(move_execution_times),
-                            np.average(garbage_update_times),
-                            np.average(game_over_check_times),
-                        ]
-                        print("average time to get best move", times[0])
-                        print("average time to get execute move", times[1])
-                        print("average time to get update garbage", times[2])
-                        print("average time to get check game over", times[3])
-                        print("bpm estimate:", float(60 / (np.sum(times))))
-
-                        if sys.argv[1] == "-maserati" or sys.argv[1] == "-cheese":
-                            time.sleep(0.5)
-                            print("Leaving challenge and restarting")
-                            leave_challenge()
-                            time.sleep(0.5)
-                            game_over = False
-                            count = -2
-                        else:
-                            while True:
-                                i = matrix_updater.check_start_round()
-                                if i != 0:
-                                    time.sleep(i - 0.5)
-                                    count = -1
-                                    game_over = False
-                                    break
 
         listener.join()
