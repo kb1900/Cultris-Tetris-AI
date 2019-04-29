@@ -16,9 +16,8 @@ population_size = 500
 game_attempts = 3
 CXPB = 0.35  # CXPB  is the probability with which two individuals are crossed
 MUTPB = 0.2  # MUTPB is the probability for mutating an individual
-NGEN = 60 # number of generations to run
+NGEN = 60  # number of generations to run
 RCALCGEN = 10
-
 
 
 creator.create("FitnessMax", base.Fitness, weights=(1.0,))
@@ -56,6 +55,7 @@ def evalOneMax(individual):
     print("Individual had fitness of", np.mean(scores))
     return (np.mean(scores),)
 
+
 # ----------
 # Operator registration
 # ----------
@@ -73,7 +73,7 @@ toolbox.register("mutate", tools.mutFlipBit, indpb=0.05)
 # generation: each individual of the current generation
 # is replaced by the 'fittest' (best) of tournsize individuals
 # drawn randomly from the current generation.
-toolbox.register("select", tools.selTournament, tournsize=int(population_size*0.01))
+toolbox.register("select", tools.selTournament, tournsize=int(population_size * 0.01))
 
 
 def main():
@@ -89,7 +89,7 @@ def main():
     fitnesses = list(toolbox.map(toolbox.evaluate, pop))
     for ind, fit in zip(pop, fitnesses):
         ind.fitness.values = fit
-        
+
     print("  Evaluated %i individuals" % len(pop))
 
     # Extracting all the fitnesses of

@@ -4,6 +4,7 @@ from c2ai.base.field import Field
 from c2ai.base.tetromino import Tetromino
 from c2ai.base import settings
 from PIL import Image, ImageDraw
+
 # from pylab import *
 
 

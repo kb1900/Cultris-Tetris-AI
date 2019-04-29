@@ -62,17 +62,6 @@ def update_labels():
     root.update()
 
 
-# with open ('current_generation_dump', 'rb') as dump_file:
-#           dump = pickle.load(dump_file)
-#           current_generation = dump[0]
-#           n = current_generation[0]
-#           #score = Tetris.run_game(n,render=True)
-#           # print('loaded previous netowrk')
-#           # print(score)
-#           # print(n.wih)
-#           # print(n.who)
-
-
 def on_press(key):
     global break_program
     global count
@@ -224,23 +213,9 @@ def timer(combo_time=0, clears=0, combo_counter=0):
                 combo_time = combo_time + 0 + clears * 0 - 0.8
             elif combo_counter > 11:
                 combo_time = combo_time + 0 + clears * 0 - 1
-            # elif combo_counter > 9:
-            #     # combo_time = combo_time + (-0.775 * combo_counter + 2.925) + clears * 1.2/(2^(combo_counter-1))
-            #     # a + b*x + c*x^2 + d*x^3
-            #     combo_time = (
-            #         combo_time
-            #         + (
-            #             4.55
-            #             - 2.6583 * (combo_counter)
-            #             + 0.55 * (combo_counter ^ 2)
-            #             - 0.042 * (combo_counter ^ 3)
-            #         )
-            #         + clears * 1.2 / (2 ^ (combo_counter - 1))
-            #     )
-            # y0 + a/x
-            # combo_time = combo_time - 0.61 + 3.0677/combo_counter + clears * 1.2/(2^(combo_counter-1))
 
     return [combo_time, combo_counter]
+
 
 def game_over_sequence(game_over):
     global losses
@@ -253,39 +228,38 @@ def game_over_sequence(game_over):
         time.sleep(0.5)
         game_over = 0
         count = -2
-    else:
-        if sys.argv[1] == "-multi":
-            os.system("open /Applications/cultris4.app")
-            if game_over == 1:
-                print("Game Over Detected")
-                losses += 1
-                kb.write("=")
-                kb.write("I lost")
-                pyautogui.press('enter')
-                kb.write(str(wins) + " Wins " + str(losses) + " Losses")
-                pyautogui.press('enter')
-                kb.write("Questions or Concerns - pm my creator on discord")
-                pyautogui.press('enter')
-                kb.write("=")
-            elif game_over == 2:
-                print ("Winner Detected")
-                wins += 1
-                kb.write("=")
-                kb.write("I won")
-                pyautogui.press('enter')
-                kb.write(str(wins) + " Wins " + str(losses) + " Losses")
-                pyautogui.press('enter')
-                kb.write("Questions or Concerns - pm my creator on discord at kb1900 0178")
-                pyautogui.press('enter')
-                kb.write("=")
-            else:
-                return True
-            
+    elif sys.argv[1] == "-multi":
+        os.system("open /Applications/cultris4.app")
+        if game_over == 1:
+            print("Game Over Detected")
+            losses += 1
+            kb.write("=")
+            kb.write("I lost")
+            pyautogui.press("enter")
+            kb.write(str(wins) + " Wins " + str(losses) + " Losses")
+            pyautogui.press("enter")
+        elif game_over == 2:
+            print("Winner Detected")
+            wins += 1
+            kb.write("=")
+            kb.write("I won")
+            pyautogui.press("enter")
+            kb.write(str(wins) + " Wins " + str(losses) + " Losses")
+            pyautogui.press("enter")
+        if (losses + wins) % 5 == 0:
+            kb.write("Questions or Concerns - pm my creator on discord")
+            pyautogui.press("enter")
+            kb.write("=")
+        else:
+            kb.write("=")
+
         while True:
             i = matrix_updater.check_start_round()
             if i != 0:
                 time.sleep(i - 0.5)
                 break
+
+
 ############# LAUNCHING GAME ################
 
 # if c2_open() == False:
@@ -314,6 +288,7 @@ def game_over_sequence(game_over):
 
 # print('Press Enter to start a game!!')
 # input()
+
 count = -2
 field = Field()
 cell_height = 41.75
@@ -387,58 +362,23 @@ while True:
                         count = -1
                     count = -1
 
-                    # time.sleep(.01)
+                while count == -1 and break_program == False:
 
                     ############# ORIENTING FIELD MATRIX ################
-                while count == -1 and break_program == False:
+
                     next_piece = Classifier.template_match("Images/nextpiece4.png")
-                    # pyautogui.moveTo(next_piece[0], (next_piece[1] + 110))
                     # print('NEXT PIECE:,', next_piece)
-                    ## Define future coordinates relative to this template matched position
                     if next_piece == False:
                         print("ERROR finding nextpiece4 template match. hardcoding")
-                        # next_piece = (689.0, 199.0)
-                        # next_piece = Classifier.template_match("Images/nextpiece4.png")
-                        # ## Define future coordinates relative to this template matched position
-                        # if next_piece == False:
-                        #     print(
-                        #         "ERROR finding nextpiece4 template match. ATTEMPTING 3rd TIME"
-                        #     )
-                        #     next_piece = Classifier.template_match(
-                        #         "Images/nextpiece4.png"
-                        #     )
-                        #     ## Define future coordinates relative to this template matched position
-                        #     if next_piece == False:
-                        #         print(
-                        #             "ERROR finding nextpiece4 template match. Hardcoding location"
-                        #         )
-                        #         next_piece = (689.0, 199.0)
-                        #         print(next_piece)
-                        #         break
+                        next_piece = (689.0, 199.0)
 
                     target = Classifier.template_match(
                         build_absolute_path("Images/kb_baby_bot4.png")
                     )
-                    print("TAGRGET", target)
+                    # print("TAGRGET", target)
                     if target == False:
                         print("ERROR finding kb_baby_bot4 template match. hardcoding")
-                        # target = (351.5, 184.5)
-                        # target = Classifier.template_match(
-                        #     build_absolute_path("Images/kb_baby_bot4.png")
-                        # )
-                        # if target == False:
-                        #     print(
-                        #         "ERROR finding kb_baby_bot4 template match. ATTEMPTING 3rd TIME"
-                        #     )
-                        #     target = Classifier.template_match(
-                        #         build_absolute_path("Images/kb_baby_bot4.png")
-                        #     )
-                        #     if target == False:
-                        #         print(
-                        #             "ERROR finding kb_baby_bot4 template match. Re-setting count to -2"
-                        #         )
-                        #         count = -2
-                        #         break
+                        target = (351.5, 184.5)
 
                     ROW = {
                         19: (target[1] + 773),
@@ -459,20 +399,6 @@ while True:
                         # 4: ((target[1]+773) - (cell_height)*15),
                         # 3: ((target[1]+773) - (cell_height)*16),
                         # 2: ((target[1]+773) - (cell_height)*17),
-                    }
-
-                    ROW11 = {
-                        19: (target[1] + 773),
-                        18: ((target[1] + 773) - (cell_height) * 1),
-                        17: ((target[1] + 773) - (cell_height) * 2),
-                        16: ((target[1] + 773) - (cell_height) * 3),
-                        15: ((target[1] + 773) - (cell_height) * 4),
-                        14: ((target[1] + 773) - (cell_height) * 5),
-                        13: ((target[1] + 773) - (cell_height) * 6),
-                        12: ((target[1] + 773) - (cell_height) * 7),
-                        11: ((target[1] + 773) - (cell_height) * 8),
-                        10: ((target[1] + 773) - (cell_height) * 9),
-                        9: ((target[1] + 773) - (cell_height) * 10),
                     }
 
                     COLUMN = {
@@ -512,57 +438,16 @@ while True:
                             ]
                             print("detected ghost as:", tetromino_name)
                         except:
-                            # next_rgb = Classifier.get_next_rgb(next_piece)
-                            # next_tetromino = Classifier.TETROMINO[next_rgb]()
-                            # next_tetromino_name = Classifier.TETROMINO_NAME[next_rgb]
                             print("did not detect ghost")
                             input()
-                            # print("detected next piece as", next_tetromino_name)
-
-                            # pyautogui.typewrite(
-                            #     " "
-                            # )  # place 1st piece at spawn location
-                            # Classifier.get_occupied(field, COLUMN, ROW)
-
-                            # current_tetromino = next_tetromino
-                            # tetromino_name = next_tetromino_name
-                    elif sys.argv[1] == "-cheese" or sys.argv[1] == "-cheesemp":
-                        try:
-                            current_rgb = Classifier.get_first_cheese_piece_rgb(
-                                COLUMN, ROW
-                            )
-                            current_tetromino = Classifier.TETROMINO_FADED_CHEESE[
-                                current_rgb
-                            ]()
-                            tetromino_name = Classifier.TETROMINO_FADED_NAME_CHEESE[
-                                current_rgb
-                            ]
-                            print("detected ghost as:", tetromino_name)
-
-                            Classifier.get_occupied(field, COLUMN, ROW11)
-
-                        except:
-                            next_rgb = Classifier.get_next_rgb(next_piece)
-                            next_tetromino = Classifier.TETROMINO[next_rgb]()
-                            next_tetromino_name = Classifier.TETROMINO_NAME[next_rgb]
-                            print("did not detect ghost")
-                            print("detected next piece as", next_tetromino_name)
-
-                            pyautogui.typewrite(
-                                " "
-                            )  # place 1st piece at spawn location
-                            Classifier.get_occupied(field, COLUMN, ROW11)
-
-                            current_tetromino = next_tetromino
-                            tetromino_name = next_tetromino_name
-
-                    print(field)
+                    print("Game Starting!")
                     count += 1
 
                     ############# MAIN PLAYING LOOP STARTS HERE ################
-                    # try:
-                
+
                 while count > 0 and break_program == False:
+
+                    # Mode handling (upstack, downstack, combo modifier)
                     if settings.mode == "upstack":
                         if (
                             field.height() > 12
@@ -597,6 +482,7 @@ while True:
                             settings.mode = "upstack"
                             settings.combo = False
 
+                    # Next piece updating
                     next_rgb = Classifier.get_next_rgb(next_piece)
                     next_tetromino = Classifier.TETROMINO[next_rgb]()
                     next_tetromino_name = Classifier.TETROMINO_NAME[next_rgb]
@@ -605,6 +491,8 @@ while True:
                     t0 = time.time()
                     start_time = time.time()
                     # print('tetromino_name', tetromino_name)
+
+                    # Best move retrieval
                     try:
                         best_drop = Optimizer.best_move(
                             field=field,
@@ -623,12 +511,14 @@ while True:
                     column = best_drop[2]
 
                     current_tetromino.rotate(rotation)
+
                     try:
                         returns = field.drop(current_tetromino, column)
                     except AssertionError:
                         print("Game Over, ran out of moves")
                         game_over = 1
 
+                    # Execute moves
                     keys = Optimizer.get_keystrokes(
                         rotation,
                         column,
@@ -644,9 +534,7 @@ while True:
                     )
 
                     # pyautogui.typewrite(keys)
-                    kb.write(
-                        keys, delay=0.00
-                    )  # 0.111s execution speed av and stable at delay = 0.005s but only needed if lag
+                    kb.write(keys, delay=0.00)
                     move_execution_times.append(time.time() - t0)
 
                     t0 = time.time()
@@ -664,7 +552,6 @@ while True:
                     combo_time = ct[0]
                     combo_counter = ct[1]
                     # print(field)
-                    # print("combos", combos)
                     print("piece_count", count)
                     print("next_tetromino", next_tetromino_name)
                     print("combo_counter", combo_counter)
@@ -675,6 +562,7 @@ while True:
                     if count > 0:
                         count += 1
 
+                    # Check Round End
                     if count % 10 == 0:
                         if sys.argv[1] != "-maserati":
                             game_over = matrix_updater.check_end_round()
@@ -689,6 +577,7 @@ while True:
                         game_over = 0
                         count = -1
 
+                    # Update combo information
                     combo_time = combo_time - (time.time() - start_time)
 
                     if combo_time < 0:
@@ -699,11 +588,10 @@ while True:
                     print("combo_time", combo_time)
                     print("")
 
-                    ## Throttle speed if move would be faster than max speed
+                    # Throttle speed if move would be faster than max speed
                     move_time = time.time() - start_time
                     min_time_per_piece = 1 / (settings.max_bpm / 60)
                     if move_time < min_time_per_piece:
                         time.sleep(min_time_per_piece - move_time)
-
 
         listener.join()

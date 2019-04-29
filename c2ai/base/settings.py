@@ -1,15 +1,21 @@
-max_bpm = 260 # The bpm will be variable but never peak above this due to time tracking and delays in main.py
-move_depth = 16 # The top moves from the current piece that will be used first to check second piece. Minimum value 1, maximum value 34.
-max_nodes = float("inf") # The maximum number of nodes (boards) that will be scored in total. Minimum value 1, maximum value 35 * 35
+max_bpm = (
+    260
+)  # The bpm will be variable but never peak above this due to time tracking and delays in main.py
+move_depth = (
+    12
+)  # The top moves from the current piece that will be used first to check second piece. Minimum value 1, maximum value 34.
+max_nodes = float(
+    "inf"
+)  # The maximum number of nodes (boards) that will be scored in total. Minimum value 1, maximum value 35 * 35
 
 mode = "downstack"
 
 modes = True
-train = False #ensures that 'n' passed to get_score is used in the evaluation
+train = False  # ensures that 'n' passed to get_score is used in the evaluation
 combo = False
 
 ## debug will save a screenshot of the field with overlayed red dots of the grid
-## and print the newfield in console. this is to tackle issues with garbage_updating mistakes 
+## and print the newfield in console. this is to tackle issues with garbage_updating mistakes
 # when the grid overlays a "edge" causing failed garbage detection
 # debug code @ in matrix.py ln 171
 # this has been resolved in siwtching to the newest cultris patch which removes the background gradient and glow

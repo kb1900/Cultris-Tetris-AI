@@ -230,7 +230,7 @@ class Tetris:
                     - 0.0900634319213337  # Average compute time for executing moves
                     - 0.024662579271626208  # Average compute time for field image processing
                     - 0.007466887216673049  # time to check game over
-                    - (t1 - t0) # time to get/compute best move based on nodes + depth
+                    - (t1 - t0)  # time to get/compute best move based on nodes + depth
                 )
 
                 if combo_time < 0:
