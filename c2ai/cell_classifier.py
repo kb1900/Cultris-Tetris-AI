@@ -90,18 +90,6 @@ class Classifier:
                     field.drop_null(Tetromino.null_Tetromino(), key_r, key_c)
 
     @staticmethod
-    def get_occupied_roundstart(field, COLUMN, ROW3):
-        print("GETTING occupied")
-
-        for key_c in COLUMN:
-            col_cord = COLUMN[key_c]
-            for key_r in ROW3:
-                row_cord = ROW3[key_r]
-                rgb = autopy.screen.get_color(col_cord, row_cord)
-                if Classifier.is_occupied(rgb) == True:
-                    field.drop_null(Tetromino.null_Tetromino(), key_r, key_c)
-
-    @staticmethod
     def remove_2_col(field, COLUMN, ROW):
         print("removing col 8 and 9")
         for key_r in ROW:
@@ -123,15 +111,6 @@ class Classifier:
         (118, 26, 26): Tetromino.T_Tetromino,
         (118, 118, 118): Tetromino.Z_Tetromino,
     }
-    TETROMINO_NAME = {
-        (118, 26, 118): "L",
-        (26, 118, 118): "S",
-        (113, 118, 41): "O",
-        (16, 118, 16): "I",
-        (41, 41, 118): "J",
-        (118, 26, 26): "T",
-        (118, 118, 118): "Z",
-    }
 
     TETROMINO_FADED = {
         (27, 5, 27): Tetromino.L_Tetromino,
@@ -142,44 +121,3 @@ class Classifier:
         (27, 5, 5): Tetromino.T_Tetromino,
         (27, 27, 27): Tetromino.Z_Tetromino,
     }
-    TETROMINO_FADED_NAME = {
-        (27, 5, 27): "L",
-        (5, 27, 27): "S",
-        (26, 27, 8): "O",
-        (2, 27, 2): "I",
-        (8, 8, 27): "J",
-        (27, 5, 5): "T",
-        (27, 27, 27): "Z",
-    }
-
-    TETROMINO_FADED_CHEESE = {
-        (42, 6, 45): Tetromino.L_Tetromino,
-        (4, 44, 45): Tetromino.S_Tetromino,
-        (40, 44, 11): Tetromino.O_Tetromino,
-        (1, 44, 4): Tetromino.I_Tetromino,
-        (8, 10, 45): Tetromino.J_Tetromino,
-        (42, 6, 7): Tetromino.T_Tetromino,
-        (42, 44, 45): Tetromino.Z_Tetromino,
-    }
-    TETROMINO_FADED_NAME_CHEESE = {
-        (42, 6, 45): "L",
-        (4, 44, 45): "S",
-        (40, 44, 11): "O",
-        (1, 44, 4): "I",
-        (8, 10, 45): "J",
-        (42, 6, 7): "T",
-        (42, 44, 45): "Z",
-    }
-
-    # target = template_match('Images/kb_baby_bot.png')
-    # next_piece = template_match('Images/nextpiece.png')
-
-    # next_rgb = get_next_rgb()
-    # next_tetromino = TETROMINO[next_rgb]()
-    # tetromino_name = TETROMINO_NAME[next_rgb]
-    # print(tetromino_name)
-
-    # target = pyautogui.moveTo(COLUMN[3],ROW[19])
-    # rgb = autopy.screen.get_color(COLUMN[3],ROW[19])
-    # print('target', target)
-    # print('rgb', rgb)

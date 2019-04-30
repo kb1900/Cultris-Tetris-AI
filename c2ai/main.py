@@ -29,7 +29,7 @@ losses = 0
 
 
 def init_label():
-    label = tkinter.Label(root, text="", font=("Times", "30"), fg="red")
+    label = tkinter.Label(root, text="", font=("Times", "20"), fg="red")
     label.master.overrideredirect(True)
     label.master.geometry("+750+650")
     label.master.lift()
@@ -54,7 +54,7 @@ def update_labels():
     combo_label["text"] = "Combo: " + str(combo_counter)
     timer_label["text"] = "Time: " + str("{0:.2f}".format(combo_time))
     piece_count_label["text"] = "Piece #" + str(count)
-    next_tetromino_label["text"] = "Next: " + str(next_tetromino_name)
+    next_tetromino_label["text"] = "Next: " + str(next_tetromino.type)
     mode_label["text"] = "Mode: " + str(settings.mode)
     active_combo_label["text"] = "Combo Active: " + str(settings.combo)
     Win_Loss_label["text"] = "Wins:" + str(wins) + " Losses:" + str(losses)
@@ -95,7 +95,7 @@ def login():
     # target = template_match(build_absolute_path('Name.png'))
     pyautogui.moveTo(x=target[0] + 600, y=target[1] + 50)
     pyautogui.dragTo(target[0] + 50, target[1] + 50, 0.5, button="left")
-    pyautogui.typewrite("kb of python")
+    pyautogui.typewrite("kb_baby_bot")
 
     target = Classifier.template_match(build_absolute_path("Images/Play.png"))
     pyautogui.moveTo(target)
@@ -233,21 +233,17 @@ def game_over_sequence(game_over):
         if game_over == 1:
             print("Game Over Detected")
             losses += 1
+            update_labels()
             kb.write("=")
-            kb.write("I lost")
-            pyautogui.press("enter")
-            kb.write(str(wins) + " Wins " + str(losses) + " Losses")
-            pyautogui.press("enter")
         elif game_over == 2:
             print("Winner Detected")
             wins += 1
+            update_labels()
             kb.write("=")
-            kb.write("I won")
-            pyautogui.press("enter")
-            kb.write(str(wins) + " Wins " + str(losses) + " Losses")
-            pyautogui.press("enter")
         if (losses + wins) % 5 == 0:
             kb.write("Questions or Concerns - pm my creator on discord")
+            pyautogui.press("enter")
+            kb.write(str(wins) + " Wins " + str(losses) + " Losses")
             pyautogui.press("enter")
             kb.write("=")
         else:
@@ -258,36 +254,6 @@ def game_over_sequence(game_over):
             if i != 0:
                 time.sleep(i - 0.5)
                 break
-
-
-############# LAUNCHING GAME ################
-
-# if c2_open() == False:
-#   print('Starting up Cultris')
-#   os.system("open /Applications/cultris4.app")
-#   time.sleep(5)
-#   pyautogui.press('enter')
-#   time.sleep(.5)
-
-# elif c2_open() == True:
-#   print('C2 is open, navigating to login page')
-#   os.system("open /Applications/cultris4.app")
-#   time.sleep(.5)
-# else:
-#   print('error on launching cultris4')
-
-
-# find_lobby_chat()
-
-
-# target = template_match(build_absolute_path('Challenges.png'))
-# pyautogui.moveTo(target)
-# pyautogui.doubleClick(target)
-# time.sleep(2)
-
-
-# print('Press Enter to start a game!!')
-# input()
 
 count = -2
 field = Field()
@@ -329,37 +295,9 @@ while True:
                         pyautogui.doubleClick(No)
                         time.sleep(2)  # 3,2,1 countdown
 
-                    elif sys.argv[1] == "-cheese":
-                        os.system("open /Applications/cultris4.app")
-                        print("cheese mode selected")
-                        cheese = Classifier.template_match(
-                            build_absolute_path("Images/swiss_cheese.png")
-                        )
-                        if cheese == False:
-                            cheese = Classifier.template_match(
-                                "Images/swiss_cheese2.png"
-                            )
-
-                        if cheese == False:
-                            print("ERROR finding cheese template match")
-                            count = -100
-                            break
-                        pyautogui.moveTo(cheese)
-                        pyautogui.doubleClick(cheese)
-                        time.sleep(0.25)
-
-                        No = Classifier.template_match(
-                            build_absolute_path("Images/No.png")
-                        )
-                        pyautogui.moveTo(No)
-                        pyautogui.doubleClick(No)
-                        time.sleep(2)  # 3,2,1 countdonw
-
                     else:
-                        # input() #3,2,1 countdown
                         os.system("open /Applications/cultris4.app")
                         pass
-                        count = -1
                     count = -1
 
                 while count == -1 and break_program == False:
@@ -371,6 +309,7 @@ while True:
                     if next_piece == False:
                         print("ERROR finding nextpiece4 template match. hardcoding")
                         next_piece = (689.0, 199.0)
+                        # pyautogui.moveTo(next_piece[0], (next_piece[1] + 110))
 
                     target = Classifier.template_match(
                         build_absolute_path("Images/kb_baby_bot4.png")
@@ -433,13 +372,10 @@ while True:
                             current_tetromino = Classifier.TETROMINO_FADED[
                                 current_rgb
                             ]()
-                            tetromino_name = Classifier.TETROMINO_FADED_NAME[
-                                current_rgb
-                            ]
-                            print("detected ghost as:", tetromino_name)
+                            print("detected ghost as:", current_tetromino.type)
                         except:
                             print("did not detect ghost")
-                            input()
+                            count = -1
                     print("Game Starting!")
                     count += 1
 
@@ -485,12 +421,10 @@ while True:
                     # Next piece updating
                     next_rgb = Classifier.get_next_rgb(next_piece)
                     next_tetromino = Classifier.TETROMINO[next_rgb]()
-                    next_tetromino_name = Classifier.TETROMINO_NAME[next_rgb]
                     update_labels()
 
                     t0 = time.time()
                     start_time = time.time()
-                    # print('tetromino_name', tetromino_name)
 
                     # Best move retrieval
                     try:
@@ -530,7 +464,7 @@ while True:
                             "move_right": "right",
                             "drop": "c",
                         },
-                        tetromino_name=tetromino_name,
+                        tetromino_name=current_tetromino.type,
                     )
 
                     # pyautogui.typewrite(keys)
@@ -553,11 +487,10 @@ while True:
                     combo_counter = ct[1]
                     # print(field)
                     print("piece_count", count)
-                    print("next_tetromino", next_tetromino_name)
+                    print("next_tetromino", next_tetromino.type)
                     print("combo_counter", combo_counter)
 
                     current_tetromino = next_tetromino
-                    tetromino_name = next_tetromino_name
 
                     if count > 0:
                         count += 1
