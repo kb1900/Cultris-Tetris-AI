@@ -8,6 +8,7 @@ import numpy as np
 import time
 import operator
 import random
+import pickle
 
 creator.create("FitnessMax", base.Fitness, weights=(1.0,))
 creator.create(
@@ -48,6 +49,8 @@ def evalOneMax(individual):
     for i in range(game_attempts):
         scores.append(Tetris.run_game(n=individual, render=False))
 
+    print("Particle had fitness of", scores, "Mean:", int(np.mean(scores)))
+
     return (np.average(scores),)
 
 
@@ -58,9 +61,22 @@ toolbox.register("update", updateParticle, phi1=2.0, phi2=2.0)
 toolbox.register("evaluate", evalOneMax)
 
 
-def main():
+def main(checkpoint):
+    try:
+        # A file name has been given, then load the data from the file
+        with open(checkpoint, "rb") as cp_file:
+            cp = pickle.load(cp_file, encoding="bytes")
+            pop = cp["population"]
+            g = cp["generation"]
+            best = cp["best"]
+    except:
+        # Start a new evolution
+        # random.seed(64)
+        pop = toolbox.population(n=population_size)
+        g = 0
+        print("Start of evolution")
+        best = None
 
-    pop = toolbox.population(n=population_size)
     stats = tools.Statistics(lambda ind: ind.fitness.values)
     stats.register("avg", np.mean)
     stats.register("std", np.std)
@@ -70,11 +86,10 @@ def main():
     logbook = tools.Logbook()
     logbook.header = ["gen", "evals"] + stats.fields
 
-    GEN = 1000
-    best = None
-
-    for g in range(GEN):
+    while g < NGEN:
+        g += 1
         start_time = time.time()
+        print("-- Generation %i --" % g)
 
         for part in pop:
             part.fitness.values = toolbox.evaluate(part)
@@ -84,23 +99,21 @@ def main():
             if not best or best.fitness < part.fitness:
                 best = creator.Particle(part)
                 best.fitness.values = part.fitness.values
-            print("Particle had fitness of", part.fitness)
-            print("Best Particle has fitness of", part.best.fitness)
+
         for part in pop:
             toolbox.update(part, best)
 
         # Gather all the fitnesses in one list and print the stats
         logbook.record(gen=g, evals=len(pop), **stats.compile(pop))
         log = logbook.stream
-        print(log)
 
+        print(log)
         print(
             "Generation",
             g,
             "took:",
             time.strftime("%H:%M:%S", time.gmtime(time.time() - start_time)),
         )
-
         print(best, "\n")
 
         with open(
@@ -108,11 +121,22 @@ def main():
         ) as text_file:
             text_file.writelines([log, "\n", str(best)])
 
+        if g % FREQ == 0:
+            # Fill the dictionary using the dict(key=value[, ...]) constructor
+            cp = dict(population=pop, generation=g, best=best)
+
+            with open("PSO_checkpoint.pkl", "wb") as cp_file:
+                pickle.dump(cp, cp_file)
+
     return pop, logbook, best
 
 
-population_size = 500
+NGEN = 500
+population_size = 100
 game_attempts = 5
+FREQ = 1
 
 if __name__ == "__main__":
-    main()
+    main(
+        checkpoint=build_absolute_path("learning/deap/pso/downstack/PSO_checkpoint.pkl")
+    )

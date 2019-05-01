@@ -6,18 +6,22 @@ from deap import tools
 from scoop import futures
 
 from c2ai import build_absolute_path
-from c2ai.learning.deap.pso.downstack.tetris import Tetris
+from c2ai.learning.deap.pso.downstack.uberleet import Tetris
 import numpy as np
+import pickle
 
 
 # ----------
 
 population_size = 500
-game_attempts = 3
+game_attempts = 5
 CXPB = 0.35  # CXPB  is the probability with which two individuals are crossed
-MUTPB = 0.2  # MUTPB is the probability for mutating an individual
-NGEN = 60  # number of generations to run
-RCALCGEN = 10
+MUTPB = 0.25  # MUTPB is the probability for mutating an individual
+NGEN = 600  # number of generations to run
+RECALCGEN = (
+    100
+)  # how often to reclaculate fitness of entire population (unecessary with higher game_attempts)
+FREQ = 1  # how often to pickle dump the progress
 
 
 creator.create("FitnessMax", base.Fitness, weights=(1.0,))
@@ -52,7 +56,7 @@ def evalOneMax(individual):
     for attempt in range(game_attempts):
         scores.append(Tetris.run_game(n=individual, render=False))
 
-    print("Individual had fitness of", np.mean(scores))
+    print("Individual had fitness of", scores, "Mean:", int(np.mean(scores)))
     return (np.mean(scores),)
 
 
@@ -63,40 +67,45 @@ def evalOneMax(individual):
 toolbox.register("evaluate", evalOneMax)
 
 # register the crossover operator
-toolbox.register("mate", tools.cxTwoPoint)
+toolbox.register("mate", tools.cxBlend, alpha=0.5)
 
 # register a mutation operator with a probability to
 # flip each attribute/gene of 0.05
-toolbox.register("mutate", tools.mutFlipBit, indpb=0.05)
+toolbox.register("mutate", tools.mutGaussian, mu=0, sigma=1, indpb=0.1)
 
 # operator for selecting individuals for breeding the next
 # generation: each individual of the current generation
 # is replaced by the 'fittest' (best) of tournsize individuals
 # drawn randomly from the current generation.
-toolbox.register("select", tools.selTournament, tournsize=int(population_size * 0.01))
+toolbox.register("select", tools.selTournament, tournsize=10)
 
 
-def main():
-    random.seed(64)
+def main(checkpoint=None):
+    try:
+        # A file name has been given, then load the data from the file
+        with open(checkpoint, "rb") as cp_file:
+            cp = pickle.load(cp_file, encoding="bytes")
+            pop = cp["population"]
+            g = cp["generation"]
+            best_ind = cp["best_ind"]
+            random.setstate(cp["rndstate"])
+            fits = [ind.fitness.values[0] for ind in pop]
+    except:
+        # Start a new evolution
+        # random.seed(64)
+        pop = toolbox.population(population_size)
+        g = 0
+        print("Start of evolution")
 
-    # create an initial population of population_size individuals (where
-    # each individual is a list of integers)
-    pop = toolbox.population(population_size)
+        # Evaluate the entire population
+        fitnesses = list(toolbox.map(toolbox.evaluate, pop))
+        for ind, fit in zip(pop, fitnesses):
+            ind.fitness.values = fit
 
-    print("Start of evolution")
+        print("  Evaluated %i individuals" % len(pop))
 
-    # Evaluate the entire population
-    fitnesses = list(toolbox.map(toolbox.evaluate, pop))
-    for ind, fit in zip(pop, fitnesses):
-        ind.fitness.values = fit
-
-    print("  Evaluated %i individuals" % len(pop))
-
-    # Extracting all the fitnesses of
-    fits = [ind.fitness.values[0] for ind in pop]
-
-    # Variable keeping track of the number of generations
-    g = 0
+        # Extracting all the fitnesses of
+        fits = [ind.fitness.values[0] for ind in pop]
 
     # Begin the evolution
     while max(fits) < 100000 and g < NGEN:
@@ -164,6 +173,18 @@ def main():
         ) as text_file:
             text_file.writelines(["\n", str(best_ind)])
 
+        if g % FREQ == 0:
+            # Fill the dictionary using the dict(key=value[, ...]) constructor
+            cp = dict(
+                population=pop,
+                generation=g,
+                best_ind=best_ind,
+                rndstate=random.getstate(),
+            )
+
+            with open("GA_checkpoint.pkl", "wb") as cp_file:
+                pickle.dump(cp, cp_file)
+
     print("-- End of (successful) evolution --")
 
     best_ind = tools.selBest(pop, 1)[0]
@@ -171,4 +192,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+
+    main(
+        checkpoint=build_absolute_path("learning/deap/pso/downstack/GA_checkpoint.pkl")
+    )
