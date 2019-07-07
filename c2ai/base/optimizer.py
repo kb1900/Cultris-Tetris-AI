@@ -156,10 +156,34 @@ class Optimizer:
         )  # sort by minimum second piece placed board score
 
         # for i in all_boards_first:
-        #     print('rotation', i[1], 'column', i[2], 'score1', round(i[3], 2), 'score2', round(i[4], 2), 'final_score', round(i[5], 2))
-        # print('')
+        #     print(
+        #         "combo",
+        #         settings.combo,
+        #         "clears1",
+        #         clears1,
+        #         "rotation",
+        #         i[1],
+        #         "column",
+        #         i[2],
+        #         "score1",
+        #         round(i[3], 2),
+        #         "score2",
+        #         round(i[4], 2),
+        #         "final_score",
+        #         round(i[5], 2),
+        #     )
+        # print("")
         # print(len(all_boards_first))
-        # print('Nodes Checked', node, 'of', (len(rotations) * (Field.WIDTH - tetromino_rotation.width() + 1)) * (len(next_rotations) * (Field.WIDTH - next_tetromino_rotation.width() + 1)))
+        # print(
+        #     "Nodes Checked",
+        #     node,
+        #     "of",
+        #     (len(rotations) * (Field.WIDTH - tetromino_rotation.width() + 1))
+        #     * (
+        #         len(next_rotations)
+        #         * (Field.WIDTH - next_tetromino_rotation.width() + 1)
+        #     ),
+        # )
         return all_boards_first[0]
 
     @staticmethod
