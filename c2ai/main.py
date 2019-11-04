@@ -70,7 +70,9 @@ def update_labels():
     except:
         pass
     mode_label["text"] = "Mode: " + str(settings.mode)
-    active_combo_label["text"] = "Combo Active: " + str(settings.combo)
+    active_combo_label["text"] = (
+        "Combo Active: " + str(settings.combo) + "\n Max BPM: " + str(max_bpm)
+    )
     Win_Loss_label["text"] = "Wins:" + str(wins) + " Losses:" + str(losses)
 
     root.update()
@@ -415,11 +417,11 @@ while True:
                         if combo_counter > 5 or combo_counter + combo_time > 8.5:
                             if field.height() < 15:
                                 settings.combo = True
-                                settings.max_bpm = 280
+                                max_bpm = settings.max_bpm_peak
                                 print("COMBO ACTIVE")
                         else:
                             settings.combo = False
-                            settings.max_bpm = 280
+                            max_bpm = settings.max_bpm
                         if (
                             field.height() < 2
                             and field.count_gaps() < 3
@@ -538,7 +540,7 @@ while True:
 
                     # Throttle speed if move would be faster than max speed
                     move_time = time.time() - start_time
-                    min_time_per_piece = 1 / (settings.max_bpm / 60)
+                    min_time_per_piece = 1 / (max_bpm / 60)
                     if move_time < min_time_per_piece:
                         time.sleep(min_time_per_piece - move_time)
 
