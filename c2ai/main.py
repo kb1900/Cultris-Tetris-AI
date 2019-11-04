@@ -34,7 +34,9 @@ def init_label():
     label.master.geometry("+750+650")
     label.master.lift()
     label.master.wm_attributes("-topmost", True)
-    label.master.wm_attributes("-transparent", 1)
+    # label.master.wm_attributes("-transparent", 1)
+    label.master.config(bg="gray24")
+    label.config(bg="gray24")
     label.pack()
 
     return label
@@ -45,6 +47,7 @@ combo_label = init_label()
 timer_label = init_label()
 piece_count_label = init_label()
 next_tetromino_label = init_label()
+rotation_column_label = init_label()
 mode_label = init_label()
 active_combo_label = init_label()
 Win_Loss_label = init_label()
@@ -55,6 +58,17 @@ def update_labels():
     timer_label["text"] = "Time: " + str("{0:.2f}".format(combo_time))
     piece_count_label["text"] = "Piece #" + str(count)
     next_tetromino_label["text"] = "Next: " + str(next_tetromino.type)
+    try:
+        rotation_column_label["text"] = (
+            "Rotation: "
+            + str(rotation)
+            + " Column: "
+            + str(column)
+            + "\n Score: "
+            + str(round(best_drop[5], 2))
+        )
+    except:
+        pass
     mode_label["text"] = "Mode: " + str(settings.mode)
     active_combo_label["text"] = "Combo Active: " + str(settings.combo)
     Win_Loss_label["text"] = "Wins:" + str(wins) + " Losses:" + str(losses)
@@ -254,6 +268,7 @@ def game_over_sequence(game_over):
             if i != 0:
                 time.sleep(i - 0.5)
                 break
+
 
 count = -2
 field = Field()

@@ -67,6 +67,7 @@ class Optimizer:
     @staticmethod
     def best_move(field, tetromino, next_tetromino, n=0, combo_time=0, combo_counter=0):
         node = 0
+        combo_priority = False
         # Here we should limit the number of rotations checked for symmetric pieces like O, S, Z, I
         if tetromino.type == "O":
             rotations = [tetromino]
@@ -100,6 +101,12 @@ class Optimizer:
                         combo_time=combo_time,
                         combo_counter=combo_counter,
                     )
+
+                    if clears1:
+                        if settings.combo and combo_counter > 5:
+                            score = score / clears1
+                            combo_priority = True
+
                     # print(tetromino_rotation, " ",column, "score:", score)
                     # print(field_copy)
                     all_boards_first.append(
@@ -118,6 +125,9 @@ class Optimizer:
         all_boards_first = all_boards_first[: settings.move_depth]
 
         for i in all_boards_first:
+            if combo_priority == True:
+                print("Priority active for combo!! \n")
+                break
             second_scores = []
             for next_tetromino_rotation in next_rotations:
                 for column in range(Field.WIDTH - next_tetromino_rotation.width() + 1):
@@ -133,6 +143,13 @@ class Optimizer:
                             combo_time=combo_time,
                             combo_counter=combo_counter,
                         )
+
+                        if combo_counter > 8:
+                            if clears2:
+                                combo_priority = True
+                                score = score / clears2
+                                break
+
                         second_scores.append(score)
 
                     except AssertionError:
@@ -143,8 +160,13 @@ class Optimizer:
 
             min_score_second = min(second_scores)
             i.append(min_score_second)
-            if settings.combo and clears1:
-                final_score = min_score_second + i[3]
+            if settings.combo:
+                if clears1:
+                    final_score = min_score_second + i[3]
+                elif clears2:
+                    final_score = min_score_second + i[3] + 75
+                else:
+                    final_score = min_score_second + i[3] + 150
             else:
                 final_score = min_score_second
             i.append(final_score)
