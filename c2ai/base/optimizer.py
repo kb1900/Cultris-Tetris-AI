@@ -110,7 +110,7 @@ class Optimizer:
                     # print(tetromino_rotation, " ",column, "score:", score)
                     # print(field_copy)
                     all_boards_first.append(
-                        [field_copy, rotation_counter, column, score]
+                        [field_copy, rotation_counter, column, score, clears1]
                     )
                 except AssertionError:
                     # print(tetromino_rotation, column, "AssertionError")
@@ -161,7 +161,7 @@ class Optimizer:
             min_score_second = min(second_scores)
             i.append(min_score_second)
             if settings.combo:
-                if clears1:
+                if i[4]:
                     final_score = min_score_second + i[3]
                 elif clears2:
                     final_score = min_score_second + i[3] + 75
