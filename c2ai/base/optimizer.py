@@ -89,6 +89,7 @@ class Optimizer:
             next_rotations[i].rotate(i)
 
         all_boards_first = []
+        # ITERATE THROUGH POSSIBLE FIRST PIECE MOVES
         for rotation_counter, tetromino_rotation in enumerate(rotations):
             for column in range(Field.WIDTH - tetromino_rotation.width() + 1):
                 field_copy = field.copy()
@@ -102,32 +103,47 @@ class Optimizer:
                         combo_counter=combo_counter,
                     )
 
-                    if clears1:
-                        if settings.combo and combo_counter > 5:
-                            score = score / clears1
-                            combo_priority = True
+                    if settings.combo:
+                        if clears1:
+                            combo_priority = "Super"
+                        if clears1 == 1:
+                            score = score / 1.3
+                        elif clears1 == 2:
+                            score = score / 1.2
+                        elif clears1 == 3:
+                            score = score / 1.1
+                        elif clears1 == 4:
+                            score = score / 1
+                        else:
+                            score = score / 0.9
 
                     # print(tetromino_rotation, " ",column, "score:", score)
                     # print(field_copy)
                     all_boards_first.append(
-                        [field_copy, rotation_counter, column, score]
+                        [field_copy, rotation_counter, column, score, clears1]
                     )
                 except AssertionError:
                     # print(tetromino_rotation, column, "AssertionError")
                     continue
                 node += 1
 
-        # benchmarking suggests a linear increase of 0.02s per move for every increase in top current piece moves explored
+        # benchmarking needs to be redone.
         all_boards_first.sort(
             key=itemgetter(3)
         )  # sort by first piece placed board scores
-        # 1 = 0.050; 2 = 0.073; 3 = 0.095; 4 = 0.114; 5 = 0.143; 6 = 0.163
         all_boards_first = all_boards_first[: settings.move_depth]
 
+        # HERE WE ITERATE THROUGH POSSIVE SECOND PIECE MOVES FOR EACH FIRST MOVE
         for i in all_boards_first:
-            if combo_priority == True:
-                print("Priority active for combo!! \n")
-                break
+            if settings.combo:
+                if combo_priority != "Super":
+                    # print("MEDIUM Priority active for combo!! \n")
+                    continue
+                elif combo_priority == "Super":
+                    # print("SUPER Priority active for combo!! \n")
+                    if combo_time < 1 or combo_counter > 6:
+                        # print("SUPERDUPER Priority active for combo!! \n")
+                        break
             second_scores = []
             for next_tetromino_rotation in next_rotations:
                 for column in range(Field.WIDTH - next_tetromino_rotation.width() + 1):
@@ -143,14 +159,23 @@ class Optimizer:
                             combo_time=combo_time,
                             combo_counter=combo_counter,
                         )
-
-                        if combo_counter > 8:
-                            if clears2:
-                                combo_priority = True
-                                score = score / clears2
-                                break
-
-                        second_scores.append(score)
+                        if combo_priority == True:
+                            if clears2 == 1:
+                                score = score / 1.3
+                            elif clears2 == 2:
+                                score = score / 1.2
+                            elif clears2 == 3:
+                                score = score / 1.1
+                            elif clears2 == 4:
+                                score = score / 1
+                            else:
+                                score = score / 0.9
+                            second_scores.append(score)
+                            if combo_counter > 6:
+                                if clears2:
+                                    break
+                        else:
+                            second_scores.append(score)
 
                     except AssertionError:
                         # print(tetromino_rotation, column, "AssertionError")
@@ -161,7 +186,7 @@ class Optimizer:
             min_score_second = min(second_scores)
             i.append(min_score_second)
             if settings.combo:
-                if clears1:
+                if i[3]:
                     final_score = min_score_second + i[3]
                 elif clears2:
                     final_score = min_score_second + i[3] + 75
