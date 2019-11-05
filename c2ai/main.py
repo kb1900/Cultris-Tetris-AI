@@ -414,7 +414,7 @@ while True:
                             )
                             settings.mode = "downstack"
                     if settings.mode == "downstack":
-                        if combo_counter > 5 or combo_counter + combo_time > 6.5:
+                        if combo_counter > 5 or combo_counter + combo_time > 8.5:
                             if field.height() < 15:
                                 settings.combo = True
                                 max_bpm = settings.max_bpm_peak

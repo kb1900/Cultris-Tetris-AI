@@ -1,6 +1,6 @@
-max_bpm = 220
+max_bpm = 190
 max_bpm_peak = (
-    260
+    250
 )  # The bpm will be variable but never peak above this due to time tracking and delays in main.py
 move_depth = (
     12
