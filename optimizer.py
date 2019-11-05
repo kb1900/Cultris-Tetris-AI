@@ -2,6 +2,32 @@ from tetromino import Tetromino
 from field import Field
 import settings
 from operator import itemgetter
+import threading
+import queue
+
+
+def get_current_rotations(tetromino, que):
+
+    # Here we should limit the number of rotations checked for symmetric pieces like O, S, Z, I
+    if tetromino.type == "O":
+        rotations = [tetromino]
+    elif tetromino.type in ("I", "S", "Z"):
+        rotations = [tetromino.copy() for r in range(2)]
+    else:
+        rotations = [tetromino.copy() for r in range(4)]
+
+    return que.put(rotations)
+
+
+def get_next_rotations(next_tetromino, que):
+    if next_tetromino.type == "O":
+        next_rotations = [next_tetromino]
+    elif next_tetromino.type in ("I", "S", "Z"):
+        next_rotations = [next_tetromino.copy() for r in range(2)]
+    else:
+        next_rotations = [next_tetromino.copy() for r in range(4)]
+
+    return que.put(next_rotations)
 
 
 class Optimizer:
@@ -49,7 +75,8 @@ class Optimizer:
                         x * y for x, y in zip(heuristics, settings.downstack_model)
                     )
                 elif settings.mode == "test1":
-                    score = sum(x * y for x, y in zip(heuristics, settings.test_model))
+                    score = sum(
+                        x * y for x, y in zip(heuristics, settings.test_model))
 
                 elif settings.mode == "test2":
                     score = sum(
@@ -68,23 +95,27 @@ class Optimizer:
     def best_move(field, tetromino, next_tetromino, n=0, combo_time=0, combo_counter=0):
         node = 0
         combo_priority = False
+
+        cur_que = queue.Queue()
+        next_que = queue.Queue()
+
+        t1 = threading.Thread(
+            target=get_current_rotations, args=(tetromino, cur_que))
+
+        t2 = threading.Thread(
+            target=get_next_rotations, args=(next_tetromino, next_que))
+
+        t1.start()
+        t2.start()
+
+        rotations = cur_que.get()
         # Here we should limit the number of rotations checked for symmetric pieces like O, S, Z, I
-        if tetromino.type == "O":
-            rotations = [tetromino]
-        elif tetromino.type in ("I", "S", "Z"):
-            rotations = [tetromino.copy() for r in range(2)]
-        else:
-            rotations = [tetromino.copy() for r in range(4)]
+        # rotations = get_current_rotations(tetromino)
         for i in range(len(rotations)):
             rotations[i].rotate(i)
 
         # Again we should limit the number of rotations checked for symmetric pieces like O, S, Z, I
-        if next_tetromino.type == "O":
-            next_rotations = [next_tetromino]
-        elif next_tetromino.type in ("I", "S", "Z"):
-            next_rotations = [next_tetromino.copy() for r in range(2)]
-        else:
-            next_rotations = [next_tetromino.copy() for r in range(4)]
+        next_rotations = next_que.get()
         for i in range(len(next_rotations)):
             next_rotations[i].rotate(i)
 
@@ -178,35 +209,6 @@ class Optimizer:
             key=lambda x: x[-1]
         )  # sort by minimum second piece placed board score
 
-        # for i in all_boards_first:
-        #     print(
-        #         "combo",
-        #         settings.combo,
-        #         "clears1",
-        #         clears1,
-        #         "rotation",
-        #         i[1],
-        #         "column",
-        #         i[2],
-        #         "score1",
-        #         round(i[3], 2),
-        #         "score2",
-        #         round(i[4], 2),
-        #         "final_score",
-        #         round(i[5], 2),
-        #     )
-        # print("")
-        # print(len(all_boards_first))
-        # print(
-        #     "Nodes Checked",
-        #     node,
-        #     "of",
-        #     (len(rotations) * (Field.WIDTH - tetromino_rotation.width() + 1))
-        #     * (
-        #         len(next_rotations)
-        #         * (Field.WIDTH - next_tetromino_rotation.width() + 1)
-        #     ),
-        # )
         return all_boards_first[0]
 
     @staticmethod

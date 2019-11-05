@@ -72,7 +72,8 @@ def timer(combo_time=0, clears=0, combo_counter=0):
 
 def compute_score(detailed_combos):
     sent_from_combos = sum(lines_sent[len(combo)] for combo in detailed_combos)
-    sent_from_clears = sum(sum(combo) - len(combo) for combo in detailed_combos)
+    sent_from_clears = sum(sum(combo) - len(combo)
+                           for combo in detailed_combos)
     # print("Lines Sent From Combos: ", sent_from_combos)
     # print("Lines Sent From Clears: ", sent_from_clears)
     # print("Lines Sent", sent_from_clears + sent_from_combos)
@@ -190,29 +191,6 @@ class Tetris:
                             "piece_count:", piece_count, "clears_count:", clears_count
                         )
                         heuristics = field.heuristics()
-                        # print(
-                        #     "gaps",
-                        #     heuristics[0],
-                        #     "bumpiness",
-                        #     heuristics[1],
-                        #     "bog1",
-                        #     heuristics[2],
-                        #     "bog2",
-                        #     heuristics[3],
-                        #     "tall_holes",
-                        #     heuristics[4],
-                        #     "field_height",
-                        #     heuristics[5],
-                        #     "\n" + "stack gaps",
-                        #     heuristics[6],
-                        #     "stack height",
-                        #     heuristics[7],
-                        #     "sum_bumps_above_two",
-                        #     heuristics[8],
-                        #     "trans_above_gap1",
-                        #     heuristics[9],
-                        # )
-                        # input()
 
                 ## PLACE BLOCK AND GET LINE CLEARS ##
                 returns = field.drop(current_tetromino, column)
@@ -220,7 +198,8 @@ class Tetris:
                     clears_count += returns[1]
                     detailed_combos[-1].append(returns[1])
 
-                combo_time, combo_counter = timer(combo_time, returns[1], combo_counter)
+                combo_time, combo_counter = timer(
+                    combo_time, returns[1], combo_counter)
 
                 ## SET UP NEXT INSTANCE ##
                 current_tetromino = next_tetromino
@@ -229,7 +208,8 @@ class Tetris:
                     - 0.0900634319213337  # Average compute time for executing moves
                     - 0.024662579271626208  # Average compute time for field image processing
                     - 0.007466887216673049  # time to check game over
-                    - (t1 - t0)  # time to get/compute best move based on nodes + depth
+                    # time to get/compute best move based on nodes + depth
+                    - (t1 - t0)
                 )
 
                 if combo_time < 0:
@@ -264,50 +244,36 @@ class Tetris:
 
 
 def main():
-    try:
-        with open(
-            build_absolute_path("learning/deap/pso/downstack/current_generation_dump"),
-            "rb",
-        ) as dump_file:
-            dump = pickle.load(dump_file)
-            current_generation = dump[0]
-            n = current_generation[0]
-            score = Tetris.run_game(n, render=True)
-            print("loaded previous netowrk")
-            print(score)
-            print(n.wih)
-            print(n.who)
 
-    except:
-        f_read = open("PSOoutput.txt", "r")
-        n = ast.literal_eval(f_read.readlines()[-1])
-        f_read.close()
+    f_read = open("PSOoutput.txt", "r")
+    n = ast.literal_eval(f_read.readlines()[-1])
+    f_read.close()
 
-        score = Tetris.run_game(n, render=True)
+    score = Tetris.run_game(n, render=True)
 
-        print("")
-        if score >= 250:
-            print("UBER LEET COMPLETE")
-            print("Lines Sent:", score)
-        else:
-            print("Remaining Lines:", 250 - score)
+    print("")
+    if score >= 250:
+        print("UBER LEET COMPLETE")
+        print("Lines Sent:", score)
+    else:
+        print("Remaining Lines:", 250 - score)
 
-        print("")
-        heuristics = [
-            "count_gaps",
-            "bumpiness",
-            "blocks_over_gap1",
-            "blocks_over_gap2",
-            "tall_holes",
-            "field_height",
-            "stack_gaps",
-            "stack_height",
-            "sum_bumps_above_two",
-            "row_trans_above_gap1",
-        ]
+    print("")
+    heuristics = [
+        "count_gaps",
+        "bumpiness",
+        "blocks_over_gap1",
+        "blocks_over_gap2",
+        "tall_holes",
+        "field_height",
+        "stack_gaps",
+        "stack_height",
+        "sum_bumps_above_two",
+        "row_trans_above_gap1",
+    ]
 
-        for index, heuristic in enumerate(heuristics):
-            print(heuristic, ":", "{0:.2f}".format(n[index]))
+    for index, heuristic in enumerate(heuristics):
+        print(heuristic, ":", "{0:.2f}".format(n[index]))
 
 
 if __name__ == "__main__":
