@@ -1,6 +1,6 @@
-from c2ai.base.field import Field
-from c2ai.base.tetromino import Tetromino
-from c2ai.base import settings
+from tetromino import Tetromino
+from field import Field
+import settings
 from operator import itemgetter
 
 
@@ -110,7 +110,7 @@ class Optimizer:
                     # print(tetromino_rotation, " ",column, "score:", score)
                     # print(field_copy)
                     all_boards_first.append(
-                        [field_copy, rotation_counter, column, score, clears1]
+                        [field_copy, rotation_counter, column, score]
                     )
                 except AssertionError:
                     # print(tetromino_rotation, column, "AssertionError")
@@ -160,8 +160,9 @@ class Optimizer:
 
             min_score_second = min(second_scores)
             i.append(min_score_second)
+            ## This makes no sense - fix it ##
             if settings.combo:
-                if i[4]:
+                if clears1:
                     final_score = min_score_second + i[3]
                 elif clears2:
                     final_score = min_score_second + i[3] + 75

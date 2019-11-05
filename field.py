@@ -1,4 +1,4 @@
-from c2ai.base.tetromino import Tetromino
+from tetromino import Tetromino
 import random
 import numpy as np
 from operator import xor

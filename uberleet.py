@@ -1,9 +1,8 @@
-from c2ai.base.tetromino import Tetromino
-from c2ai.base.field import Field
-from c2ai.base.optimizer import Optimizer
-from c2ai.base import settings
-from c2ai.learning.deap.pso.downstack.tetris import Tetris
-from c2ai import build_absolute_path
+from tetromino import Tetromino
+from field import Field
+from optimizer import Optimizer
+import settings
+
 
 import random
 import time
@@ -100,7 +99,7 @@ class Tetris:
         Returns: piece_count: pieces placed prior to game end
         """
         field = Field()
-        with open(build_absolute_path("base/pieces.txt"), "r") as file:
+        with open(("pieces.txt"), "r") as file:
             sequence = file.read().replace("\n", "")
             # print(sequence)
             # sequence = sequence.strip("\n")
