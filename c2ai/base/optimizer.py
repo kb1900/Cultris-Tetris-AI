@@ -2,73 +2,71 @@ from c2ai.base.field import Field
 from c2ai.base.tetromino import Tetromino
 from c2ai.base import settings
 from operator import itemgetter
+import multiprocessing as mp
+import time
 
 
 class Optimizer:
     @staticmethod
-    def get_score(field, clears, row=0, n=0, combo_time=0, combo_counter=0):
-        f = field
-
-        """
-        heuristics[0] = count_gaps()
-        heuristics[1] = bumpiness
-        heuristics[2] = blocks_over_gap1
-        heuristics[3] = blocks_over_gap2
-        heuristics[4] = tall_holes
-        heuristics[5] = field_height
-        heuristics[6] = stack_gaps
-        heuristics[7] = stack_height
-        heuristics[8] = sum_bumps_above_two
-        heuristics[9] = row_trans_above_gap1
-        """
-        heuristics = f.heuristics()
-
-        # features = [heuristics[0], heuristics[1], heuristics[3],heuristics[4],heuristics[5],heuristics[6],heuristics[7], heuristics[8],heuristics[9],heuristics[10]]
-
+    def score_board(board, n=0):
+        if board[0] == False:
+            return float("inf")
+        heuristics = board[0].heuristics()
         if settings.modes:
             if settings.train:
-                if settings.mode == "upstack":
-                    if clears > 0:
-                        score = float("inf")
-                    else:
-                        score = sum(
-                            x * y for x, y in zip(heuristics, settings.upstack_model)
-                        )
-                elif settings.mode == "downstack":
-                    score = sum(x * y for x, y in zip(heuristics, n))
+                model = n
             else:
-                if settings.mode == "upstack":
-                    if clears > 0:
-                        score = float("inf")
-                    else:
-                        score = sum(
-                            x * y for x, y in zip(heuristics, settings.upstack_model)
-                        )
-                elif settings.mode == "downstack":
-                    score = sum(
-                        x * y for x, y in zip(heuristics, settings.downstack_model)
-                    )
-                elif settings.mode == "test1":
-                    score = sum(x * y for x, y in zip(heuristics, settings.test_model))
+                model = settings.downstack_model
 
-                elif settings.mode == "test2":
-                    score = sum(
-                        x * y for x, y in zip(heuristics, settings.downstack_model)
-                    )
-        else:
-            score = sum(x * y for x, y in zip(heuristics, settings.test_model))
-
-        if settings.combo:
-            if combo_time < 1:
-                combo_time += 1
-            score = score / (combo_time)
-        return float(score)
+        return sum(x * y for x, y in zip(heuristics, model))
 
     @staticmethod
-    def best_move(field, tetromino, next_tetromino, n=0, combo_time=0, combo_counter=0):
-        node = 0
-        combo_priority = False
-        # Here we should limit the number of rotations checked for symmetric pieces like O, S, Z, I
+    def get_all_boards_sequential(field, rotations, next_rotations, deep=True):
+        # Returns a list of all_boards_shallow based on the first tetromino's placement options
+        # Returns a lit of all_boards_deep based on the second tetromino's placement options for each board in all_boards_shallow
+        all_boards_shallow = []
+        # rotations = Optimizer.get_all_rotations(tetromino)
+
+        # Iterate through rotations, columns
+        for rotation_counter, tetromino_rotation in enumerate(rotations):
+            for column in range(Field.WIDTH - tetromino_rotation.width() + 1):
+                field_copy = field.copy()
+                clears = field_copy.drop(tetromino_rotation, column)[1]
+                # print(field_copy)
+                all_boards_shallow.append(
+                    [field_copy, rotation_counter, column, clears]
+                )
+        if deep == False:
+            return all_boards_shallow
+
+        all_boards_deep = []
+        # next_rotations = Optimizer.get_all_rotations(next_tetromino)
+
+        # Iterate through each board in all_boards_shallow, then iterate through rotations, columns
+        for board in all_boards_shallow:
+            for rotation_counter, tetromino_rotation in enumerate(next_rotations):
+                for column in range(Field.WIDTH - tetromino_rotation.width() + 1):
+                    field_copy = board[0].copy()
+                    first_rotation = board[1]
+                    first_column = board[2]
+                    first_piece_clears = board[3]
+                    second_piece_clears = field_copy.drop(tetromino_rotation, column)[1]
+                    all_boards_deep.append(
+                        [
+                            field_copy,
+                            first_rotation,
+                            first_column,
+                            first_piece_clears,
+                            rotation_counter,
+                            column,
+                            second_piece_clears,
+                        ]
+                    )
+        return all_boards_deep
+
+    @staticmethod
+    def get_all_rotations(tetromino):
+        # Returns a list of tetrominos, rotated with pruning to avoid symetric rotations
         if tetromino.type == "O":
             rotations = [tetromino]
         elif tetromino.type in ("I", "S", "Z"):
@@ -78,135 +76,96 @@ class Optimizer:
         for i in range(len(rotations)):
             rotations[i].rotate(i)
 
-        # Again we should limit the number of rotations checked for symmetric pieces like O, S, Z, I
-        if next_tetromino.type == "O":
-            next_rotations = [next_tetromino]
-        elif next_tetromino.type in ("I", "S", "Z"):
-            next_rotations = [next_tetromino.copy() for r in range(2)]
-        else:
-            next_rotations = [next_tetromino.copy() for r in range(4)]
-        for i in range(len(next_rotations)):
-            next_rotations[i].rotate(i)
+        return rotations
 
-        all_boards_first = []
+    @staticmethod
+    def get_first_board(field, tetromino_rotation, rotation_count, column):
+        # given a rotation, column, next_rotation, next_column
+        # returns [field, rotation, column, clears]
+        field = field.copy()
+        try:
+            clears = field.drop(tetromino_rotation, column)[1]
+        except AssertionError:
+            field = False
+            clears = 0
+        return [field, rotation_count, column, clears]
+
+    @staticmethod
+    def get_second_board(
+        field,
+        first_rotation_count,
+        first_column,
+        first_clears,
+        second_tetromino_rotation,
+        second_rotation_count,
+        second_column,
+    ):
+        # given a rotation, column, next_rotation, next_column
+        # returns [field, rotation, column, clears]
+        try:
+            field = field.copy()
+            clears = field.drop(second_tetromino_rotation, second_column)[1]
+        except:
+            field = False
+            clears = 0
+        return [
+            field,
+            first_rotation_count,
+            first_column,
+            first_clears,
+            second_rotation_count,
+            second_column,
+            clears,
+        ]
+
+    def best_move(field, tetromino, next_tetromino, n=0, combo_time=0, combo_counter=0):
+        print("WE HAVE ARRIVED HERE")
+
+        # need to create a moves list of [field, tetromino_rotation, rotation_count, column] to feeed into get_board()
+        rotations = Optimizer.get_all_rotations(tetromino)
+        next_rotations = Optimizer.get_all_rotations(next_tetromino)
+        first_moves = []
+        # First piece moves
         for rotation_counter, tetromino_rotation in enumerate(rotations):
             for column in range(Field.WIDTH - tetromino_rotation.width() + 1):
-                field_copy = field.copy()
-                try:
-                    clears1 = field_copy.drop(tetromino_rotation, column)[1]
-                    score = Optimizer.get_score(
-                        field=field_copy,
-                        clears=clears1,
-                        n=n,
-                        combo_time=combo_time,
-                        combo_counter=combo_counter,
-                    )
+                first_moves.append(
+                    [field, tetromino_rotation, rotation_counter, column]
+                )
 
-                    if clears1:
-                        if settings.combo and combo_counter > 5:
-                            score = score / clears1
-                            combo_priority = True
-
-                    # print(tetromino_rotation, " ",column, "score:", score)
-                    # print(field_copy)
-                    all_boards_first.append(
-                        [field_copy, rotation_counter, column, score, clears1]
-                    )
-                except AssertionError:
-                    # print(tetromino_rotation, column, "AssertionError")
-                    continue
-                node += 1
-
-        # benchmarking suggests a linear increase of 0.02s per move for every increase in top current piece moves explored
-        all_boards_first.sort(
-            key=itemgetter(3)
-        )  # sort by first piece placed board scores
-        # 1 = 0.050; 2 = 0.073; 3 = 0.095; 4 = 0.114; 5 = 0.143; 6 = 0.163
-        all_boards_first = all_boards_first[: settings.move_depth]
-
-        for i in all_boards_first:
-            if combo_priority == True:
-                print("Priority active for combo!! \n")
-                break
-            second_scores = []
-            for next_tetromino_rotation in next_rotations:
-                for column in range(Field.WIDTH - next_tetromino_rotation.width() + 1):
-                    next_field_copy = i[0].copy()
-                    try:
-                        clears2 = next_field_copy.drop(next_tetromino_rotation, column)[
-                            1
+        pool = mp.Pool(processes=4)
+        first_boards = list(pool.starmap(Optimizer.get_first_board, first_moves))
+        pool.close()
+        print("WE HAVE ARRIVED HERE2")
+        second_moves = []
+        # Second piece moves
+        for firstboard in first_boards:
+            for rotation_counter, tetromino_rotation in enumerate(next_rotations):
+                for column in range(Field.WIDTH - tetromino_rotation.width() + 1):
+                    second_moves.append(
+                        [
+                            firstboard[0],  # first move field
+                            firstboard[1],  # first move rotation counter
+                            firstboard[2],  # first move column
+                            firstboard[3],  # first move clears
+                            tetromino_rotation,  # second move rotation
+                            rotation_counter,  # second move rotation counter
+                            column,  # second move columnm
                         ]
-                        score = Optimizer.get_score(
-                            field=next_field_copy,
-                            clears=clears2,
-                            n=n,
-                            combo_time=combo_time,
-                            combo_counter=combo_counter,
-                        )
+                    )
+        pool = mp.Pool(processes=4)
+        all_boards = list(pool.starmap(Optimizer.get_second_board, second_moves))
+        pool.close()
+        print("WE HAVE ARRIVED HERE3")
 
-                        if combo_counter > 8:
-                            if clears2:
-                                combo_priority = True
-                                score = score / clears2
-                                break
+        pool = mp.Pool(processes=4)
+        scores = list(pool.map(Optimizer.score_board, all_boards))
+        pool.close()
+        print("WE HAVE ARRIVED HERE4")
+        for index, score in enumerate(scores):
+            all_boards[index].append(score)
 
-                        second_scores.append(score)
-
-                    except AssertionError:
-                        # print(tetromino_rotation, column, "AssertionError")
-                        score = float("inf")
-                        second_scores.append(score)
-                    node += 1
-
-            min_score_second = min(second_scores)
-            i.append(min_score_second)
-            if settings.combo:
-                if i[4]:
-                    final_score = min_score_second + i[3]
-                elif clears2:
-                    final_score = min_score_second + i[3] + 75
-                else:
-                    final_score = min_score_second + i[3] + 150
-            else:
-                final_score = min_score_second
-            i.append(final_score)
-            if node > settings.max_nodes:
-                break
-
-        all_boards_first.sort(
-            key=lambda x: x[-1]
-        )  # sort by minimum second piece placed board score
-
-        # for i in all_boards_first:
-        #     print(
-        #         "combo",
-        #         settings.combo,
-        #         "clears1",
-        #         clears1,
-        #         "rotation",
-        #         i[1],
-        #         "column",
-        #         i[2],
-        #         "score1",
-        #         round(i[3], 2),
-        #         "score2",
-        #         round(i[4], 2),
-        #         "final_score",
-        #         round(i[5], 2),
-        #     )
-        # print("")
-        # print(len(all_boards_first))
-        # print(
-        #     "Nodes Checked",
-        #     node,
-        #     "of",
-        #     (len(rotations) * (Field.WIDTH - tetromino_rotation.width() + 1))
-        #     * (
-        #         len(next_rotations)
-        #         * (Field.WIDTH - next_tetromino_rotation.width() + 1)
-        #     ),
-        # )
-        return all_boards_first[0]
+        all_boards.sort(key=lambda x: x[-1])
+        return all_boards[0]
 
     @staticmethod
     def get_keystrokes(rotation, column, keymap, tetromino_name):
@@ -531,4 +490,68 @@ class Optimizer:
 
 
 if __name__ == "__main__":
+    try:
+        mp.set_start_method("forkserver")
+    except RuntimeError:
+        pass
     f = Field()
+    tetromino = Tetromino.J_Tetromino()
+    next_tetromino = Tetromino.T_Tetromino()
+    rotations = Optimizer.get_all_rotations(tetromino)
+    next_rotations = Optimizer.get_all_rotations(next_tetromino)
+
+    start = time.time()
+    all_boards = Optimizer.get_all_boards_sequential(f, rotations, next_rotations)
+    print("Total number of boards:", len(all_boards), "\n")
+    print("Getting all boards linearly took", time.time() - start, "seconds")
+
+    start = time.time()
+    # need to create a moves list such that we have [field, tetromino_rotation, rotation_count, column] to feeed into get_board
+    first_moves = []
+    # First piece moves
+    for rotation_counter, tetromino_rotation in enumerate(rotations):
+        for column in range(Field.WIDTH - tetromino_rotation.width() + 1):
+            first_moves.append([f, tetromino_rotation, rotation_counter, column])
+
+    pool = mp.Pool(processes=4)
+    first_boards = list(pool.starmap(Optimizer.get_first_board, first_moves))
+    pool.close()
+
+    second_moves = []
+    # Second piece moves
+    for firstboard in first_boards:
+        for rotation_counter, tetromino_rotation in enumerate(next_rotations):
+            for column in range(Field.WIDTH - tetromino_rotation.width() + 1):
+                second_moves.append(
+                    [
+                        firstboard[0],  # first move field
+                        firstboard[1],  # first move rotation counter
+                        firstboard[2],  # first move column
+                        firstboard[3],  # first move clears
+                        tetromino_rotation,  # second move rotation
+                        rotation_counter,  # second move rotation counter
+                        column,  # second move columnm
+                    ]
+                )
+    pool = mp.Pool(processes=4)
+    all_boards = list(pool.starmap(Optimizer.get_second_board, second_moves))
+    pool.close()
+    print("Getting all boards with 2x starmap took", time.time() - start, "seconds \n")
+
+    start = time.time()
+    for board in all_boards:
+        board.append(Optimizer.score_board(board))
+    print("Scoring all boards linearly took", time.time() - start, "seconds")
+
+    start = time.time()
+    pool = mp.Pool(processes=4)
+    scores = list(pool.map(Optimizer.score_board, all_boards))
+    pool.close()
+    for index, score in enumerate(scores):
+        all_boards[index].append(score)
+    print("Scoring all boards with map took:", time.time() - start, "seconds \n")
+
+    start = time.time()
+    all_boards.sort(key=lambda x: x[-1])
+    print("Ranking boards took", time.time() - start, "seconds")
+    print(all_boards[0])
