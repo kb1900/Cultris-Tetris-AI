@@ -90,18 +90,41 @@ class Tetromino:
 
 
 if __name__ == "__main__":
-    t = Tetromino.L_Tetromino()
+    t = Tetromino.L_Tetromino()  # L tetromino
     print(t)
-    print()
-    t.rotate_right()
-    print(t)
-    print()
-    t.rotate_right()
-    print(t)
-    print()
-    t.rotate_left()
-    print(t)
-    print(t.height())
-    print(t.width())
-    t.flip()
-    print(t)
+
+    raw_piece = [[" ", " ", "x"], ["x", "x", "x"]]
+    print(raw_piece)  # the "raw" tetromino
+
+    print(
+        "\n".join("".join(x) for x in raw_piece)
+    )  # the string tetromnino is just converting the list of lists (raw) to a real piece by 1) joining each list by a new line 2) each sublist becomes a string
+
+    flipped_raw_piece = list(
+        reversed(raw_piece)
+    )  # this flips the two substings of the raw piece
+    print(flipped_raw_piece)
+    print("\n".join("".join(x) for x in flipped_raw_piece))
+
+    flipped_zipped_raw_piece = list(
+        zip(*reversed(raw_piece))
+    )  # zip returns iterator of tuples where the first item in each passed iterator is paired together, then the second item in each passed iterator are paired together etc.
+    # the star just turns the argument into positional arguments
+    # so zip(['x', 'x', 'x'], [' ', ' ', 'x']) becomes ('x', ' '), ('x', ' '), ('x', 'x')
+    print(flipped_zipped_raw_piece)
+    # then again we just join each list (tuple) by new line and each sublist (tuple) becomes a string
+    print("\n".join("".join(x) for x in flipped_zipped_raw_piece))
+
+    # print()
+    # t.rotate_right()
+    # print(t)
+    # print()
+    # t.rotate_right()
+    # print(t)
+    # print()
+    # t.rotate_left()
+    # print(t)
+    # print(t.height())
+    # print(t.width())
+    # t.flip()
+    # print(t)
