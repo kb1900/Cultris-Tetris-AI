@@ -296,16 +296,42 @@ class Field:
         else:
             row_trans_above_gap1 = 0
 
-        heuristics[0] = len(true_gaps)
-        heuristics[1] = bumpiness
-        heuristics[2] = blocks_over_gap1
-        heuristics[3] = blocks_over_gap2
-        heuristics[4] = sum(tall_hole_heights)
-        heuristics[5] = field_height
-        heuristics[6] = len(true_stack_gaps)
-        heuristics[7] = stack_height
-        heuristics[8] = sum_bumps_above_two
-        heuristics[9] = row_trans_above_gap1
+        heuristics[0] = len(
+            true_gaps
+        )  # gaps are defined as a cell with 1) a space AND 2) the cell above and cell below contain an x
+        heuristics[
+            1
+        ] = (
+            bumpiness
+        )  # take the height of each column, take the absolute difference between adjacent columns, sum them
+        heuristics[
+            2
+        ] = blocks_over_gap1  # number of occupied cells (x) over the highest true_gap
+        heuristics[
+            3
+        ] = (
+            blocks_over_gap2
+        )  # number of occupied cells (x) over the second highest true_gap
+        heuristics[4] = sum(
+            tall_hole_heights
+        )  # find a hole (not a gap) which is covered above by a x, compute the height of the hole (number of spaces), sum
+        heuristics[5] = field_height  # the maximum height of the heights of columns
+        heuristics[6] = len(
+            true_stack_gaps
+        )  # same as true_gaps but only for the pieces stacked (does not include garbage holes)
+        heuristics[
+            7
+        ] = (
+            stack_height
+        )  # the maximum height of the height of columns, ignoring garbage
+        heuristics[
+            8
+        ] = sum_bumps_above_two  # bumpiness, but only for bumps larger than 2 in height
+        heuristics[
+            9
+        ] = (
+            row_trans_above_gap1
+        )  # isolate the row above the highest gap. a row transition is if an x is adjacent to a space. number of transitions
 
         return heuristics
 

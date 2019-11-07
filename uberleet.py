@@ -73,8 +73,7 @@ def timer(combo_time=0, clears=0, combo_counter=0):
 
 def compute_score(detailed_combos):
     sent_from_combos = sum(lines_sent[len(combo)] for combo in detailed_combos)
-    sent_from_clears = sum(sum(combo) - len(combo)
-                           for combo in detailed_combos)
+    sent_from_clears = sum(sum(combo) - len(combo) for combo in detailed_combos)
     # print("Lines Sent From Combos: ", sent_from_combos)
     # print("Lines Sent From Clears: ", sent_from_clears)
     # print("Lines Sent", sent_from_clears + sent_from_combos)
@@ -116,9 +115,9 @@ class Tetris:
         current_tetromino = Tetromino.create(sequence[piece_count])
 
         current_tetromino = Tetromino.create("L")
-        print(current_tetromino.state)
-        print([[" ", " ", "x"], ["x", "x", "x"]])
-        time.sleep(100)
+        # print(current_tetromino.state)
+        # print([[" ", " ", "x"], ["x", "x", "x"]])
+        # time.sleep(100)
 
         clears_count = random.uniform(0.001, 1)
 
@@ -126,9 +125,18 @@ class Tetris:
             try:
                 next_tetromino = Tetromino.create(sequence[piece_count + 1])
 
+                r0 = time.time()
                 r = requests.get(
-                    'http://localhost:9876/mode/{}/{}/{}/{}/{}/{}'.format(settings.mode, field.height(), field.count_gaps(),
-                                                                          field.max_bump(), combo_counter, combo_time))
+                    "http://localhost:9876/mode/{}/{}/{}/{}/{}/{}".format(
+                        settings.mode,
+                        field.height(),
+                        field.count_gaps(),
+                        field.max_bump(),
+                        combo_counter,
+                        combo_time,
+                    )
+                )
+                print("Requests took", time.time() - r0)
 
                 settings.mode = r.json()["mode"]
                 # tries to get the value for combo if the key is invalid sets it to false
@@ -172,6 +180,29 @@ class Tetris:
                             "piece_count:", piece_count, "clears_count:", clears_count
                         )
                         heuristics = field.heuristics()
+                        print(
+                            "gaps",
+                            heuristics[0],
+                            "bumpiness",
+                            heuristics[1],
+                            "bog1",
+                            heuristics[2],
+                            "bog2",
+                            heuristics[3],
+                            "tall_holes",
+                            heuristics[4],
+                            "field_height",
+                            heuristics[5],
+                            "\n" + "stack gaps",
+                            heuristics[6],
+                            "stack height",
+                            heuristics[7],
+                            "sum_bumps_above_two",
+                            heuristics[8],
+                            "trans_above_gap1",
+                            heuristics[9],
+                        )
+                        input()
 
                 ## PLACE BLOCK AND GET LINE CLEARS ##
                 returns = field.drop(current_tetromino, column)
@@ -179,8 +210,7 @@ class Tetris:
                     clears_count += returns[1]
                     detailed_combos[-1].append(returns[1])
 
-                combo_time, combo_counter = timer(
-                    combo_time, returns[1], combo_counter)
+                combo_time, combo_counter = timer(combo_time, returns[1], combo_counter)
 
                 ## SET UP NEXT INSTANCE ##
                 current_tetromino = next_tetromino

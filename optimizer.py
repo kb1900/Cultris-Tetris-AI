@@ -74,8 +74,7 @@ class Optimizer:
                         x * y for x, y in zip(heuristics, settings.downstack_model)
                     )
                 elif settings.mode == "test1":
-                    score = sum(
-                        x * y for x, y in zip(heuristics, settings.test_model))
+                    score = sum(x * y for x, y in zip(heuristics, settings.test_model))
 
                 elif settings.mode == "test2":
                     score = sum(
@@ -93,16 +92,15 @@ class Optimizer:
     @staticmethod
     def best_move(field, tetromino, next_tetromino, n=0, combo_time=0, combo_counter=0):
         node = 0
-        combo_priority = False
 
         cur_que = queue.Queue()
         next_que = queue.Queue()
 
-        t1 = threading.Thread(
-            target=get_current_rotations, args=(tetromino, cur_que))
+        t1 = threading.Thread(target=get_current_rotations, args=(tetromino, cur_que))
 
         t2 = threading.Thread(
-            target=get_next_rotations, args=(next_tetromino, next_que))
+            target=get_next_rotations, args=(next_tetromino, next_que)
+        )
 
         t1.start()
         t2.start()
@@ -131,12 +129,6 @@ class Optimizer:
                         combo_time=combo_time,
                         combo_counter=combo_counter,
                     )
-
-                    if clears1:
-                        if settings.combo and combo_counter > 5:
-                            score = score / clears1
-                            combo_priority = True
-
                     # print(tetromino_rotation, " ",column, "score:", score)
                     # print(field_copy)
                     all_boards_first.append(
@@ -155,9 +147,6 @@ class Optimizer:
         all_boards_first = all_boards_first[: settings.move_depth]
 
         for i in all_boards_first:
-            if combo_priority == True:
-                print("Priority active for combo!! \n")
-                break
             second_scores = []
             for next_tetromino_rotation in next_rotations:
                 for column in range(Field.WIDTH - next_tetromino_rotation.width() + 1):
@@ -173,13 +162,6 @@ class Optimizer:
                             combo_time=combo_time,
                             combo_counter=combo_counter,
                         )
-
-                        if combo_counter > 8:
-                            if clears2:
-                                combo_priority = True
-                                score = score / clears2
-                                break
-
                         second_scores.append(score)
 
                     except AssertionError:
