@@ -1,4 +1,3 @@
-from tetromino import Tetromino
 from field import Field
 import settings
 from operator import itemgetter

@@ -6,8 +6,9 @@ import settings
 
 import random
 import time
-import pickle
 import ast
+
+import requests
 
 
 lines_sent = {
@@ -102,56 +103,36 @@ class Tetris:
         field = Field()
         with open(("pieces.txt"), "r") as file:
             sequence = file.read().replace("\n", "")
-            # print(sequence)
-            # sequence = sequence.strip("\n")
 
         piece_count = 1
         max_piece_count = 500
-        exit = 1
         seed = random.randint(0, int(len(sequence) / 4))
         combo_counter = 0
         combo_time = 0
         combos = []
         detailed_combos = [[]]
-        # seed = 0
         sequence = sequence[seed:]
 
         current_tetromino = Tetromino.create(sequence[piece_count])
+
+        current_tetromino = Tetromino.create("L")
+        print(current_tetromino.state)
+        print([[" ", " ", "x"], ["x", "x", "x"]])
+        time.sleep(100)
+
         clears_count = random.uniform(0.001, 1)
 
-        while exit == 1:
+        while 1:
             try:
                 next_tetromino = Tetromino.create(sequence[piece_count + 1])
 
-                if settings.mode == "upstack":
-                    if (
-                        field.height() > 12
-                        or field.count_gaps() > 2
-                        or field.max_bump() > 6
-                    ):
-                        # print(
-                        #     "MODE SWITCH TO DOWNSTACK",
-                        #     # field.height(),
-                        #     # field.count_gaps(),
-                        # )
-                        settings.mode = "downstack"
-                if settings.mode == "downstack":
-                    if combo_counter > 6 or combo_counter + combo_time > 8.5:
-                        settings.combo = True
-                        # print("COMBO ACTIVE")
-                    else:
-                        settings.combo = False
-                    if (
-                        field.height() < 4
-                        and field.count_gaps() < 3
-                        and combo_counter < 3
-                    ):
-                        # print(
-                        #     "MODE SWITCH TO UPSTACK",
-                        #     # field.height(),
-                        #     # field.count_gaps(),
-                        # )
-                        settings.mode = "upstack"
+                r = requests.get(
+                    'http://localhost:9876/mode/{}/{}/{}/{}/{}/{}'.format(settings.mode, field.height(), field.count_gaps(),
+                                                                          field.max_bump(), combo_counter, combo_time))
+
+                settings.mode = r.json()["mode"]
+                # tries to get the value for combo if the key is invalid sets it to false
+                settings.combo = r.json().get("combo", False)
 
                 ## GET BEST MOVE ##
                 t0 = time.time()
