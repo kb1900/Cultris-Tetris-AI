@@ -500,21 +500,62 @@ while True:
                         "rotateLeft": "q",
                         "moveLeft": "left",
                         "moveRight": "right",
+                        "moveDown": "down",
                         "drop": "c",
                     }
 
                     moveList = q[0]
-                    clears = q[1]
-                    keylist = []
-                    keyboard = Keyboard()
-                    for i in moveList:
-                        # print(key_map[i])
-                        keylist.append(key_map[i])
-                        # keyboard.KeyDown(key_map[i])
-                        # keyboard.KeyUp(key_map[i])
-                        # time.sleep(0.030)
+                    soft = q[1]
 
-                    kb.write(keylist, delay=0.00)
+                    clears = q[2]
+                    keylist = []
+
+                    keyboard = Keyboard()
+                    if soft:
+                        # print("SOFT DROP:", moveList)
+                        predown = []
+                        postdown = []
+                        for count, i in enumerate(moveList):
+                            if i == "moveDown":
+                                predown = moveList[:count]
+                                moveList = moveList[count:]
+                                break
+                        for count, i in enumerate(moveList):
+                            if i != "moveDown":
+                                postdown = moveList[count:]
+                                moveList = moveList[:count]
+                                break
+                        # print("downs", moveList)
+                        # print("len(moveList)", len(moveList))
+                        # print("predown", predown)
+                        # print("postdown", postdown)
+
+                        predownkeylist = []
+                        for i in predown:
+                            predownkeylist.append(key_map[i])
+                        kb.write(predownkeylist, delay=0.00)
+
+                        down_delay = len(moveList)/50
+                        if current_tetromino.type == "I":
+                            down_delay += 0.1
+                        kb.press(key_map["moveDown"])
+                        time.sleep(down_delay)
+                        kb.release(key_map["moveDown"])
+
+                        postdownkeylist = []
+                        for i in postdown:
+                            postdownkeylist.append(key_map[i])
+                        kb.write(postdownkeylist, delay=0.01)
+
+                    else:
+                        for i in moveList:
+                            # print(key_map[i])
+                            keylist.append(key_map[i])
+                            # keyboard.KeyDown(key_map[i])
+                            # keyboard.KeyUp(key_map[i])
+                            # time.sleep(0.030)
+
+                        kb.write(keylist, delay=0.00)
                     move_execution_times.append(time.time() - t0)
 
                     t0 = time.time()

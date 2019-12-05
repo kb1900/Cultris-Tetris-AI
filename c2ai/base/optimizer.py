@@ -227,6 +227,7 @@ class Optimizer:
 
         returns = json.loads(r.text)
         moveList = returns["MoveList"]
+        soft = returns["Soft"]
         rawField = returns["Field"]["Board"]
         Clears = returns["Clears"]
         Score = returns["Score"]
@@ -237,7 +238,7 @@ class Optimizer:
 
         # print(field)
 
-        return [moveList, Clears]
+        return [moveList, soft, Clears]
 
     @staticmethod
     def get_keystrokes(rotation, column, keymap, tetromino_name):
