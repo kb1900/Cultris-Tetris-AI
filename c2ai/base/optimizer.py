@@ -2,6 +2,8 @@ from c2ai.base.field import Field
 from c2ai.base.tetromino import Tetromino
 from c2ai.base import settings
 from operator import itemgetter
+import requests, json, numpy as np
+import collections
 
 
 class Optimizer:
@@ -207,6 +209,35 @@ class Optimizer:
         #     ),
         # )
         return all_boards_first[0]
+
+    @staticmethod
+    def go_best_move(field, tetromino, next_tetromino, combo_time=0, combo_counter=0):
+
+        # print(field)
+
+        url = "http://localhost:9876/bestmove/{}/{}/{}/{}/{}".format(
+            field.go_field_array(),
+            tetromino.type.lower(),
+            next_tetromino.type.lower(),
+            combo_time,
+            combo_counter,
+        )
+        # print("URL", url)
+        r = requests.get(url)
+
+        returns = json.loads(r.text)
+        moveList = returns["MoveList"]
+        rawField = returns["Field"]["Board"]
+        Clears = returns["Clears"]
+        Score = returns["Score"]
+
+        # print("moveList:", moveList, "Clears", Clears, "Score", Score)
+
+        field.py_field_array(rawField=rawField)
+
+        # print(field)
+
+        return [moveList, Clears]
 
     @staticmethod
     def get_keystrokes(rotation, column, keymap, tetromino_name):

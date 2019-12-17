@@ -443,49 +443,72 @@ while True:
                     t0 = time.time()
                     start_time = time.time()
 
-                    # Best move retrieval
-                    try:
-                        best_drop = Optimizer.best_move(
-                            field=field,
-                            tetromino=current_tetromino,
-                            next_tetromino=next_tetromino,
-                            combo_time=combo_time,
-                            combo_counter=combo_counter,
-                        )
-                    except IndexError:
-                        print("Game Over, ran out of moves")
-                        game_over = 1
+                    # We replace the following with 1) conversion of field to a type sent to the go microservice
+                    # Then send it to go and recieve the chosen move
+
+                    q = Optimizer.go_best_move(
+                        field=field,
+                        tetromino=current_tetromino,
+                        next_tetromino=next_tetromino,
+                        combo_time=combo_time,
+                        combo_counter=combo_counter,
+                    )
+                    # # Best move retrieval
+                    # try:
+                    #     best_drop = Optimizer.best_move(
+                    #         field=field,
+                    #         tetromino=current_tetromino,
+                    #         next_tetromino=next_tetromino,
+                    #         combo_time=combo_time,
+                    #         combo_counter=combo_counter,
+                    #     )
+                    # except IndexError:
+                    #     print("Game Over, ran out of moves")
+                    #     game_over = 1
                     best_drop_times.append(time.time() - t0)
 
                     t0 = time.time()
-                    rotation = best_drop[1]
-                    column = best_drop[2]
+                    # rotation = best_drop[1]
+                    # column = best_drop[2]
 
-                    current_tetromino.rotate(rotation)
+                    # current_tetromino.rotate(rotation)
 
-                    try:
-                        returns = field.drop(current_tetromino, column)
-                    except AssertionError:
-                        print("Game Over, ran out of moves")
-                        game_over = 1
+                    # try:
+                    #     returns = field.drop(current_tetromino, column)
+                    # except AssertionError:
+                    #     print("Game Over, ran out of moves")
+                    #     game_over = 1
 
-                    # Execute moves
-                    keys = Optimizer.get_keystrokes(
-                        rotation,
-                        column,
-                        {
-                            "rotate_right": "w",
-                            "rotate_180": "tab",
-                            "rotate_left": "q",
-                            "move_left": "left",
-                            "move_right": "right",
-                            "drop": "c",
-                        },
-                        tetromino_name=current_tetromino.type,
-                    )
+                    # # Execute moves
+                    # keys = Optimizer.get_keystrokes(
+                    #     rotation,
+                    #     column,
+                    #     {
+                    #         "rotate_right": "w",
+                    #         "rotate_180": "tab",
+                    #         "rotate_left": "q",
+                    #         "move_left": "left",
+                    #         "move_right": "right",
+                    #         "drop": "c",
+                    #     },
+                    #     tetromino_name=current_tetromino.type,
+                    # )
+                    key_map = {
+                        "rotateRight": "w",
+                        "rotate180": "tab",
+                        "rotateLeft": "q",
+                        "moveLeft": "left",
+                        "moveRight": "right",
+                        "drop": "c",
+                    }
 
+                    moveList = q[0]
+                    clears = q[1]
+                    keylist = []
+                    for i in moveList:
+                        keylist.append(key_map[i])
                     # pyautogui.typewrite(keys)
-                    kb.write(keys, delay=0.00)
+                    kb.write(keylist, delay=0.00)
                     move_execution_times.append(time.time() - t0)
 
                     t0 = time.time()
@@ -496,7 +519,7 @@ while True:
 
                     ct = timer(
                         combo_time=combo_time,
-                        clears=returns[1],
+                        clears=clears,
                         combo_counter=combo_counter,
                     )
 
