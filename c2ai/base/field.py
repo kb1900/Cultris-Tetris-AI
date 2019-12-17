@@ -1,6 +1,6 @@
 from c2ai.base.tetromino import Tetromino
 import random
-import numpy as np
+import numpy as np, json
 from operator import xor
 
 
@@ -187,6 +187,36 @@ class Field:
 
     def field_array(self):
         return np.array(self.state)
+
+    def go_field_array(self):
+        go_field_array = np.array(self.state)
+        for (x, y), value in np.ndenumerate(go_field_array):
+            if value == " ":
+                go_field_array[x, y] = 0
+            elif value == "0":
+                go_field_array[x, y] = 9
+            else:
+                go_field_array[x, y] = 1
+
+        return json.dumps(go_field_array.tolist())
+
+    def py_field_array(self, rawField):
+        py_field_array = list(rawField)
+        for row, value in enumerate(py_field_array):
+            py_field_array[row] = [str(i) for i in value]
+
+        for i in range(len(py_field_array)):
+            for j in range(len(py_field_array[i])):
+                if py_field_array[i][j] == "0":
+                    py_field_array[i][j] = " "
+                elif py_field_array[i][j] == "9":
+                    py_field_array[i][j] = "0"
+                else:
+                    py_field_array[i][j] = "x"
+        newField = np.array(py_field_array)
+        self.state = newField.tolist()
+
+        return True
 
     def heuristics(self):
 
