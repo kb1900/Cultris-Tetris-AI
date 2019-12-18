@@ -17,6 +17,7 @@ from c2ai.cell_classifier import Classifier
 from c2ai.matrix import matrix_updater
 from c2ai import build_absolute_path
 from c2ai.base import settings
+from c2ai.base.keyboardpress import Keyboard
 
 best_drop_times = []
 move_execution_times = []
@@ -407,18 +408,18 @@ while True:
                             or field.count_gaps() > 2
                             or field.max_bump() > 6
                         ):
-                            print(
-                                "MODE SWITCH TO DOWNSTACK",
-                                # field.height(),
-                                # field.count_gaps(),
-                            )
+                            # print(
+                            #     "MODE SWITCH TO DOWNSTACK",
+                            #     # field.height(),
+                            #     # field.count_gaps(),
+                            # )
                             settings.mode = "downstack"
                     if settings.mode == "downstack":
                         if combo_counter > 5 or combo_counter + combo_time > 8.5:
                             if field.height() < 15:
                                 settings.combo = True
                                 max_bpm = settings.max_bpm_peak
-                                print("COMBO ACTIVE")
+                                # print("COMBO ACTIVE")
                         else:
                             settings.combo = False
                             max_bpm = settings.max_bpm
@@ -427,11 +428,11 @@ while True:
                             and field.count_gaps() < 3
                             and combo_counter < 3
                         ):
-                            print(
-                                "MODE SWITCH TO UPSTACK",
-                                # field.height(),
-                                # field.count_gaps(),
-                            )
+                            # print(
+                            #     "MODE SWITCH TO UPSTACK",
+                            #     # field.height(),
+                            #     # field.count_gaps(),
+                            # )
                             settings.mode = "upstack"
                             settings.combo = False
 
@@ -505,9 +506,14 @@ while True:
                     moveList = q[0]
                     clears = q[1]
                     keylist = []
+                    keyboard = Keyboard()
                     for i in moveList:
+                        # print(key_map[i])
                         keylist.append(key_map[i])
-                    # pyautogui.typewrite(keys)
+                        # keyboard.KeyDown(key_map[i])
+                        # keyboard.KeyUp(key_map[i])
+                        # time.sleep(0.030)
+
                     kb.write(keylist, delay=0.00)
                     move_execution_times.append(time.time() - t0)
 
@@ -526,9 +532,9 @@ while True:
                     combo_time = ct[0]
                     combo_counter = ct[1]
                     # print(field)
-                    print("piece_count", count)
-                    print("next_tetromino", next_tetromino.type)
-                    print("combo_counter", combo_counter)
+                    # print("piece_count", count)
+                    # print("next_tetromino", next_tetromino.type)
+                    # print("combo_counter", combo_counter)
 
                     current_tetromino = next_tetromino
 
@@ -558,8 +564,8 @@ while True:
                         if combo_counter != 0:
                             combos.append(combo_counter)
                         combo_counter = 0
-                    print("combo_time", combo_time)
-                    print("")
+                    # print("combo_time", combo_time)
+                    # print("")
 
                     # Throttle speed if move would be faster than max speed
                     move_time = time.time() - start_time
